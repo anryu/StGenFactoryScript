@@ -1,0 +1,252 @@
+
+print=[------------------------------------------------------出荷状態確認_START]
+print=[出荷状態確認]
+
+
+aDevice.GevSCPD=150
+
+aControlRetry.SetRetry=20
+aControlRetry.SetTimer=100
+aControlRetry.SetBusyCommand=02 00 AC 01 00 03
+aControlRetry.SetBusyStatus=02 01 00 03
+
+#カスタマーコード
+ 
+aControlRetry.SendData=02 00 08 01 00 03
+aControlRetry.ReturnData=02 01 00 03
+aControlRetry.Execute
+
+#ハードウェア・バージョン
+aControlRetry.SendData=02 00 01 01 00 03
+aControlRetry.ReturnData=aHardVerRet
+aControlRetry.Execute
+
+#opck=4相当の内容(GigEではopckはなくしたので)
+aControlRetry.SendData=02 00 16 08 00 03
+aControlRetry.ReturnData=aOPCKRet
+aControlRetry.Execute
+
+#inmd
+aControlRetry.SendData=02 00 10 01 00 03
+aControlRetry.ReturnData=02 01 00 03
+aControlRetry.Execute
+
+#limd
+#aControlRetry.SendData=02 00 11 01 00 03
+#aControlRetry.ReturnData=02 01 02 03
+#aControlRetry.Execute
+
+#LineStartTriggerMode
+aControlRetry.SendData=02 00 58 01 00 03
+aControlRetry.ReturnData=02 01 00 03
+aControlRetry.Execute
+
+#FrameStartTriggerMode
+aControlRetry.SendData=02 00 4C 01 00 03
+aControlRetry.ReturnData=02 01 00 03
+aControlRetry.Execute
+
+#FrameBurstStartTriggerMode
+aControlRetry.SendData=02 00 40 01 00 03
+aControlRetry.ReturnData=02 01 00 03
+aControlRetry.Execute
+
+#opbt
+aControlRetry.SendData=02 00 12 01 00 03
+aControlRetry.ReturnData=02 01 00 03
+aControlRetry.Execute
+
+#露光時間設定
+aControlRetry.SendData=02 00 20 02 00 03
+aControlRetry.ReturnData=02 02 F0 00 03
+aControlRetry.Execute
+
+#Baudrate 0:115200(ファームで固定したので要らない)
+#aControlRetry.SendData=02 00 14 01 00 03
+#aControlRetry.ReturnData=02 01 00 03
+#aControlRetry.Execute
+
+#gadt
+aControlRetry.SendData=02 00 31 01 00 03
+aControlRetry.ReturnData=02 01 00 03
+aControlRetry.Execute
+
+# analog gain
+aControlRetry.SendData=02 00 34 01 00 03
+aControlRetry.ReturnData=02 01 00 03
+aControlRetry.Execute
+
+#gcdt
+aControlRetry.SendData=02 00 6C 01 00 03
+aControlRetry.ReturnData=02 01 20 03
+aControlRetry.Execute
+
+#tsmd
+aControlRetry.SendData=02 00 78 01 00 03
+aControlRetry.ReturnData=02 01 00 03
+aControlRetry.Execute
+
+#ffmd
+aControlRetry.SendData=02 00 81 01 00 03
+aControlRetry.ReturnData=02 01 01 03
+aControlRetry.Execute
+
+# TAKEXはGenIcamにこのコマンドが無い
+# aControlRetry.SendData=02 00 82 01 00 03
+# aControlRetry.ReturnData=02 01 01 03
+# aControlRetry.Execute
+
+#fful
+# aControlRetry.SendData=02 00 83 01 00 03
+# aControlRetry.ReturnData=02 01 00 03
+# aControlRetry.Execute
+
+#ffdtl
+# aControlRetry.SendData=02 00 84 01 00 03
+# aControlRetry.ReturnData=02 01 00 03
+# aControlRetry.Execute
+
+#ffdt
+# aControlRetry.SendData=02 00 85 01 00 03
+# aControlRetry.ReturnData=02 01 00 03
+# aControlRetry.Execute
+
+#ffpl
+# aControlRetry.SendData=02 00 86 01 00 03
+# aControlRetry.ReturnData=02 01 00 03
+# aControlRetry.Execute
+
+#ffpu
+# aControlRetry.SendData=02 00 87 01 00 03
+# aControlRetry.ReturnData=02 01 00 03
+# aControlRetry.Execute
+
+#fftg
+aControlRetry.SendData=02 00 88 01 00 03
+aControlRetry.ReturnData=02 01 C8 03
+aControlRetry.Execute
+
+#ffto
+aControlRetry.SendData=02 00 8A 01 00 03
+aControlRetry.ReturnData=02 01 03 03
+aControlRetry.Execute
+
+#ffum
+aControlRetry.SendData=02 00 8C 01 00 03
+aControlRetry.ReturnData=02 01 00 03
+aControlRetry.Execute
+
+#ffsb
+# aControlRetry.SendData=02 00 8D 01 00 03
+# aControlRetry.ReturnData=02 01 00 03
+# aControlRetry.Execute
+
+#ctwd
+aControlRetry.SendData=02 00 96 01 00 03
+aControlRetry.ReturnData=02 01 00 03
+aControlRetry.Execute
+
+#datg
+aControlRetry.SendData=02 00 98 01 00 03
+aControlRetry.ReturnData=02 01 06 03
+aControlRetry.Execute
+
+#dac_manu_ch1
+# aControlRetry.SendData=02 00 9E 01 00 03
+# aControlRetry.ReturnData=02 01 00 03
+# aControlRetry.Execute
+
+#dac_manu_ch1
+# aControlRetry.SendData=02 00 9F 01 00 03
+# aControlRetry.ReturnData=02 01 00 03
+# aControlRetry.Execute
+
+#dac_manu_ch2
+# aControlRetry.SendData=02 00 A0 01 00 03
+# aControlRetry.ReturnData=02 01 00 03
+# aControlRetry.Execute
+
+#dac_manu_ch2
+# aControlRetry.SendData=02 00 A1 01 00 03
+# aControlRetry.ReturnData=02 01 00 03
+# aControlRetry.Execute
+
+#abmd
+aControlRetry.SendData=02 00 A2 01 00 03
+aControlRetry.ReturnData=02 01 00 03
+aControlRetry.Execute
+
+#lnmd
+aControlRetry.SendData=02 00 A3 01 00 03
+aControlRetry.ReturnData=02 01 00 03
+aControlRetry.Execute
+
+#Debug_test_pattern
+aControlRetry.SendData=02 00 A5 01 00 03
+aControlRetry.ReturnData=02 01 00 03
+aControlRetry.Execute
+
+#Saturation
+aControlRetry.SendData=02 00 A6 01 00 03
+aControlRetry.ReturnData=02 01 00 03
+aControlRetry.Execute
+
+#usid
+aControlRetry.SendData=02 00 A7 01 00 03
+aControlRetry.ReturnData=02 01 00 03
+aControlRetry.Execute
+
+#ROI start
+aControlRetry.SendData=02 00 B0 02 00 03
+aControlRetry.ReturnData=02 02 00 00 03
+aControlRetry.Execute
+
+#width
+aControlRetry.SendData=02 00 C0 02 00 03
+aControlRetry.ReturnData=aWidthRet
+aControlRetry.Execute
+
+#opck
+#aControlRetry.SendData=02 00 EE 01 00 03
+#aControlRetry.ReturnData=02 01 0B 03
+#aControlRetry.Execute
+
+#Line to Line補正で使用するblack pixelを切り替えコマンド(0:Electrical Black or 1:Optical Black)
+aControlRetry.SendData=02 00 C8 01 00 03
+aControlRetry.ReturnData=02 01 01 03
+aControlRetry.Execute
+
+#BlackPixelの表示有無(0:Black Pixel非表示 or 1:Black Pixel表示)
+aControlRetry.SendData=02 00 CA 01 00 03
+aControlRetry.ReturnData=02 01 00 03
+aControlRetry.Execute
+
+#通信専用モード機能(0:OFF or 1:ON)
+aControlRetry.SendData=02 00 CB 01 00 03
+aControlRetry.ReturnData=02 01 00 03
+aControlRetry.Execute
+
+#未使用CMOSレジスタ値変更(Default=0x46=8'b0100_0110) [bit7-5:nBANDGAP_SW] [bit4-3:Not Used] [bit2:nWHITE_CLAMPING] [bit1:nPIXCLK_OUT_ENB] [bit0:nENB_CTRL_VR]
+aControlRetry.SendData=02 00 CC 01 00 03
+aControlRetry.ReturnData=02 01 46 03
+aControlRetry.Execute
+
+#cMCOMPAN_DEBUG_ON : DEBUG_OFF:0  DEBUG_ON:1
+aControlRetry.SendData=02 00 CD 01 00 03
+aControlRetry.ReturnData=02 01 00 03
+aControlRetry.Execute
+
+
+print(Check=OK)
+print=[------------------------------------------------------出荷状態確認_END]
+
+print(TIMESTAMP)
+
+
+
+
+
+
+
+
+

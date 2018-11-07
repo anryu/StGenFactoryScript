@@ -1,0 +1,45 @@
+# aLineStartm
+# aLineEndm
+
+
+StIF aIF
+aIF.Start(aBrandName==1)
+	# TAKEX
+	aControlRetry.SendData=02 02 81 01 01 03
+	aControlRetry.ReturnData=02 00 01 03
+	aControlRetry.Execute
+	Sleep(2000)
+
+	#clear gain
+	aDevice.FFC_gain_clear
+aIF.Else
+	# STC
+	aControlRetry.SendData=02 02 81 01 07 03
+	aControlRetry.ReturnData=02 00 01 03
+	aControlRetry.Execute
+	Sleep(2000)
+aIF.End
+delete aIF
+
+
+aDevice.Start
+
+print=[------------------------------------------------------‰æ‘fŒ‡Š×Šm”F1_START]
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(PixelDefect_9bitMODE)
+aCommon.SaveAllExecute
+delete aCommon
+
+print=[‰æ‘fŒ‡Š×Šm”F1]
+StCheckPixelDefect aCheckPixelDefect(aDevice)
+aCheckPixelDefect.SetStartLine(aLineStartm)
+aCheckPixelDefect.SetEndLine(aLineEndPixDfct)
+aCheckPixelDefect.SetWidthLines(3)
+aCheckPixelDefect.SetDifferenceMax(40)
+aCheckPixelDefect.SetSeparate(1)
+aCheckPixelDefect.Execute
+delete aCheckPixelDefect
+
+print=[------------------------------------------------------‰æ‘fŒ‡Š×Šm”F1_END]
+
+aDevice.Stop

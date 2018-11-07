@@ -1,0 +1,24 @@
+
+print=[------------------------------------------------------出荷状態確認_START]
+print=[出荷状態確認]
+
+print=#############################################################################################START:受け入れ検査では除外する箇所
+CommentStart=6
+#FACTORY⇒REG
+#busyが解除されるのを待つ
+aControlRetry.SetRetry=20
+aControlRetry.SendData=02 02 E2 01 08 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+
+#cmsv
+#busyが解除されるのを待つ
+aControlRetry.SetRetry=20
+aControlRetry.SendData=02 02 E2 01 01 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+print=#############################################################################################END:受け入れ検査では除外する箇所
+CommentEnd=6
+

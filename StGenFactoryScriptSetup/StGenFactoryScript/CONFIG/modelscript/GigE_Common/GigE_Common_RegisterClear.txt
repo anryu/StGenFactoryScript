@@ -1,0 +1,44 @@
+
+print=#############################################################################################START:受け入れ検査では除外する箇所
+CommentStart=6
+
+aControlRetry.SetTimer=100
+aControlRetry.SetBusyCommand=02 00 AC 01 00 03
+aControlRetry.SetBusyStatus=02 01 00 03
+
+print=[------------------------------------------------------レジスタALL_CLEAR_START]
+print=[レジスタALL_CLEAR]
+aControlRetry.SendData=02 02 E3 01 10 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+print(TIMESTAMP)
+
+aDevice.Disconnect
+
+Sleep(2000)
+
+print=[------------------------------------------------------電源ONOFF_START]
+aTexioControl.SetChannel=2
+aTexioControl.SetVoltage(12.0)
+aTexioControl.PowerOff
+Sleep(2000)
+aTexioControl.PowerOn
+Sleep(1000)
+aTexioControl.PowerOff
+Sleep(2000)
+aTexioControl.PowerOn
+Sleep(1000)
+
+aDevice.Connect
+
+aDevice.GevSCPD=150
+
+print(Check=OK)
+print=[------------------------------------------------------レジスタALL_CLEAR_END]
+print=#############################################################################################END:受け入れ検査では除外する箇所
+CommentEnd=6
+
+
+
+

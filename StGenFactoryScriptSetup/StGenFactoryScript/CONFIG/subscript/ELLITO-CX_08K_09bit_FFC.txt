@@ -1,0 +1,863 @@
+#変更履歴
+#VER01(2018/4/24)
+#・コメント修正(集計ソフトで集計可能にするため)
+#・データSaveコマンド後のスリープ時間を延長(Errorが出るため)
+#・SNMaxの規格を変更(個体差バラつきのため)
+#　　-FFC補正値保存確認9,13,12,16
+#・平均輝度の規格を変更(個体差バラつきのため)
+#　　-FFC補正値保存確認11,15
+#VER02(2018/8/9)
+#・データSaveコマンド後のスリープ時間を延長(1s⇒1.5s) GeniCam Write Error対策)
+#VER03(2018/10/29)
+#・FFC調整・保存(ゲイン5.5倍、4倍)の遮光確認の規格を変更(AverageMax = 25⇒50)(個体差バラツキのため)
+
+print(SUBSCRIPT=ELLITO-CX_08K_09bit_FFC.txt)
+print(SUBSCRIPT_VER=003)
+
+print=[-------------------検査設定_START]
+#ラインレート設定:10kHz=100us
+aDevice.Write(0xA110,7812)
+
+#露光モード設定:プログラマブル露光
+aDevice.Write(0xA104,1)
+
+aDevice.Start
+Sleep(1500)
+
+print=[-------------------FFC調整・保存(ゲイン1倍)_START]
+# DSNU無効/PRNU無効/HFPN無効
+aDevice.Write(0xA200,0)
+aDevice.Write(0xA204,0)
+aDevice.Write(0xA208,0)
+
+#露光時間設定:72us
+aDevice.Write(0xA120,5625)
+#アナログゲイン:1倍
+aDevice.Write(0xA130,4)
+
+print=[遮光]
+aTerminal.Command(ch1onoff=0&ch2onoff=0&ch3onoff=0&ch4onoff=0)
+Sleep(2000)
+
+#照明が消灯しない事例があったため追加
+print=[遮光確認]
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(8191)
+aCheckSN.SetSN(20)
+aCheckSN.SetSNMax(20)
+aCheckSN.SetAverageMin(0)
+aCheckSN.SetAverageMax(25)
+aCheckSN.SetLineAverageMin(0)
+aCheckSN.SetLineAverageMax(25)
+aCheckSN.Execute
+delete aCheckSN
+
+# DSNU有効/PRNU有効/HFPN有効
+aDevice.Write(0xA200,1)
+aDevice.Write(0xA204,1)
+aDevice.Write(0xA208,1)
+Sleep(500)
+
+print=[自動DSNU]
+#クランプ調整
+aDevice.Write(0xA458,0xffff)
+
+Sleep(500)
+
+#基準機の光量を読込
+StLightControl aLightControl(aDevice)
+aLightControl.SetTerminal(aTerminal)
+aLightControl.InfoFileName=.\LightInfo1.txt
+aLightControl.LoadFileExecute
+delete aLightControl
+
+Sleep(1500)
+
+# DSNU無効/PRNU無効/HFPN有効
+aDevice.Write(0xA200,1)
+aDevice.Write(0xA204,0)
+aDevice.Write(0xA208,0)
+
+Sleep(500)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(DSNUoff_PRNUoff_HFPNon5)
+aCommon.SaveCSVExecute
+delete aCommon
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(8191)
+aCheckSN.SetSN(2)
+aCheckSN.SetSNMax(2.4)
+aCheckSN.SetAverageMin(140)
+aCheckSN.SetAverageMax(190)
+aCheckSN.SetLineAverageMin(135)
+aCheckSN.SetLineAverageMax(195)
+aCheckSN.Execute
+delete aCheckSN
+
+# DSNU有効/PRNU有効/HFPN有効
+aDevice.Write(0xA200,1)
+aDevice.Write(0xA204,1)
+aDevice.Write(0xA208,1)
+Sleep(500)
+
+print=[自動PRNU]
+aDevice.Write(0xA45C,200)
+Sleep(1000)
+
+# ユーザ設定保存
+aDevice.Write(0xA520,1)
+Sleep(1500)
+#補正データ保存
+#ELITE HFPN Save
+aDevice.Write(0xA720,1)
+Sleep(1500)
+#ELITE DSNU Save
+aDevice.Write(0xA730,1)
+Sleep(1500)
+#ELITE PRNU Save
+aDevice.Write(0xA740,1)
+Sleep(1500)
+
+print=[FFC補正値保存確認9]
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(LEDon_BeforePowerONOFF5)
+aCommon.SaveCSVExecute
+delete aCommon
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(8191)
+aCheckSN.SetSN(3)
+aCheckSN.SetSNMax(5)
+aCheckSN.SetAverageMin(195)
+aCheckSN.SetAverageMax(205)
+aCheckSN.SetLineAverageMin(190)
+aCheckSN.SetLineAverageMax(210)
+aCheckSN.Execute
+delete aCheckSN
+print=[-------------------FFC調整・保存(ゲイン1倍)_END]
+
+
+
+print=[-------------------FFC調整・保存(ゲイン2倍)_START]
+# DSNU無効/PRNU無効/HFPN無効
+aDevice.Write(0xA200,0)
+aDevice.Write(0xA204,0)
+aDevice.Write(0xA208,0)
+
+#露光時間設定:36us
+aDevice.Write(0xA120,2813)
+#アナログゲイン:2倍
+aDevice.Write(0xA130,5)
+
+print=[遮光]
+aTerminal.Command(ch1onoff=0&ch2onoff=0&ch3onoff=0&ch4onoff=0)
+Sleep(2000)
+
+#照明が消灯しない事例があったため追加
+print=[遮光確認]
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(8191)
+aCheckSN.SetSN(20)
+aCheckSN.SetSNMax(20)
+aCheckSN.SetAverageMin(0)
+aCheckSN.SetAverageMax(25)
+aCheckSN.SetLineAverageMin(0)
+aCheckSN.SetLineAverageMax(25)
+aCheckSN.Execute
+delete aCheckSN
+
+# DSNU有効/PRNU有効/HFPN有効
+aDevice.Write(0xA200,1)
+aDevice.Write(0xA204,1)
+aDevice.Write(0xA208,1)
+Sleep(500)
+
+print=[自動DSNU]
+#クランプ調整
+aDevice.Write(0xA458,0xffff)
+
+Sleep(500)
+
+#基準機の光量を読込
+StLightControl aLightControl(aDevice)
+aLightControl.SetTerminal(aTerminal)
+aLightControl.InfoFileName=.\LightInfo1.txt
+aLightControl.LoadFileExecute
+delete aLightControl
+
+Sleep(1500)
+
+# DSNU無効/PRNU無効/HFPN有効
+aDevice.Write(0xA200,1)
+aDevice.Write(0xA204,0)
+aDevice.Write(0xA208,0)
+
+Sleep(500)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(DSNUoff_PRNUoff_HFPNon6)
+aCommon.SaveCSVExecute
+delete aCommon
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(8191)
+aCheckSN.SetSN(4)
+aCheckSN.SetSNMax(5)
+aCheckSN.SetAverageMin(140)
+aCheckSN.SetAverageMax(190)
+aCheckSN.SetLineAverageMin(135)
+aCheckSN.SetLineAverageMax(195)
+aCheckSN.Execute
+delete aCheckSN
+
+# DSNU有効/PRNU有効/HFPN有効
+aDevice.Write(0xA200,1)
+aDevice.Write(0xA204,1)
+aDevice.Write(0xA208,1)
+Sleep(500)
+
+print=[自動PRNU]
+aDevice.Write(0xA45C,200)
+Sleep(1000)
+
+# ユーザ設定保存
+aDevice.Write(0xA520,1)
+Sleep(1500)
+#補正データ保存
+#ELITE HFPN Save
+aDevice.Write(0xA720,1)
+Sleep(1500)
+#ELITE DSNU Save
+aDevice.Write(0xA730,1)
+Sleep(1500)
+#ELITE PRNU Save
+aDevice.Write(0xA740,1)
+Sleep(1500)
+
+print=[FFC補正値保存確認10]
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(LEDon_BeforePowerONOFF6)
+aCommon.SaveCSVExecute
+delete aCommon
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(8191)
+aCheckSN.SetSN(6)
+aCheckSN.SetSNMax(7.2)
+aCheckSN.SetAverageMin(195)
+aCheckSN.SetAverageMax(205)
+aCheckSN.SetLineAverageMin(190)
+aCheckSN.SetLineAverageMax(210)
+aCheckSN.Execute
+delete aCheckSN
+
+print=[-------------------FFC調整・保存(ゲイン2倍)_END]
+
+
+
+print=[-------------------FFC調整・保存(ゲイン5.5倍)_START]
+# DSNU無効/PRNU無効/HFPN無効
+aDevice.Write(0xA200,0)
+aDevice.Write(0xA204,0)
+aDevice.Write(0xA208,0)
+
+#露光時間設定:13.09us
+aDevice.Write(0xA120,1023)
+#アナログゲイン:5.5倍
+aDevice.Write(0xA130,7)
+
+print=[遮光]
+aTerminal.Command(ch1onoff=0&ch2onoff=0&ch3onoff=0&ch4onoff=0)
+Sleep(2000)
+
+#照明が消灯しない事例があったため追加
+print=[遮光確認]
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(8191)
+aCheckSN.SetSN(20)
+aCheckSN.SetSNMax(20)
+aCheckSN.SetAverageMin(0)
+aCheckSN.SetAverageMax(50)
+aCheckSN.SetLineAverageMin(0)
+aCheckSN.SetLineAverageMax(50)
+aCheckSN.Execute
+delete aCheckSN
+
+# DSNU有効/PRNU有効/HFPN有効
+aDevice.Write(0xA200,1)
+aDevice.Write(0xA204,1)
+aDevice.Write(0xA208,1)
+Sleep(500)
+
+print=[自動DSNU]
+#クランプ調整
+#NGが出るため、NoCheck。処理が終わるまで15s待つ
+aDevice.WriteNoCheck(1)
+aDevice.Write(0xA458,0xffff)
+aDevice.WriteNoCheck(0)
+Sleep(15000)
+
+Sleep(500)
+
+#基準機の光量を読込
+StLightControl aLightControl(aDevice)
+aLightControl.SetTerminal(aTerminal)
+aLightControl.InfoFileName=.\LightInfo1.txt
+aLightControl.LoadFileExecute
+delete aLightControl
+
+Sleep(1500)
+
+# DSNU無効/PRNU無効/HFPN有効
+aDevice.Write(0xA200,1)
+aDevice.Write(0xA204,0)
+aDevice.Write(0xA208,0)
+
+Sleep(500)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(DSNUoff_PRNUoff_HFPNon7)
+aCommon.SaveCSVExecute
+delete aCommon
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(8191)
+aCheckSN.SetSN(5.5)
+aCheckSN.SetSNMax(6.9)
+aCheckSN.SetAverageMin(140)
+aCheckSN.SetAverageMax(190)
+aCheckSN.SetLineAverageMin(135)
+aCheckSN.SetLineAverageMax(195)
+aCheckSN.Execute
+delete aCheckSN
+
+# DSNU有効/PRNU有効/HFPN有効
+aDevice.Write(0xA200,1)
+aDevice.Write(0xA204,1)
+aDevice.Write(0xA208,1)
+Sleep(500)
+
+print=[自動PRNU]
+aDevice.Write(0xA45C,200)
+Sleep(1000)
+
+# ユーザ設定保存
+aDevice.Write(0xA520,1)
+Sleep(1500)
+#補正データ保存
+#ELITE HFPN Save
+aDevice.Write(0xA720,1)
+Sleep(1500)
+#ELITE DSNU Save
+aDevice.Write(0xA730,1)
+Sleep(1500)
+#ELITE PRNU Save
+aDevice.Write(0xA740,1)
+Sleep(1500)
+
+print=[FFC補正値保存確認11]
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(LEDon_BeforePowerONOFF7)
+aCommon.SaveCSVExecute
+delete aCommon
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(8191)
+aCheckSN.SetSN(8)
+aCheckSN.SetSNMax(13)
+aCheckSN.SetAverageMin(195)
+aCheckSN.SetAverageMax(205)
+aCheckSN.SetLineAverageMin(180)
+aCheckSN.SetLineAverageMax(220)
+aCheckSN.Execute
+delete aCheckSN
+
+print=[-------------------FFC調整・保存(ゲイン5.5倍)_END]
+
+
+#HPFNの値を1個のみしか保存できない(各ゲインで保持できない)。出荷設定を4倍のHFPN補正値とするため、ゲイン4倍を最後に調整する。
+print=[-------------------FFC調整・保存(ゲイン4倍)_START]
+# DSNU無効/PRNU無効/HFPN無効
+aDevice.Write(0xA200,0)
+aDevice.Write(0xA204,0)
+aDevice.Write(0xA208,0)
+
+#露光時間設定:18us
+aDevice.Write(0xA120,1406)
+#アナログゲイン:4倍
+aDevice.Write(0xA130,6)
+
+print=[遮光]
+aTerminal.Command(ch1onoff=0&ch2onoff=0&ch3onoff=0&ch4onoff=0)
+Sleep(2000)
+
+#照明が消灯しない事例があったため追加
+print=[遮光確認]
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(8191)
+aCheckSN.SetSN(20)
+aCheckSN.SetSNMax(20)
+aCheckSN.SetAverageMin(0)
+aCheckSN.SetAverageMax(50)
+aCheckSN.SetLineAverageMin(0)
+aCheckSN.SetLineAverageMax(50)
+aCheckSN.Execute
+delete aCheckSN
+
+# DSNU有効/PRNU有効/HFPN有効
+aDevice.Write(0xA200,1)
+aDevice.Write(0xA204,1)
+aDevice.Write(0xA208,1)
+Sleep(500)
+
+print=[自動DSNU]
+#クランプ調整
+#NGが出るため、NoCheck。処理が終わるまで15s待つ
+aDevice.WriteNoCheck(1)
+aDevice.Write(0xA458,0xffff)
+aDevice.WriteNoCheck(0)
+Sleep(15000)
+
+Sleep(500)
+
+#基準機の光量を読込
+StLightControl aLightControl(aDevice)
+aLightControl.SetTerminal(aTerminal)
+aLightControl.InfoFileName=.\LightInfo1.txt
+aLightControl.LoadFileExecute
+delete aLightControl
+
+Sleep(1500)
+
+# DSNU無効/PRNU無効/HFPN有効
+aDevice.Write(0xA200,1)
+aDevice.Write(0xA204,0)
+aDevice.Write(0xA208,0)
+
+Sleep(500)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(DSNUoff_PRNUoff_HFPNon8)
+aCommon.SaveCSVExecute
+delete aCommon
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(8191)
+aCheckSN.SetSN(4)
+aCheckSN.SetSNMax(5)
+aCheckSN.SetAverageMin(140)
+aCheckSN.SetAverageMax(190)
+aCheckSN.SetLineAverageMin(135)
+aCheckSN.SetLineAverageMax(195)
+aCheckSN.Execute
+delete aCheckSN
+
+# DSNU有効/PRNU有効/HFPN有効
+aDevice.Write(0xA200,1)
+aDevice.Write(0xA204,1)
+aDevice.Write(0xA208,1)
+Sleep(500)
+
+print=[自動PRNU]
+aDevice.Write(0xA45C,200)
+Sleep(1000)
+
+# ユーザ設定保存
+aDevice.Write(0xA520,1)
+Sleep(1500)
+#補正データ保存
+#ELITE HFPN Save
+aDevice.Write(0xA720,1)
+Sleep(1500)
+#ELITE DSNU Save
+aDevice.Write(0xA730,1)
+Sleep(1500)
+#ELITE PRNU Save
+aDevice.Write(0xA740,1)
+Sleep(1500)
+
+print=[FFC補正値保存確認12]
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(LEDon_BeforePowerONOFF8)
+aCommon.SaveCSVExecute
+delete aCommon
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(8191)
+aCheckSN.SetSN(6)
+aCheckSN.SetSNMax(9)
+aCheckSN.SetAverageMin(195)
+aCheckSN.SetAverageMax(205)
+aCheckSN.SetLineAverageMin(190)
+aCheckSN.SetLineAverageMax(210)
+aCheckSN.Execute
+delete aCheckSN
+
+print=[-------------------FFC調整・保存(ゲイン4倍)_END]
+
+
+aDevice.Stop
+Sleep(500)
+aDevice.Close
+Sleep(500)
+delete aDevice
+
+aTexioControl.PowerOff
+Sleep(1000)
+aTexioControl.PowerOn
+Sleep(30000)
+
+#カメラ接続
+StDeviceGenICam aDevice
+aDevice.Open(ELLITO 8K)
+aDevice.Endian=Big
+aDevice.LinkConfig=LINK4SPEED6250
+aDevice.DisplayHeight=512
+aDevice.SetBufferCount=100
+aDevice.Start
+Sleep(2000)
+
+print=[-------------------FFC保存確認(ゲイン1倍)_START]
+
+#露光時間設定:72us
+aDevice.Write(0xA120,5625)
+#アナログゲイン:1倍
+aDevice.Write(0xA130,4)
+
+Sleep(500)
+
+print=[FFC補正値保存確認13]
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(LEDon_AfterPowerONOFF5)
+aCommon.SaveCSVExecute
+delete aCommon
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(8191)
+aCheckSN.SetSN(3)
+aCheckSN.SetSNMax(5)
+aCheckSN.SetAverageMin(195)
+aCheckSN.SetAverageMax(205)
+aCheckSN.SetLineAverageMin(190)
+aCheckSN.SetLineAverageMax(210)
+aCheckSN.Execute
+delete aCheckSN
+
+print=[-------------------FFC保存確認(ゲイン1倍)_END]
+
+
+
+print=[-------------------FFC保存確認(ゲイン2倍)_START]
+#露光時間設定:36us
+aDevice.Write(0xA120,2813)
+#アナログゲイン:2倍
+aDevice.Write(0xA130,5)
+
+Sleep(500)
+
+print=[FFC補正値保存確認14]
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(LEDon_AfterPowerONOFF6)
+aCommon.SaveCSVExecute
+delete aCommon
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(8191)
+aCheckSN.SetSN(6)
+aCheckSN.SetSNMax(7.2)
+aCheckSN.SetAverageMin(195)
+aCheckSN.SetAverageMax(205)
+aCheckSN.SetLineAverageMin(190)
+aCheckSN.SetLineAverageMax(210)
+aCheckSN.Execute
+delete aCheckSN
+print=[-------------------FFC保存確認(ゲイン2倍)_END]
+
+
+
+print=[-------------------FFC保存確認(ゲイン5.5倍)_START]
+#露光時間設定:13.09us
+aDevice.Write(0xA120,1023)
+#アナログゲイン:5.5倍
+aDevice.Write(0xA130,7)
+
+Sleep(500)
+
+print=[FFC補正値保存確認15]
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(LEDon_AfterPowerONOFF7)
+aCommon.SaveCSVExecute
+delete aCommon
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(8191)
+aCheckSN.SetSN(8)
+aCheckSN.SetSNMax(13)
+aCheckSN.SetAverageMin(195)
+aCheckSN.SetAverageMax(205)
+aCheckSN.SetLineAverageMin(180)
+aCheckSN.SetLineAverageMax(220)
+aCheckSN.Execute
+delete aCheckSN
+print=[-------------------FFC保存確認(ゲイン5.5倍)_END]
+
+
+
+print=[-------------------FFC保存確認(ゲイン4倍)_START]
+#露光時間設定:18us
+aDevice.Write(0xA120,1406)
+#アナログゲイン:4倍
+aDevice.Write(0xA130,6)
+
+Sleep(500)
+
+print=[FFC補正値保存確認16]
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(LEDon_AfterPowerONOFF8)
+aCommon.SaveCSVExecute
+delete aCommon
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(8191)
+aCheckSN.SetSN(6)
+aCheckSN.SetSNMax(9)
+aCheckSN.SetAverageMin(195)
+aCheckSN.SetAverageMax(205)
+aCheckSN.SetLineAverageMin(190)
+aCheckSN.SetLineAverageMax(210)
+aCheckSN.Execute
+delete aCheckSN
+print=[-------------------FFC保存確認(ゲイン4倍)_END]
+
+
+
+
+
+print=[遮光]
+aTerminal.Command(ch1onoff=0&ch2onoff=0&ch3onoff=0&ch4onoff=0)
+Sleep(2000)
+
+#FFC補正ON時のクランプレベルが10階調であることを確認
+
+print=[-------------------FFC保存確認_遮光(ゲイン1倍)_START]
+
+#露光時間設定:72us
+aDevice.Write(0xA120,5625)
+#アナログゲイン:1倍
+aDevice.Write(0xA130,4)
+
+Sleep(500)
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(8191)
+aCheckSN.SetSN(10)
+aCheckSN.SetSNMax(50)
+aCheckSN.SetAverageMin(2)
+aCheckSN.SetAverageMax(18)
+aCheckSN.SetLineAverageMin(2)
+aCheckSN.SetLineAverageMax(18)
+aCheckSN.Execute
+delete aCheckSN
+
+print=[-------------------FFC保存確認_遮光(ゲイン1倍)_END]
+
+
+
+print=[-------------------FFC保存確認_遮光(ゲイン2倍)_START]
+#露光時間設定:36us
+aDevice.Write(0xA120,2813)
+#アナログゲイン:2倍
+aDevice.Write(0xA130,5)
+
+Sleep(500)
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(8191)
+aCheckSN.SetSN(10)
+aCheckSN.SetSNMax(50)
+aCheckSN.SetAverageMin(2)
+aCheckSN.SetAverageMax(18)
+aCheckSN.SetLineAverageMin(2)
+aCheckSN.SetLineAverageMax(18)
+aCheckSN.Execute
+delete aCheckSN
+print=[-------------------FFC保存確認_遮光(ゲイン2倍)_END]
+
+
+
+print=[-------------------FFC保存確認_遮光(ゲイン5.5倍)_START]
+#露光時間設定:13.09us
+aDevice.Write(0xA120,1023)
+#アナログゲイン:5.5倍
+aDevice.Write(0xA130,7)
+
+Sleep(500)
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(8191)
+aCheckSN.SetSN(10)
+aCheckSN.SetSNMax(50)
+aCheckSN.SetAverageMin(2)
+aCheckSN.SetAverageMax(18)
+aCheckSN.SetLineAverageMin(2)
+aCheckSN.SetLineAverageMax(18)
+aCheckSN.Execute
+delete aCheckSN
+print=[-------------------FFC保存確認_遮光(ゲイン5.5倍)_END]
+
+
+
+print=[-------------------FFC保存確認_遮光(ゲイン4倍)_START]
+#露光時間設定:18us
+aDevice.Write(0xA120,1406)
+#アナログゲイン:4倍
+aDevice.Write(0xA130,6)
+
+Sleep(500)
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(8191)
+aCheckSN.SetSN(10)
+aCheckSN.SetSNMax(50)
+aCheckSN.SetAverageMin(2)
+aCheckSN.SetAverageMax(18)
+aCheckSN.SetLineAverageMin(2)
+aCheckSN.SetLineAverageMax(18)
+aCheckSN.Execute
+delete aCheckSN
+print=[-------------------FFC保存確認_遮光(ゲイン4倍)_END]
+
+
+
+
+
+aDevice.Stop
+Sleep(500)
+#12bit出力
+aDevice.PixelFormat=Mono12
+aDevice.Write(0xA348,2)
+aDevice.Start
+Sleep(500)
+
+#クランプレベルが0階調に沈み込んでいないことを確認
+
+print=[-------------------クランプ確認(ゲイン1倍)_START]
+#露光時間設定:72us
+aDevice.Write(0xA120,5625)
+#アナログゲイン:1倍
+aDevice.Write(0xA130,4)
+
+Sleep(500)
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(8191)
+aCheckSN.SetSN(2000)
+aCheckSN.SetSNMax(2000)
+aCheckSN.SetAverageMin(0)
+aCheckSN.SetAverageMax(240)
+aCheckSN.SetLineAverageMin(1)
+aCheckSN.SetLineAverageMax(240)
+aCheckSN.Execute
+delete aCheckSN
+print=[-------------------クランプ確認(ゲイン1倍)_END]
+
+
+
+print=[-------------------クランプ確認(ゲイン2倍)_START]
+#露光時間設定:36us
+aDevice.Write(0xA120,2813)
+#アナログゲイン:2倍
+aDevice.Write(0xA130,5)
+
+Sleep(500)
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(8191)
+aCheckSN.SetSN(2000)
+aCheckSN.SetSNMax(2000)
+aCheckSN.SetAverageMin(0)
+aCheckSN.SetAverageMax(240)
+aCheckSN.SetLineAverageMin(1)
+aCheckSN.SetLineAverageMax(240)
+aCheckSN.Execute
+delete aCheckSN
+print=[-------------------クランプ確認(ゲイン2倍)_END]
+
+
+
+print=[-------------------クランプ確認(ゲイン5.5倍)_START]
+#露光時間設定:13.09us
+aDevice.Write(0xA120,1023)
+#アナログゲイン:5.5倍
+aDevice.Write(0xA130,7)
+
+Sleep(500)
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(8191)
+aCheckSN.SetSN(2000)
+aCheckSN.SetSNMax(2000)
+aCheckSN.SetAverageMin(0)
+aCheckSN.SetAverageMax(240)
+aCheckSN.SetLineAverageMin(1)
+aCheckSN.SetLineAverageMax(240)
+aCheckSN.Execute
+delete aCheckSN
+print=[-------------------クランプ確認(ゲイン5.5倍)_END]
+
+
+
+print=[-------------------クランプ確認(ゲイン4倍)_START]
+#露光時間設定:18us
+aDevice.Write(0xA120,1406)
+#アナログゲイン:4倍
+aDevice.Write(0xA130,6)
+
+Sleep(500)
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(8191)
+aCheckSN.SetSN(2000)
+aCheckSN.SetSNMax(2000)
+aCheckSN.SetAverageMin(0)
+aCheckSN.SetAverageMax(240)
+aCheckSN.SetLineAverageMin(1)
+aCheckSN.SetLineAverageMax(240)
+aCheckSN.Execute
+delete aCheckSN
+print=[-------------------クランプ確認(ゲイン4倍)_END]
+
+
+aDevice.Stop
+Sleep(500)
+
+#元に戻す
+#8bit出力
+aDevice.PixelFormat=Mono8
+aDevice.Write(0xA348,0)
+#露光時間設定:72us
+aDevice.Write(0xA120,5625)
+#アナログゲイン:1倍
+aDevice.Write(0xA130,0)

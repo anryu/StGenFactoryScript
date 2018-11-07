@@ -1,0 +1,25 @@
+print=[遮光]
+aTerminal.Command(ch1onoff=0&ch2onoff=0&ch3onoff=0&ch4onoff=0)
+
+aDevice.Close
+Sleep(500)
+delete aDevice
+
+#安定化電源の電圧表示が見えるようにMain電源を切る。
+#aTexioControl.PowerOff
+aTexioControl.MainPowerOff
+delete aTexioControl
+
+delete aTerminal
+
+print=[外観確認]
+print(TIMESTAMP)
+StCheckMessage aMessage
+aMessage.SetOKButtonShow(true)
+aMessage.SetNGButtonShow(false)
+aMessage.SetTextButtonShow(false)
+aMessage.SetMessage(下記項目の外観を確認して下さい。\n・マウント部に保護シートが装着されていること\n・ﾈｼﾞの浮きがないこと\n・部品のｶｹ/傷や成型不良による0.5mm以上の隙間が無きこと)
+aMessage.Execute
+delete aMessage
+
+print(TIMESTAMP)

@@ -1,0 +1,1722 @@
+#変更履歴
+#VER01(2018/10/29)
+#・[SaturationDefect1]の光量をMAXに変更(光量不足で飽和しないため)
+
+print=[ELLITO-CL_16K_INS]
+print(SUBSCRIPT=ELLITO-CL_16K_INS.txt)
+print(SUBSCRIPT_VER=001)
+
+print=[-----------------------------------------------------------------16K_START]
+print=[-------------------検査設定_START]
+# DSNU無効/PRNU無効/HFPN無効
+aControlRetry.SendData(0x02,"FFM 0",0x0d)
+aControlRetry.ReturnData(0x0d,0x0a,"USER>")
+aControlRetry.Execute
+
+#トリガモード設定 外部トリガ
+aControlRetry.SendData(0x02,"STM 1",0x0d)
+aControlRetry.Execute
+
+#露光モード設定:プログラマブル露光
+aControlRetry.SendData(0x02,"SEM 0",0x0d)
+aControlRetry.Execute
+
+#露光時間設定:80us
+aControlRetry.SendData(0x02,"SET 80000",0x0d)
+aControlRetry.Execute
+
+print=[-------------------検査設定_END]
+
+aDevice.Close
+Sleep(500)
+aDevice.SetBoardID=Full
+aDevice.SetBoardTopology=MONO_DECA
+aDevice.SetConnect=M
+aDevice.CameraFile(LCLA-16M_10TAP_sync10k_exp10us.cam)
+aDevice.Open
+aDevice.Start
+Sleep(1000)
+
+print=[-------------------ゴミ検査_START]
+print=[光源調整1]
+StLightControl aLightControl(aDevice)
+aLightControl.SetTerminal(aTerminal)
+aLightControl.SetStartLine(0)
+aLightControl.SetEndLine(16383)
+aLightControl.SetTimer(1500)
+aLightControl.SetColor(W)
+aLightControl.SetMaxValueW(1000)
+aLightControl.SetInitValueW(1000)
+aLightControl.SetTargetW(200)
+aLightControl.SetTargetRangeW(3)
+aLightControl.Execute
+delete aLightControl
+
+Sleep(500)
+
+print=[ゴミ検査4]
+StCheckDustDlg aCheckDust(aDevice)
+aCheckDust.SetCheckMode(2)
+aCheckDust.SetContinuousCountMax(3)
+aCheckDust.SetStartLine(0)
+aCheckDust.SetEndLine(16383)
+aCheckDust.SetWidthLines(500)
+aCheckDust.SetDifferenceMax(3)
+aCheckDust.SetSeparate(1)
+aCheckDust.SetAverageLowLevel(180)
+aCheckDust.SetAverageHighLevel(220)
+aCheckDust.SetBMPFileName(DUST2_16K)
+aCheckDust.SetCSVFileName(DUST2_16K)
+aCheckDust.SetMode=1
+aCheckDust.Execute
+delete aCheckDust
+aDevice.Stop
+Sleep(500)
+print=[-------------------ゴミ検査_END]
+
+
+##############################################################出荷検査除外
+CommentStart=2
+print=[-------------------LVDS調整_START]
+
+#LVDS調整値が初期値であることを確認
+aControlRetry.ReturnData(0x0d,0x0a,"00000924",0x0d,0x0a,"USER>")
+aControlRetry.SendData(0x02,"RED 0",0x0d)
+aControlRetry.Execute
+
+aControlRetry.SendData(0x02,"RED 1",0x0d)
+aControlRetry.Execute
+
+aControlRetry.SendData(0x02,"RED 2",0x0d)
+aControlRetry.Execute
+
+aControlRetry.SendData(0x02,"RED 3",0x0d)
+aControlRetry.Execute
+
+aControlRetry.SendData(0x02,"RED 4",0x0d)
+aControlRetry.Execute
+
+aControlRetry.SendData(0x02,"RED 5",0x0d)
+aControlRetry.Execute
+
+aControlRetry.SendData(0x02,"RED 6",0x0d)
+aControlRetry.Execute
+
+aControlRetry.SendData(0x02,"RED 7",0x0d)
+aControlRetry.Execute
+
+aControlRetry.SendData(0x02,"RED 8",0x0d)
+aControlRetry.Execute
+
+aControlRetry.SendData(0x02,"RED 9",0x0d)
+aControlRetry.Execute
+
+aControlRetry.SendData(0x02,"RED 10",0x0d)
+aControlRetry.Execute
+
+aControlRetry.SendData(0x02,"RED 11",0x0d)
+aControlRetry.Execute
+
+aControlRetry.SendData(0x02,"RED 12",0x0d)
+aControlRetry.Execute
+
+aControlRetry.SendData(0x02,"RED 13",0x0d)
+aControlRetry.Execute
+
+aControlRetry.SendData(0x02,"RED 14",0x0d)
+aControlRetry.Execute
+
+aControlRetry.SendData(0x02,"RED 15",0x0d)
+aControlRetry.Execute
+
+aControlRetry.SendData(0x02,"RED 16",0x0d)
+aControlRetry.Execute
+
+aControlRetry.SendData(0x02,"RED 17",0x0d)
+aControlRetry.Execute
+
+print(Check=OK)
+aDevice.Start
+Sleep(500)
+
+print=[デジタルデータ取りこぼし検出]
+StCheckDataLose aCheckDataLose(aDevice)
+aCheckDataLose.SetStartLine(0)
+aCheckDataLose.SetEndLine(16383)
+aCheckDataLose.SetDifferenceMax(13)
+aCheckDataLose.SetCSVFileName(DigitalDataError.csv)
+aCheckDataLose.Execute
+delete aCheckDataLose
+
+aDevice.Stop
+Sleep(500)
+print=[-------------------LVDS調整_END]
+##############################################################
+CommentEnd=2
+
+
+print=[-------------------テストパターン照合_START]
+aDevice.Start
+Sleep(500)
+
+# DSNU無効/PRNU無効/HFPN無効
+aControlRetry.ReturnData(0x0d,0x0a,"USER>")
+aControlRetry.SendData(0x02,"FFM 0",0x0d)
+aControlRetry.Execute
+
+# テストパターン:縦縞
+aControlRetry.SendData(0x02,"SVM 2",0x0d)
+aControlRetry.Execute
+
+Sleep(500)
+
+print=[テストパターン照合1]
+StCheckTestPattern aCheckTestPattern(aDevice)
+aCheckTestPattern.Start=0
+aCheckTestPattern.End=16383
+aCheckTestPattern.FileName=LCLA-16M_SVM2.csv
+aCheckTestPattern.Execute
+delete aCheckTestPattern
+
+# テストパターン:カメラ画像
+aControlRetry.SendData(0x02,"SVM 0",0x0d)
+aControlRetry.Execute
+
+print=[-------------------テストパターン照合_END]
+
+
+print=[-------------------ラインレート検査_START]
+#露光モード設定:フル露光
+aControlRetry.SendData(0x02,"SEM 1",0x0d)
+aControlRetry.ReturnData(0x0d,0x0a,"USER>")
+aControlRetry.Execute
+
+aDevice.Stop
+Sleep(500)
+#16K画素ではフレームレート=50fpsが出ないため画素数を減らしたカメラファイルで確認する。
+aDevice.Close
+Sleep(500)
+aDevice.SetBoardID=Full
+aDevice.SetBoardTopology=MONO_DECA
+aDevice.SetConnect=M
+aDevice.CameraFile(LCLA-16M_10TAP_sync50k_exp10us_2200PIX.cam)
+aDevice.Open
+aDevice.Start
+
+#200フレーム待つ
+StCheckCommon aCommon(aDevice)
+aCommon.WaitFrameExecute(200)
+delete aCommon
+
+print=[ラインレート検査1]
+StCheckFramerate aCheckFramerate(aDevice)
+aCheckFramerate.MaxFramerate=51.0
+aCheckFramerate.MinFramerate=49.0
+aCheckFramerate.Execute
+delete aCheckFramerate
+
+#元に戻す
+#露光モード設定:プログラマブル露光
+aControlRetry.SendData(0x02,"SEM 0",0x0d)
+aControlRetry.Execute
+
+#露光時間設定:80us
+aControlRetry.SendData(0x02,"SET 80000",0x0d)
+aControlRetry.Execute
+
+print=[-------------------ラインレート検査_END]
+
+aDevice.Stop
+Sleep(500)
+aDevice.Close
+Sleep(500)
+aDevice.SetBoardID=Full
+aDevice.SetBoardTopology=MONO_DECA
+aDevice.SetConnect=M
+aDevice.CameraFile(LCLA-16M_10TAP_sync10k_exp10us.cam)
+aDevice.Open
+aDevice.Start
+Sleep(500)
+
+print=[-------------------白飛び検査_START]
+# DSNU無効/PRNU無効/HFPN無効
+aControlRetry.SendData(0x02,"FFM 0",0x0d)
+aControlRetry.Execute
+Sleep(500)
+
+print=[光源調整2]
+StLightControl aLightControl(aDevice)
+aLightControl.SetTerminal(aTerminal)
+aLightControl.SetStartLine(0)
+aLightControl.SetEndLine(16383)
+aLightControl.SetTimer(1500)
+aLightControl.SetColor(W)
+aLightControl.SetMaxValueW(1000)
+aLightControl.SetInitValueW(1000)
+aLightControl.SetTargetW(215)
+aLightControl.SetTargetRangeW(3)
+aLightControl.Execute
+delete aLightControl
+
+Sleep(500)
+
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(OVER_EXP1)
+aCommon.SaveCSVExecute
+delete aCommon
+
+print=[白飛び検査1]
+StCheckSpBehavior aCheckBehavior(aDevice)
+aCheckBehavior.SetStartLine(0)
+aCheckBehavior.SetEndLine(16383)
+aCheckBehavior.SetMaxLevel(255)
+aCheckBehavior.SetMinLevel(255)
+aCheckBehavior.SetInOutMode(0)
+aCheckBehavior.SetContinuousCount(0)
+#aCheckBehavior.SetJudgeMode(1)  未使用
+aCheckBehavior.Execute
+delete aCheckBehavior
+
+print=[-------------------白飛び検査_END]
+
+
+
+print=[-------------------BIT反転検査_START]
+
+# DSNU無効/PRNU無効/HFPN無効
+aControlRetry.SendData(0x02,"FFM 0",0x0d)
+aControlRetry.Execute
+Sleep(500)
+
+###############下位7bit反転検出
+print=[光源調整3]
+StLightControl aLightControl(aDevice)
+aLightControl.SetTerminal(aTerminal)
+aLightControl.SetStartLine(0)
+aLightControl.SetEndLine(16383)
+aLightControl.SetTimer(1500)
+aLightControl.SetColor(W)
+aLightControl.SetMaxValueW(1000)
+aLightControl.SetInitValueW(1000)
+aLightControl.SetTargetW(128)
+aLightControl.SetTargetRangeW(3)
+aLightControl.Execute
+
+Sleep(500)
+print=[BIT反転検査1]
+StCheckDataLose aCheckDataLose(aDevice)
+aCheckDataLose.SetStartLine(0)
+aCheckDataLose.SetEndLine(16383)
+aCheckDataLose.SetDifferenceMax(13)
+aCheckDataLose.SetCSVFileName(DataLose_128_1.csv)
+aCheckDataLose.Execute
+
+#画素間での感度バラつきを考慮：露光時間+5%
+#露光時間設定:84us
+aControlRetry.SendData(0x02,"SET 84000",0x0d)
+aControlRetry.Execute
+
+Sleep(500)
+print=[BIT反転検査2]
+aCheckDataLose.SetCSVFileName(DataLose_128_2.csv)
+aCheckDataLose.Execute
+
+#画素間での感度バラつきを考慮：露光時間-5%
+#露光時間設定:76us
+aControlRetry.SendData(0x02,"SET 76000",0x0d)
+aControlRetry.Execute
+
+Sleep(500)
+print=[BIT反転検査3]
+aCheckDataLose.SetCSVFileName(DataLose_128_3.csv)
+aCheckDataLose.Execute
+
+#画素間での感度バラつきを考慮：露光時間+2.5%
+#露光時間設定:82us
+aControlRetry.SendData(0x02,"SET 82000",0x0d)
+aControlRetry.Execute
+
+Sleep(500)
+print=[BIT反転検査4]
+aCheckDataLose.SetCSVFileName(DataLose_128_4.csv)
+aCheckDataLose.Execute
+
+#画素間での感度バラつきを考慮：露光時間-2.5%
+#露光時間設定:78us
+aControlRetry.SendData(0x02,"SET 78000",0x0d)
+aControlRetry.Execute
+
+Sleep(500)
+print=[BIT反転検査5]
+aCheckDataLose.SetCSVFileName(DataLose_128_5.csv)
+aCheckDataLose.Execute
+
+#露光時間設定:80us
+aControlRetry.SendData(0x02,"SET 80000",0x0d)
+aControlRetry.Execute
+Sleep(500)
+
+
+###############下位6bit反転検出
+print=[光源調整4]
+aLightControl.SetTargetW(192)
+aLightControl.Execute
+
+Sleep(500)
+print=[BIT反転検査6]
+aCheckDataLose.SetCSVFileName(DataLose_192_1.csv)
+aCheckDataLose.Execute
+
+#画素間での感度バラつきを考慮：露光時間+5%
+#露光時間設定:84us
+aControlRetry.SendData(0x02,"SET 84000",0x0d)
+aControlRetry.Execute
+
+Sleep(500)
+print=[BIT反転検査7]
+aCheckDataLose.SetCSVFileName(DataLose_192_2.csv)
+aCheckDataLose.Execute
+
+#画素間での感度バラつきを考慮：露光時間-5%
+#露光時間設定:76us
+aControlRetry.SendData(0x02,"SET 76000",0x0d)
+aControlRetry.Execute
+
+Sleep(500)
+print=[BIT反転検査8]
+aCheckDataLose.SetCSVFileName(DataLose_192_3.csv)
+aCheckDataLose.Execute
+
+#画素間での感度バラつきを考慮：露光時間+2.5%
+#露光時間設定:82us
+aControlRetry.SendData(0x02,"SET 82000",0x0d)
+aControlRetry.Execute
+
+Sleep(500)
+print=[BIT反転検査9]
+aCheckDataLose.SetCSVFileName(DataLose_192_4.csv)
+aCheckDataLose.Execute
+
+#画素間での感度バラつきを考慮：露光時間-2.5%
+#露光時間設定:78us
+aControlRetry.SendData(0x02,"SET 78000",0x0d)
+aControlRetry.Execute
+
+Sleep(500)
+print=[BIT反転検査10]
+aCheckDataLose.SetCSVFileName(DataLose_192_5.csv)
+aCheckDataLose.Execute
+
+#露光時間設定:80us
+aControlRetry.SendData(0x02,"SET 80000",0x0d)
+aControlRetry.Execute
+Sleep(500)
+
+
+###############下位5bit反転検出
+print=[光源調整5]
+aLightControl.SetTargetW(224)
+aLightControl.Execute
+
+Sleep(500)
+print=[BIT反転検査11]
+aCheckDataLose.SetCSVFileName(DataLose_224_1.csv)
+aCheckDataLose.Execute
+
+#画素間での感度バラつきを考慮：露光時間+5%
+#露光時間設定:84us
+aControlRetry.SendData(0x02,"SET 84000",0x0d)
+aControlRetry.Execute
+
+Sleep(500)
+print=[BIT反転検査12]
+aCheckDataLose.SetCSVFileName(DataLose_224_2.csv)
+aCheckDataLose.Execute
+
+#画素間での感度バラつきを考慮：露光時間-5%
+#露光時間設定:76us
+aControlRetry.SendData(0x02,"SET 76000",0x0d)
+aControlRetry.Execute
+
+Sleep(500)
+print=[BIT反転検査13]
+aCheckDataLose.SetCSVFileName(DataLose_224_3.csv)
+aCheckDataLose.Execute
+
+#画素間での感度バラつきを考慮：露光時間+2.5%
+#露光時間設定:82us
+aControlRetry.SendData(0x02,"SET 82000",0x0d)
+aControlRetry.Execute
+
+Sleep(500)
+print=[BIT反転検査14]
+aCheckDataLose.SetCSVFileName(DataLose_224_4.csv)
+aCheckDataLose.Execute
+
+#画素間での感度バラつきを考慮：露光時間-2.5%
+#露光時間設定:78us
+aControlRetry.SendData(0x02,"SET 78000",0x0d)
+aControlRetry.Execute
+
+Sleep(500)
+print=[BIT反転検査15]
+aCheckDataLose.SetCSVFileName(DataLose_224_5.csv)
+aCheckDataLose.Execute
+
+
+#光量不足のため露光時間伸ばす
+#露光時間設定:90us
+aControlRetry.SendData(0x02,"SET 90000",0x0d)
+aControlRetry.Execute
+Sleep(500)
+
+
+###############下位4bit反転検出
+print=[光源調整6]
+aLightControl.SetTargetW(240)
+aLightControl.Execute
+delete aLightControl
+
+Sleep(500)
+print=[BIT反転検査16]
+aCheckDataLose.SetCSVFileName(DataLose_240_1.csv)
+aCheckDataLose.Execute
+
+#画素間での感度バラつきを考慮：露光時間+5%
+#露光時間設定:94.5us
+aControlRetry.SendData(0x02,"SET 94500",0x0d)
+aControlRetry.Execute
+
+Sleep(500)
+print=[BIT反転検査17]
+aCheckDataLose.SetCSVFileName(DataLose_240_2.csv)
+aCheckDataLose.Execute
+
+#画素間での感度バラつきを考慮：露光時間-5%
+#露光時間設定:85.5us
+aControlRetry.SendData(0x02,"SET 85500",0x0d)
+aControlRetry.Execute
+
+Sleep(500)
+print=[BIT反転検査18]
+aCheckDataLose.SetCSVFileName(DataLose_240_3.csv)
+aCheckDataLose.Execute
+
+#画素間での感度バラつきを考慮：露光時間+2.5%
+#露光時間設定:92.25us
+aControlRetry.SendData(0x02,"SET 92250",0x0d)
+aControlRetry.Execute
+
+Sleep(500)
+print=[BIT反転検査19]
+aCheckDataLose.SetCSVFileName(DataLose_240_4.csv)
+aCheckDataLose.Execute
+
+#画素間での感度バラつきを考慮：露光時間-2.5%
+#露光時間設定:87.75us
+aControlRetry.SendData(0x02,"SET 87750",0x0d)
+aControlRetry.Execute
+
+Sleep(500)
+print=[BIT反転検査20]
+aCheckDataLose.SetCSVFileName(DataLose_240_5.csv)
+aCheckDataLose.Execute
+delete aCheckDataLose
+
+#元に戻す
+#露光時間設定:80us
+aControlRetry.SendData(0x02,"SET 80000",0x0d)
+aControlRetry.Execute
+
+print=[-------------------BIT反転検査_END]
+
+
+
+
+##############################################################出荷検査除外
+CommentStart=2
+
+print=[遮光]
+aTerminal.Command(ch1onoff=0&ch2onoff=0&ch3onoff=0&ch4onoff=0)
+Sleep(2000)
+
+#照明が消灯しない事例があったため追加
+print=[遮光確認]
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(16383)
+aCheckSN.SetSN(10)
+aCheckSN.SetSNMax(10)
+aCheckSN.SetAverageMin(0)
+aCheckSN.SetAverageMax(15)
+aCheckSN.SetLineAverageMin(0)
+aCheckSN.SetLineAverageMax(15)
+aCheckSN.Execute
+delete aCheckSN
+
+
+print=[-------------------FFC調整・保存_START]
+# DSNU有効/PRNU有効/HFPN有効
+aControlRetry.SendData(0x02,"FFM 1",0x0d)
+aControlRetry.Execute
+Sleep(500)
+
+aControlRetry.SetRetry=300
+print=[クランプ調整]
+aControlRetry.SendData(0x02,"ADS 0xffff 1",0x0d)
+aControlRetry.Execute
+# ユーザ設定保存
+aControlRetry.SendData(0x02,"USS",0x0d)
+aControlRetry.Execute
+aControlRetry.SetRetry=0
+
+
+#露光時間設定:20us
+aControlRetry.SendData(0x02,"SET 20000",0x0d)
+aControlRetry.Execute
+
+aSerialComm.SetRecieveDelayTime(5000)
+#アナログゲイン:4倍
+aControlRetry.SendData(0x02,"SAG 2",0x0d)
+aControlRetry.Execute
+aSerialComm.SetRecieveDelayTime(0)
+
+aControlRetry.SetRetry=300
+print=[自動DSNU]
+#クランプ調整
+aControlRetry.SendData(0x02,"ADS 0xffff 1",0x0d)
+aControlRetry.Execute
+aControlRetry.SetRetry=0
+
+Sleep(500)
+
+#基準機の光量を読込
+StLightControl aLightControl(aDevice)
+aLightControl.SetTerminal(aTerminal)
+aLightControl.InfoFileName=.\LightInfo1.txt
+aLightControl.LoadFileExecute
+delete aLightControl
+
+Sleep(500)
+
+# DSNU無効/PRNU無効/HFPN有効
+aControlRetry.SendData(0x02,"FFM 4",0x0d)
+aControlRetry.Execute
+
+Sleep(500)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(DSNUoff_PRNUoff_HFPNon1)
+aCommon.SaveCSVExecute
+delete aCommon
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(16383)
+aCheckSN.SetSN(4)
+aCheckSN.SetSNMax(5)
+aCheckSN.SetAverageMin(140)
+aCheckSN.SetAverageMax(190)
+aCheckSN.SetLineAverageMin(135)
+aCheckSN.SetLineAverageMax(195)
+aCheckSN.Execute
+delete aCheckSN
+
+# DSNU有効/PRNU有効/HFPN有効
+aControlRetry.SendData(0x02,"FFM 1",0x0d)
+aControlRetry.Execute
+Sleep(500)
+
+aControlRetry.SetRetry=300
+print=[自動PRNU]
+aControlRetry.SendData(0x02,"APR 200",0x0d)
+aControlRetry.Execute
+aControlRetry.SetRetry=0
+
+
+aControlRetry.SetRetry=300
+# ユーザ設定保存
+aControlRetry.SendData(0x02,"USS",0x0d)
+aControlRetry.Execute
+#補正データ保存
+aControlRetry.SendData(0x02,"WCD",0x0d)
+aControlRetry.Execute
+aControlRetry.SetRetry=0
+
+Sleep(1000)
+print=[FFC補正値保存確認1]
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(LEDon_BeforePowerONOFF1)
+aCommon.SaveCSVExecute
+delete aCommon
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(16383)
+aCheckSN.SetSN(6)
+aCheckSN.SetSNMax(7.2)
+aCheckSN.SetAverageMin(198)
+aCheckSN.SetAverageMax(202)
+aCheckSN.SetLineAverageMin(198)
+aCheckSN.SetLineAverageMax(202)
+aCheckSN.Execute
+delete aCheckSN
+
+
+aDevice.Stop
+Sleep(500)
+aTexioControl.PowerOff
+Sleep(5000)
+aTexioControl.PowerOn
+Sleep(13000)
+#ポーリング
+aControlRetry.SetRetry=300
+aControlRetry.SendData()
+aControlRetry.Execute
+aControlRetry.SetRetry=0
+aDevice.Start
+Sleep(2000)
+
+print=[FFC補正値保存確認2]
+
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(LEDon_AfterPowerONOFF1)
+aCommon.SaveCSVExecute
+delete aCommon
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(16383)
+aCheckSN.SetSN(6)
+aCheckSN.SetSNMax(7.2)
+aCheckSN.SetAverageMin(198)
+aCheckSN.SetAverageMax(202)
+aCheckSN.SetLineAverageMin(198)
+aCheckSN.SetLineAverageMax(202)
+aCheckSN.Execute
+delete aCheckSN
+
+#元に戻す
+#露光時間設定:80us
+aControlRetry.SendData(0x02,"SET 80000",0x0d)
+aControlRetry.Execute
+
+#SAGコマンドの戻り値受信に時間を要し、タイムアウトエラーとなったため、待ち時間を設ける。
+aSerialComm.SetRecieveDelayTime(5000)
+#アナログゲイン:1倍
+aControlRetry.SendData(0x02,"SAG 0",0x0d)
+aControlRetry.Execute
+aSerialComm.SetRecieveDelayTime(0)
+
+print=[-------------------FFC調整・保存_END]
+##############################################################
+CommentEnd=2
+
+
+
+print=[-------------------クランプレベル検査_START]
+print=[遮光]
+aTerminal.Command(ch1onoff=0&ch2onoff=0&ch3onoff=0&ch4onoff=0)
+Sleep(2000)
+
+# DSNU無効/PRNU無効/HFPN有効
+aControlRetry.SendData(0x02,"FFM 4",0x0d)
+aControlRetry.Execute
+Sleep(500)
+
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(CLAMP_CHECK_8bit1)
+aCommon.SaveCSVExecute
+delete aCommon
+
+print=[クランプレベル検査（8bit）1]
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(16383)
+aCheckSN.SetSN(0.3)
+aCheckSN.SetSNMax(1.5)
+aCheckSN.SetAverageMin(2)
+aCheckSN.SetAverageMax(18)
+aCheckSN.SetLineAverageMin(2)
+aCheckSN.SetLineAverageMax(18)
+aCheckSN.Execute
+delete aCheckSN
+
+
+aDevice.Stop
+Sleep(500)
+
+#4tap出力
+aControlRetry.SendData(0x02,"SOT 2",0x0d)
+aControlRetry.Execute
+
+#10bit出力
+aControlRetry.SendData(0x02,"SOB 1",0x0d)
+aControlRetry.Execute
+
+aDevice.Close
+Sleep(500)
+aDevice.SetBoardID=Full
+aDevice.SetBoardTopology=MONO
+aDevice.SetConnect=M
+aDevice.CameraFile(LCLA-16M_4TAP_sync10k_exp10us_10bit.cam)
+aDevice.Open
+aDevice.Start
+Sleep(500)
+
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(CLAMP_CHECK_10bit1)
+aCommon.SaveCSVExecute
+delete aCommon
+
+print=[クランプレベル検査（10bit）1]
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(16383)
+aCheckSN.SetSN(1.2)
+aCheckSN.SetSNMax(6)
+aCheckSN.SetAverageMin(8)
+aCheckSN.SetAverageMax(72)
+aCheckSN.SetLineAverageMin(8)
+aCheckSN.SetLineAverageMax(72)
+aCheckSN.Execute
+delete aCheckSN
+
+
+aDevice.Stop
+Sleep(500)
+
+#4tap出力
+aControlRetry.SendData(0x02,"SOT 2",0x0d)
+aControlRetry.Execute
+
+#12bit出力
+aControlRetry.SendData(0x02,"SOB 2",0x0d)
+aControlRetry.Execute
+
+aDevice.Close
+Sleep(500)
+aDevice.SetBoardID=Full
+aDevice.SetBoardTopology=MONO
+aDevice.SetConnect=M
+aDevice.CameraFile(LCLA-16M_4TAP_sync10k_exp10us_12bit.cam)
+aDevice.Open
+aDevice.Start
+Sleep(500)
+
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(CLAMP_CHECK_12bit1)
+aCommon.SaveCSVExecute
+delete aCommon
+
+print=[クランプレベル検査（12bit）1]
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(16383)
+aCheckSN.SetSN(4.8)
+aCheckSN.SetSNMax(24)
+aCheckSN.SetAverageMin(32)
+aCheckSN.SetAverageMax(288)
+aCheckSN.SetLineAverageMin(32)
+aCheckSN.SetLineAverageMax(288)
+aCheckSN.Execute
+delete aCheckSN
+
+aDevice.Stop
+Sleep(500)
+
+#10tap出力
+aControlRetry.SendData(0x02,"SOT 4",0x0d)
+aControlRetry.Execute
+
+#8bit出力
+aControlRetry.SendData(0x02,"SOB 0",0x0d)
+aControlRetry.Execute
+
+aDevice.Close
+Sleep(500)
+aDevice.SetBoardID=Full
+aDevice.SetBoardTopology=MONO_DECA
+aDevice.SetConnect=M
+aDevice.CameraFile(LCLA-16M_10TAP_sync10k_exp10us.cam)
+aDevice.Open
+aDevice.Start
+Sleep(500)
+
+print=[-------------------クランプレベル検査_END]
+
+
+
+print=[-------------------クランプレベル検査HFPNoff_START]
+# DSNU無効/PRNU無効/HFPN無効
+aControlRetry.SendData(0x02,"FFM 0",0x0d)
+aControlRetry.Execute
+Sleep(500)
+
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(CLAMP_CHECK_HFPNoff_8bit1)
+aCommon.SaveCSVExecute
+delete aCommon
+
+print=[クランプレベル検査（8bit）HFPNoff1]
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(16383)
+aCheckSN.SetSN(0.3)
+aCheckSN.SetSNMax(1.5)
+aCheckSN.SetAverageMin(0)
+aCheckSN.SetAverageMax(15)
+aCheckSN.SetLineAverageMin(0)
+aCheckSN.SetLineAverageMax(15)
+aCheckSN.Execute
+delete aCheckSN
+
+
+aDevice.Stop
+Sleep(500)
+
+#4tap出力
+aControlRetry.SendData(0x02,"SOT 2",0x0d)
+aControlRetry.Execute
+
+#10bit出力
+aControlRetry.SendData(0x02,"SOB 1",0x0d)
+aControlRetry.Execute
+
+aDevice.Close
+Sleep(500)
+aDevice.SetBoardID=Full
+aDevice.SetBoardTopology=MONO
+aDevice.SetConnect=M
+aDevice.CameraFile(LCLA-16M_4TAP_sync10k_exp10us_10bit.cam)
+aDevice.Open
+aDevice.Start
+Sleep(500)
+
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(CLAMP_CHECK_HFPNoff_10bit1)
+aCommon.SaveCSVExecute
+delete aCommon
+
+print=[クランプレベル検査（10bit）HFPNoff1]
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(16383)
+aCheckSN.SetSN(1.2)
+aCheckSN.SetSNMax(6)
+aCheckSN.SetAverageMin(0)
+aCheckSN.SetAverageMax(60)
+aCheckSN.SetLineAverageMin(0)
+aCheckSN.SetLineAverageMax(60)
+aCheckSN.Execute
+delete aCheckSN
+
+
+aDevice.Stop
+Sleep(500)
+
+#4tap出力
+aControlRetry.SendData(0x02,"SOT 2",0x0d)
+aControlRetry.Execute
+
+#12bit出力
+aControlRetry.SendData(0x02,"SOB 2",0x0d)
+aControlRetry.Execute
+
+aDevice.Close
+Sleep(500)
+aDevice.SetBoardID=Full
+aDevice.SetBoardTopology=MONO
+aDevice.SetConnect=M
+aDevice.CameraFile(LCLA-16M_4TAP_sync10k_exp10us_12bit.cam)
+aDevice.Open
+aDevice.Start
+Sleep(500)
+
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(CLAMP_CHECK_HFPNoff_12bit1)
+aCommon.SaveCSVExecute
+delete aCommon
+
+print=[クランプレベル検査（12bit）HFPNoff1]
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(16383)
+aCheckSN.SetSN(4.8)
+aCheckSN.SetSNMax(24)
+aCheckSN.SetAverageMin(0)
+aCheckSN.SetAverageMax(240)
+aCheckSN.SetLineAverageMin(1)
+aCheckSN.SetLineAverageMax(240)
+aCheckSN.Execute
+delete aCheckSN
+
+aDevice.Stop
+Sleep(500)
+
+#10tap出力
+aControlRetry.SendData(0x02,"SOT 4",0x0d)
+aControlRetry.Execute
+
+#8bit出力
+aControlRetry.SendData(0x02,"SOB 0",0x0d)
+aControlRetry.Execute
+
+aDevice.Close
+Sleep(500)
+aDevice.SetBoardID=Full
+aDevice.SetBoardTopology=MONO_DECA
+aDevice.SetConnect=M
+aDevice.CameraFile(LCLA-16M_10TAP_sync10k_exp10us.cam)
+aDevice.Open
+aDevice.Start
+Sleep(500)
+
+# DSNU無効/PRNU無効/HFPN有効
+aControlRetry.SendData(0x02,"FFM 4",0x0d)
+aControlRetry.Execute
+
+print=[-------------------クランプレベル検査HFPNoff_END]
+
+
+
+print=[-------------------SN検査（8bit）1_START]
+#基準機の光量を読込
+StLightControl aLightControl(aDevice)
+aLightControl.SetTerminal(aTerminal)
+aLightControl.InfoFileName=.\LightInfo2.txt
+aLightControl.LoadFileExecute
+delete aLightControl
+
+# DSNU無効/PRNU無効/HFPN有効
+aControlRetry.SendData(0x02,"FFM 4",0x0d)
+aControlRetry.Execute
+
+Sleep(500)
+
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(SN_CHECK_8bit1)
+aCommon.SaveCSVExecute
+delete aCommon
+
+print=[SN検査（8bit）1]
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(16383)
+aCheckSN.SetSN(2)
+aCheckSN.SetSNMax(2.4)
+aCheckSN.SetAverageMin(140)
+aCheckSN.SetAverageMax(190)
+aCheckSN.SetLineAverageMin(135)
+aCheckSN.SetLineAverageMax(195)
+aCheckSN.Execute
+delete aCheckSN
+print=[-------------------SN検査（8bit）1_END]
+
+print=[-------------------SN検査（10bit）1_START]
+aDevice.Stop
+Sleep(500)
+
+#4tap出力
+aControlRetry.SendData(0x02,"SOT 2",0x0d)
+aControlRetry.Execute
+
+#10bit出力
+aControlRetry.SendData(0x02,"SOB 1",0x0d)
+aControlRetry.Execute
+
+aDevice.Close
+Sleep(500)
+aDevice.SetBoardID=Full
+aDevice.SetBoardTopology=MONO
+aDevice.SetConnect=M
+aDevice.CameraFile(LCLA-16M_4TAP_sync10k_exp10us_10bit.cam)
+aDevice.Open
+aDevice.Start
+
+Sleep(500)
+
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(SN_CHECK_10bit1)
+aCommon.SaveCSVExecute
+delete aCommon
+
+print=[SN検査（10bit）1]
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(16383)
+aCheckSN.SetSN(8)
+aCheckSN.SetSNMax(9.6)
+aCheckSN.SetAverageMin(560)
+aCheckSN.SetAverageMax(760)
+aCheckSN.SetLineAverageMin(540)
+aCheckSN.SetLineAverageMax(780)
+aCheckSN.Execute
+delete aCheckSN
+print=[-------------------SN検査（10bit）1_END]
+
+print=[-------------------SN検査（12bit）1_START]
+aDevice.Stop
+Sleep(500)
+
+#4tap出力
+aControlRetry.SendData(0x02,"SOT 2",0x0d)
+aControlRetry.Execute
+
+#12bit出力
+aControlRetry.SendData(0x02,"SOB 2",0x0d)
+aControlRetry.Execute
+
+aDevice.Close
+Sleep(500)
+aDevice.SetBoardID=Full
+aDevice.SetBoardTopology=MONO
+aDevice.SetConnect=M
+aDevice.CameraFile(LCLA-16M_4TAP_sync10k_exp10us_12bit.cam)
+aDevice.Open
+aDevice.Start
+Sleep(500)
+
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(SN_CHECK_12bit1)
+aCommon.SaveCSVExecute
+delete aCommon
+
+print=[SN検査（12bit）1]
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(16383)
+aCheckSN.SetSN(32)
+aCheckSN.SetSNMax(38.4)
+aCheckSN.SetAverageMin(2240)
+aCheckSN.SetAverageMax(3040)
+aCheckSN.SetLineAverageMin(2160)
+aCheckSN.SetLineAverageMax(3120)
+aCheckSN.Execute
+delete aCheckSN
+print=[-------------------SN検査（12bit）1_END]
+
+
+print=[-------------------SN検査（8bit）FFC補正あり1_START]
+# DSNU有効/PRNU有効/HFPN有効
+aControlRetry.SendData(0x02,"FFM 1",0x0d)
+aControlRetry.Execute
+
+aDevice.Stop
+Sleep(500)
+
+#10tap出力
+aControlRetry.SendData(0x02,"SOT 4",0x0d)
+aControlRetry.Execute
+
+#8bit出力
+aControlRetry.SendData(0x02,"SOB 0",0x0d)
+aControlRetry.Execute
+
+aDevice.Close
+Sleep(500)
+aDevice.SetBoardID=Full
+aDevice.SetBoardTopology=MONO_DECA
+aDevice.SetConnect=M
+aDevice.CameraFile(LCLA-16M_10TAP_sync10k_exp10us.cam)
+aDevice.Open
+aDevice.Start
+
+Sleep(500)
+
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(SN_CHECK_8bit_FFC1)
+aCommon.SaveCSVExecute
+delete aCommon
+
+print=[SN検査（8bit）FFC補正あり1]
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(16383)
+aCheckSN.SetSN(3)
+aCheckSN.SetSNMax(3.6)
+##############################################################出荷検査時規格変更
+#工程内検査
+CommentStart=2
+aCheckSN.SetAverageMin(190)
+aCheckSN.SetAverageMax(210)
+aCheckSN.SetLineAverageMin(185)
+aCheckSN.SetLineAverageMax(215)
+CommentEnd=2
+#出荷検査
+CommentStart=1
+aCheckSN.SetAverageMin(175)
+aCheckSN.SetAverageMax(225)
+aCheckSN.SetLineAverageMin(150)
+aCheckSN.SetLineAverageMax(250)
+CommentEnd=1
+aCheckSN.Execute
+delete aCheckSN
+print=[-------------------SN検査（8bit）FFC補正あり1_END]
+
+print=[-------------------SN検査（10bit）FFC補正あり1_START]
+aDevice.Stop
+Sleep(500)
+
+#4tap出力
+aControlRetry.SendData(0x02,"SOT 2",0x0d)
+aControlRetry.Execute
+
+#10bit出力
+aControlRetry.SendData(0x02,"SOB 1",0x0d)
+aControlRetry.Execute
+
+aDevice.Close
+Sleep(500)
+aDevice.SetBoardID=Full
+aDevice.SetBoardTopology=MONO
+aDevice.SetConnect=M
+aDevice.CameraFile(LCLA-16M_4TAP_sync10k_exp10us_10bit.cam)
+aDevice.Open
+aDevice.Start
+Sleep(500)
+
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(SN_CHECK_10bit_FFC1)
+aCommon.SaveCSVExecute
+delete aCommon
+
+print=[SN検査（10bit）FFC補正あり1]
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(16383)
+aCheckSN.SetSN(12)
+aCheckSN.SetSNMax(14.4)
+##############################################################出荷検査時規格変更
+#工程内検査
+CommentStart=2
+aCheckSN.SetAverageMin(760)
+aCheckSN.SetAverageMax(840)
+aCheckSN.SetLineAverageMin(740)
+aCheckSN.SetLineAverageMax(860)
+CommentEnd=2
+#出荷検査
+CommentStart=1
+aCheckSN.SetAverageMin(700)
+aCheckSN.SetAverageMax(900)
+aCheckSN.SetLineAverageMin(600)
+aCheckSN.SetLineAverageMax(1000)
+CommentEnd=1
+aCheckSN.Execute
+delete aCheckSN
+print=[-------------------SN検査（10bit）FFC補正あり1_END]
+
+print=[-------------------SN検査（12bit）FFC補正あり1_START]
+aDevice.Stop
+Sleep(500)
+
+#4tap出力
+aControlRetry.SendData(0x02,"SOT 2",0x0d)
+aControlRetry.Execute
+
+#12bit出力
+aControlRetry.SendData(0x02,"SOB 2",0x0d)
+aControlRetry.Execute
+
+aDevice.Close
+Sleep(500)
+aDevice.SetBoardID=Full
+aDevice.SetBoardTopology=MONO
+aDevice.SetConnect=M
+aDevice.CameraFile(LCLA-16M_4TAP_sync10k_exp10us_12bit.cam)
+aDevice.Open
+aDevice.Start
+Sleep(500)
+
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(SN_CHECK_12bit_FFC1)
+aCommon.SaveCSVExecute
+delete aCommon
+
+print=[SN検査（12bit）FFC補正あり1]
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(16383)
+aCheckSN.SetSN(48)
+aCheckSN.SetSNMax(57.6)
+##############################################################出荷検査時規格変更
+#工程内検査
+CommentStart=2
+aCheckSN.SetAverageMin(3040)
+aCheckSN.SetAverageMax(3360)
+aCheckSN.SetLineAverageMin(2960)
+aCheckSN.SetLineAverageMax(3440)
+CommentEnd=2
+#出荷検査
+CommentStart=1
+aCheckSN.SetAverageMin(2800)
+aCheckSN.SetAverageMax(3600)
+aCheckSN.SetLineAverageMin(2400)
+aCheckSN.SetLineAverageMax(4000)
+CommentEnd=1
+aCheckSN.Execute
+delete aCheckSN
+print=[-------------------SN検査（12bit）FFC補正あり1_END]
+
+print=[遮光]
+aTerminal.Command(ch1onoff=0&ch2onoff=0&ch3onoff=0&ch4onoff=0)
+Sleep(2000)
+
+print=[-------------------SN検査（8bit）FFC補正あり_遮光1_START]
+# DSNU有効/PRNU有効/HFPN有効
+aControlRetry.SendData(0x02,"FFM 1",0x0d)
+aControlRetry.Execute
+
+aDevice.Stop
+Sleep(500)
+
+#10tap出力
+aControlRetry.SendData(0x02,"SOT 4",0x0d)
+aControlRetry.Execute
+
+#8bit出力
+aControlRetry.SendData(0x02,"SOB 0",0x0d)
+aControlRetry.Execute
+
+aDevice.Close
+Sleep(500)
+aDevice.SetBoardID=Full
+aDevice.SetBoardTopology=MONO_DECA
+aDevice.SetConnect=M
+aDevice.CameraFile(LCLA-16M_10TAP_sync10k_exp10us.cam)
+aDevice.Open
+aDevice.Start
+Sleep(500)
+
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(SN_CHECK_8bit_FFC_BLACK1)
+aCommon.SaveCSVExecute
+delete aCommon
+
+print=[SN検査（8bit）FFC補正あり_遮光1]
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(16383)
+aCheckSN.SetSN(0.6)
+aCheckSN.SetSNMax(1.5)
+aCheckSN.SetAverageMin(2)
+aCheckSN.SetAverageMax(18)
+aCheckSN.SetLineAverageMin(2)
+aCheckSN.SetLineAverageMax(18)
+aCheckSN.Execute
+delete aCheckSN
+print=[-------------------SN検査（8bit）FFC補正あり_遮光1_END]
+
+print=[-------------------SN検査（10bit）FFC補正あり_遮光1_START]
+aDevice.Stop
+Sleep(500)
+
+#4tap出力
+aControlRetry.SendData(0x02,"SOT 2",0x0d)
+aControlRetry.Execute
+
+#10bit出力
+aControlRetry.SendData(0x02,"SOB 1",0x0d)
+aControlRetry.Execute
+
+aDevice.Close
+Sleep(500)
+aDevice.SetBoardID=Full
+aDevice.SetBoardTopology=MONO
+aDevice.SetConnect=M
+aDevice.CameraFile(LCLA-16M_4TAP_sync10k_exp10us_10bit.cam)
+aDevice.Open
+aDevice.Start
+Sleep(500)
+
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(SN_CHECK_10bit_FFC_BLACK1)
+aCommon.SaveCSVExecute
+delete aCommon
+
+print=[SN検査（10bit）FFC補正あり_遮光1]
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(16383)
+aCheckSN.SetSN(2.4)
+aCheckSN.SetSNMax(6)
+aCheckSN.SetAverageMin(8)
+aCheckSN.SetAverageMax(72)
+aCheckSN.SetLineAverageMin(8)
+aCheckSN.SetLineAverageMax(72)
+aCheckSN.Execute
+delete aCheckSN
+print=[-------------------SN検査（10bit）FFC補正あり_遮光1_END]
+
+print=[-------------------SN検査（12bit）FFC補正あり_遮光1_START]
+aDevice.Stop
+Sleep(500)
+
+#4tap出力
+aControlRetry.SendData(0x02,"SOT 2",0x0d)
+aControlRetry.Execute
+
+#12bit出力
+aControlRetry.SendData(0x02,"SOB 2",0x0d)
+aControlRetry.Execute
+
+aDevice.Close
+Sleep(500)
+aDevice.SetBoardID=Full
+aDevice.SetBoardTopology=MONO
+aDevice.SetConnect=M
+aDevice.CameraFile(LCLA-16M_4TAP_sync10k_exp10us_12bit.cam)
+aDevice.Open
+aDevice.Start
+Sleep(500)
+
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(SN_CHECK_12bit_FFC_BLACK1)
+aCommon.SaveCSVExecute
+delete aCommon
+
+print=[SN検査（12bit）FFC補正あり_遮光1]
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(16383)
+aCheckSN.SetSN(9.6)
+aCheckSN.SetSNMax(24)
+aCheckSN.SetAverageMin(32)
+aCheckSN.SetAverageMax(288)
+aCheckSN.SetLineAverageMin(32)
+aCheckSN.SetLineAverageMax(288)
+aCheckSN.Execute
+delete aCheckSN
+
+print=[-------------------SN検査（12bit）FFC補正あり_遮光1_END]
+print=[受光]
+aTerminal.SetOnOffW=1
+
+#10tap出力に戻す
+aDevice.Stop
+Sleep(500)
+#10tap出力
+aControlRetry.SendData(0x02,"SOT 4",0x0d)
+aControlRetry.Execute
+
+#8bit出力
+aControlRetry.SendData(0x02,"SOB 0",0x0d)
+aControlRetry.Execute
+
+#消費電流測定用に最高速で動かす。
+
+#露光モード設定:フル露光
+aControlRetry.SendData(0x02,"SEM 1",0x0d)
+aControlRetry.ReturnData(0x0d,0x0a,"USER>")
+aControlRetry.Execute
+
+aDevice.Close
+Sleep(500)
+aDevice.SetBoardID=Full
+aDevice.SetBoardTopology=MONO_DECA
+aDevice.SetConnect=M
+aDevice.CameraFile(LCLA-16M_10TAP_sync50k_exp10us.cam)
+aDevice.Open
+aDevice.Start
+Sleep(2000)
+
+print=[-------------------消費電流1_START]
+print=[消費電流1]
+StCheckPower aCheckPower
+aCheckPower.SetTexioControl=aTexioControl
+aCheckPower.SetMode=2
+aCheckPower.SetCurrentMax=291
+aCheckPower.SetCurrentMin=150
+aCheckPower.Execute
+delete aCheckPower
+print=[-------------------消費電流1_END]
+
+aDevice.Stop
+Sleep(500)
+aDevice.Close
+Sleep(500)
+aDevice.SetBoardID=Full
+aDevice.SetBoardTopology=MONO_DECA
+aDevice.SetConnect=M
+aDevice.CameraFile(LCLA-16M_10TAP_sync10k_exp10us.cam)
+aDevice.Open
+aDevice.Start
+Sleep(500)
+
+#元に戻す
+#露光モード設定:プログラマブル露光
+aControlRetry.SendData(0x02,"SEM 0",0x0d)
+aControlRetry.Execute
+
+#露光時間設定:80us
+aControlRetry.SendData(0x02,"SET 80000",0x0d)
+aControlRetry.Execute
+
+print=[-------------------ゲイン検査_START]
+print=[ゲイン検査1]
+
+#SAGコマンドの戻り値受信に時間を要し、タイムアウトエラーとなったため、待ち時間を設ける。
+aSerialComm.SetRecieveDelayTime(5000)
+#アナログゲイン:1倍
+aControlRetry.SendData(0x02,"SAG 0",0x0d)
+aControlRetry.Execute
+aSerialComm.SetRecieveDelayTime(0)
+
+#デジタルゲイン:1倍
+aControlRetry.SendData(0x02,"SSG 10000",0x0d)
+aControlRetry.Execute
+
+# DSNU無効/PRNU無効/HFPN有効
+aControlRetry.SendData(0x02,"FFM 4",0x0d)
+aControlRetry.Execute
+
+Sleep(500)
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(16383)
+aCheckSN.SetSN(100)
+aCheckSN.SetSNMax(100)
+aCheckSN.SetAverageMin(135)
+aCheckSN.SetAverageMax(195)
+aCheckSN.Execute
+
+#SAGコマンドの戻り値受信に時間を要し、タイムアウトエラーとなったため、待ち時間を設ける。
+aSerialComm.SetRecieveDelayTime(5000)
+#アナログゲイン:2倍
+aControlRetry.SendData(0x02,"SAG 1",0x0d)
+aControlRetry.Execute
+aSerialComm.SetRecieveDelayTime(0)
+
+Sleep(500)
+
+aCheckSN.SetAverageMin(250)
+aCheckSN.SetAverageMax(255)
+aCheckSN.Execute
+delete aCheckSN
+
+#元に戻す
+
+#SAGコマンドの戻り値受信に時間を要し、タイムアウトエラーとなったため、待ち時間を設ける。
+aSerialComm.SetRecieveDelayTime(5000)
+#アナログゲイン:1倍
+aControlRetry.SendData(0x02,"SAG 0",0x0d)
+aControlRetry.Execute
+aSerialComm.SetRecieveDelayTime(0)
+
+print=[-------------------ゲイン検査_END]
+
+
+
+print=[-------------------不飽和検出検査_START]
+aDevice.Stop
+Sleep(500)
+
+#4tap出力
+aControlRetry.SendData(0x02,"SOT 2",0x0d)
+aControlRetry.Execute
+
+#12bit出力
+aControlRetry.SendData(0x02,"SOB 2",0x0d)
+aControlRetry.Execute
+
+aDevice.Close
+Sleep(500)
+aDevice.SetBoardID=Full
+aDevice.SetBoardTopology=MONO
+aDevice.SetConnect=M
+aDevice.CameraFile(LCLA-16M_4TAP_sync1k_exp10us_12bit.cam)
+aDevice.Open
+aDevice.Start
+
+#光量MAX
+aTerminal.Command(ch4val=1023)
+Sleep(2000)
+
+print=[飽和レベル1]
+# DSNU有効/PRNU有効/HFPN有効
+aControlRetry.SendData(0x02,"FFM 1",0x0d)
+aControlRetry.Execute
+
+#SAGコマンドの戻り値受信に時間を要し、タイムアウトエラーとなったため、待ち時間を設ける。
+aSerialComm.SetRecieveDelayTime(5000)
+#アナログゲイン:1倍
+aControlRetry.SendData(0x02,"SAG 0",0x0d)
+aControlRetry.Execute
+aSerialComm.SetRecieveDelayTime(0)
+
+#デジタルゲイン:1倍
+aControlRetry.SendData(0x02,"SSG 10000",0x0d)
+aControlRetry.Execute
+
+#露光モード設定:フル露光
+aControlRetry.SendData(0x02,"SEM 1",0x0d)
+aControlRetry.Execute
+Sleep(2000)
+
+StCheckSpBehavior aCheckBehavior(aDevice)
+aCheckBehavior.SetStartLine(0)
+aCheckBehavior.SetEndLine(16383)
+aCheckBehavior.SetMaxLevel(4095)
+aCheckBehavior.SetMinLevel(4095)
+aCheckBehavior.SetInOutMode(1)
+aCheckBehavior.SetContinuousCount(0)
+#aCheckBehavior.SetJudgeMode(1)  未使用
+aCheckBehavior.Execute
+delete aCheckBehavior
+
+#元に戻す
+#露光モード設定:プログラマブル露光
+aControlRetry.SendData(0x02,"SEM 0",0x0d)
+aControlRetry.Execute
+
+print=[-------------------不飽和検出検査_END]
+
+
+
+print=[-------------------画素欠陥検査_START]
+print=[遮光]
+aTerminal.Command(ch1onoff=0&ch2onoff=0&ch3onoff=0&ch4onoff=0)
+Sleep(2000)
+
+# DSNU無効/PRNU無効/HFPN有効
+aControlRetry.SendData(0x02,"FFM 4",0x0d)
+aControlRetry.Execute
+
+# HFPNパラメータ設定:オフセット=100階調(12bit)
+aControlRetry.SendData(0x02,"SHP 512 100",0x0d)
+aControlRetry.Execute
+
+#露光時間設定:100us
+aControlRetry.SendData(0x02,"SET 100000",0x0d)
+aControlRetry.Execute
+
+Sleep(2000)
+
+print=[WhiteSpotDefect1]
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(WhiteSpotDefect1)
+aCommon.SaveCSVExecute
+delete aCommon
+
+StCheckSpBehavior aCheckBehavior(aDevice)
+aCheckBehavior.SetStartLine(0)
+aCheckBehavior.SetEndLine(16383)
+aCheckBehavior.SetMaxLevel(512)
+aCheckBehavior.SetMinLevel(1)
+aCheckBehavior.SetInOutMode(1)
+aCheckBehavior.SetContinuousCount(0)
+#aCheckBehavior.SetJudgeMode(1)  未使用
+aCheckBehavior.Execute
+delete aCheckBehavior
+
+
+# DSNU無効/PRNU無効/HFPN無効
+aControlRetry.SendData(0x02,"FFM 0",0x0d)
+aControlRetry.Execute
+
+#露光時間設定:60us
+aControlRetry.SendData(0x02,"SET 60000",0x0d)
+aControlRetry.Execute
+Sleep(2000)
+
+
+print=[光源調整7]
+#4096x0.5=2048
+StLightControl aLightControl(aDevice)
+aLightControl.SetTerminal(aTerminal)
+aLightControl.SetStartLine(0)
+aLightControl.SetEndLine(16383)
+aLightControl.SetTimer(2000)
+aLightControl.SetColor(W)
+aLightControl.SetMaxValueW(1000)
+aLightControl.SetInitValueW(1000)
+aLightControl.SetTargetW(2048)
+aLightControl.SetTargetRangeW(160)
+aLightControl.Execute
+
+Sleep(2000)
+
+print=[BlackBrightDefect1]
+#平均±15%の範囲内にあることを確認
+StCheckDustDlg aCheckDust(aDevice)
+aCheckDust.SetCheckMode(1)
+aCheckDust.SetStartLine(0)
+aCheckDust.SetEndLine(16383)
+aCheckDust.SetWidthLines(500)
+aCheckDust.SetDifferenceMax(15)
+aCheckDust.SetSeparate(1)
+aCheckDust.SetAverageLowLevel(1888)
+aCheckDust.SetAverageHighLevel(2208)
+aCheckDust.SetCSVFileName(BlackBrightDefect1)
+aCheckDust.SetMode=1
+aCheckDust.Execute
+delete aCheckDust
+
+
+#露光時間設定:110us
+aControlRetry.SendData(0x02,"SET 110000",0x0d)
+aControlRetry.Execute
+Sleep(2000)
+
+print=[光源調整8]
+#4096x0.7=3276.8
+aLightControl.SetTargetW(3277)
+aLightControl.Execute
+delete aLightControl
+
+Sleep(2000)
+
+print=[BlackBrightDefect2]
+#平均±15%の範囲内にあることを確認
+StCheckDustDlg aCheckDust(aDevice)
+aCheckDust.SetCheckMode(1)
+aCheckDust.SetStartLine(0)
+aCheckDust.SetEndLine(16383)
+aCheckDust.SetWidthLines(500)
+aCheckDust.SetDifferenceMax(15)
+aCheckDust.SetSeparate(1)
+aCheckDust.SetAverageLowLevel(3117)
+aCheckDust.SetAverageHighLevel(3437)
+aCheckDust.SetCSVFileName(BlackBrightDefect2)
+aCheckDust.SetMode=1
+aCheckDust.Execute
+delete aCheckDust
+
+
+print=[SaturationDefect1]
+
+aTerminal.Command(ch4val=1023)
+
+#露光時間設定:900us
+aControlRetry.SendData(0x02,"SET 900000",0x0d)
+aControlRetry.Execute
+
+Sleep(2000)
+
+#4012以上であることを確認
+StCheckSpBehavior aCheckBehavior(aDevice)
+aCheckBehavior.SetStartLine(0)
+aCheckBehavior.SetEndLine(16383)
+aCheckBehavior.SetMaxLevel(4095)
+aCheckBehavior.SetMinLevel(4012)
+aCheckBehavior.SetInOutMode(1)
+aCheckBehavior.SetContinuousCount(0)
+#aCheckBehavior.SetJudgeMode(1)  未使用
+aCheckBehavior.Execute
+delete aCheckBehavior
+
+#元に戻す
+# HFPNパラメータ設定:オフセット=6階調(8bit)
+aControlRetry.SendData(0x02,"SHP 512 96",0x0d)
+aControlRetry.Execute
+
+# DSNU有効/PRNU有効/HFPN有効
+aControlRetry.SendData(0x02,"FFM 1",0x0d)
+aControlRetry.Execute
+
+print=[-------------------画素欠陥検査_END]
+
+aDevice.Stop
+Sleep(500)
+
+print=[-----------------------------------------------------------------16K_END]

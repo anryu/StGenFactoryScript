@@ -1,0 +1,30 @@
+print=[-------------------バージョン検査_START]
+print=[バージョン検査]
+
+#FPGA ID1
+aDevice.ReadCheckData(0x1000)
+aDevice.ReadExecute(0xA000)
+
+#FPGA ID2
+aDevice.ReadCheckData(0x1101)
+aDevice.ReadExecute(0xA004)
+
+#FPGA Ver.
+aDevice.ReadCheckData(0)
+aDevice.ReadExecute(0xA010)
+
+#FPGA Rev.
+aDevice.ReadCheckData(3)
+aDevice.ReadExecute(0xA014)
+
+#NIOS Ver.
+aDevice.ReadCheckData(3)
+aDevice.ReadExecute(0xA020)
+
+#NIOS Rev.
+aDevice.ReadCheckData(8)
+aDevice.ReadExecute(0xA024)
+
+print(Check=OK)
+
+print=[-------------------バージョン検査_END]

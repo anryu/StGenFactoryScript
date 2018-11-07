@@ -1,0 +1,68 @@
+
+
+print=[------------------------------------------------------バージョン確認_START]
+print=[バージョン確認]
+
+
+aControlRetry.SetRetry=20
+aControlRetry.SetTimer=1000
+aControlRetry.SetBusyCommand=02 00 AC 01 00 03
+aControlRetry.SetBusyStatus=02 01 00 03
+
+
+################機種コード
+#機種コード下位 (上位+下位16bit：D[7..0])⇒FPGAで固定値を持つ
+aControlRetry.SendData=02 00 00 01 00 03
+aControlRetry.ReturnData=aKishuCodeL
+aControlRetry.Execute
+
+#機種コード上位 (上位+下位16bit：D[7..0])⇒FPGAで固定値を持つ
+aControlRetry.SendData=02 00 0A 01 00 03
+aControlRetry.ReturnData=aKishuCodeU
+aControlRetry.Execute
+
+#第二機種コード⇒FPGAで固定値を持つ
+aControlRetry.SendData=02 00 09 01 00 03
+aControlRetry.ReturnData=02 01 00 03
+aControlRetry.Execute
+
+#cmmo(ラインセンサ固有の機種コード)
+aControlRetry.SendData=02 00 B5 01 00 03
+aControlRetry.ReturnData=aKishuCodeLine
+aControlRetry.Execute
+
+################バージョン
+#FPGA・バージョン (16bit：D[15..8])⇒FPGAで固定値を持つ
+#FPGA・バージョン (16bit：D[7..0])⇒FPGAで固定値を持つ
+aControlRetry.SendData=02 00 02 02 00 03
+aControlRetry.ReturnData=02 02 02 00 03
+aControlRetry.Execute
+
+#ファームウェア・バージョン照合データ (16bit：D[15..8])⇒マイコンファームウェアで固定値を持つ
+#ファームウェア・バージョン照合データ (16bit：D[7..0])⇒マイコンファームウェアで固定値を持つ
+aControlRetry.SendData=02 00 7E 02 00 03
+aControlRetry.ReturnData=02 02 00 00 03
+aControlRetry.Execute
+
+#fpvr(ラインセンサ固有のファームウェア・バージョンデータレジスタ)
+aControlRetry.SendData=02 00 B6 01 00 03
+aControlRetry.ReturnData=aFirmVerLine
+aControlRetry.Execute
+
+#カスタマコード⇒:OK
+aControlRetry.SendData=02 00 08 01 00 03
+aControlRetry.ReturnData=02 01 00 03
+aControlRetry.Execute
+
+
+print(Check=OK)
+print=[------------------------------------------------------バージョン確認_END]
+
+
+
+
+
+
+
+
+

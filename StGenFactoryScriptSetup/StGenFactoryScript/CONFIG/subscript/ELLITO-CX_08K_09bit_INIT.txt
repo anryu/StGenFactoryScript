@@ -1,0 +1,75 @@
+#変更履歴
+#VER01(2018/4/6)
+#コメント修正(集計ソフトで集計可能にするため)
+
+print(SUBSCRIPT=ELLITO-CX_08K_09bit_INIT.txt)
+print(SUBSCRIPT_VER=001)
+
+#「20171226_ELLITO_8k_9bitモード設定手順.docx」 の手順を以下に記載
+
+#4.3(トリガ制御モード変更)
+aDevice.Write(0xa940,1)
+
+
+#4.4(8k 9bitモード設定)
+aDevice.Write(0xa154,1)
+aDevice.Write(0xa308,1)
+aDevice.Write(0xa948,2)
+
+
+#4.5(8k 9btモード アナログゲイン設定)
+aDevice.Write(0xa130,4)
+
+
+#4.6(Register番号設定)
+aDevice.Write(0xa714,3)
+
+
+#4.7(Register番号設定)
+aDevice.Write(0xa710,3)
+aDevice.Write(0xafe0,0x0304)
+
+StWriteFileData aWriteFileData(aDevice)
+aWriteFileData.SetAddressMagnification(4)
+aWriteFileData.SetAddressOffset(0xB000)
+aWriteFileData.SetFileName(20171113_8k_9bit_Dual_MixSup36_Init7.csv)
+aWriteFileData.Execute
+delete aWriteFileData
+
+
+#4.8(設定保存)
+aDevice.Write(0xa520,1)
+
+
+#4.9(センサリセット前準備)
+aDevice.Write(0xa90c,0x20)
+#読込みチェック
+aDevice.ReadCheckAddress(0xA908)
+aDevice.ReadCheckData(0x240D)
+aDevice.ReadExecute
+
+
+#4.10(センサリセット)
+aDevice.WriteNoCheck(1)
+aDevice.Write(0xa914,1)
+aDevice.WriteNoCheck(0)
+Sleep(10000)
+
+aDevice.Close
+Sleep(500)
+delete aDevice
+
+#カメラ接続
+StDeviceGenICam aDevice
+aDevice.Open(ELLITO 8K)
+aDevice.Endian=Big
+aDevice.LinkConfig=LINK4SPEED6250
+aDevice.DisplayHeight=512
+aDevice.SetBufferCount=100
+
+#4.11(8k動作確認)
+aDevice.Write(0xa90c,0x20)
+#読込みチェック
+aDevice.ReadCheckAddress(0xA908)
+aDevice.ReadCheckData(0x230D)
+aDevice.ReadExecute

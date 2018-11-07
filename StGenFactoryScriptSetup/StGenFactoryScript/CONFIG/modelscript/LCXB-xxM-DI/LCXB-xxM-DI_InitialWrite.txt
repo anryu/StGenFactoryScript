@@ -1,0 +1,100 @@
+print=[-------------------初期値の書き込み_START]
+print=[初期値の書き込み]
+
+# DSNU補正初期化
+aDevice.Write(0xA240,1)
+# PRNU補正初期化
+aDevice.Write(0xA250,1)
+# シェーディング補正初期化
+aDevice.Write(0xA260,1)
+
+# レジスタセット選択:標準レジスタ
+aDevice.Write(0xA714,0xFF)
+
+# LVAL幅設定:16384画素
+aDevice.Write(0xA154,0)
+
+# テストPT疑似LVAL幅選択:16K
+aDevice.Write(0xA308,0)
+
+# 画像出力:11bit
+aDevice.Write(0xA948,0)
+
+# 垂直ピクセルサイズ設定:長方形モード
+aDevice.Write(0xA310,0)
+
+#トリガモード設定:フリーラン
+aDevice.Write(0xA100,0)
+
+#露光モード設定:フル露光
+aDevice.Write(0xA104,0)
+
+#トリガアクティブパルス設定:ポジティブ
+aDevice.Write(0xA108,0)
+
+#ラインレート設定:40kHz(12.8ns単位)
+aDevice.Write(0xA110,1953)
+
+#露光時間設定:18.7us(12.8ns単位)
+aDevice.Write(0xA120,1461)
+
+#アナログゲイン:1倍
+aDevice.Write(0xA130,0)
+
+# DSNU有効/PRNU有効/HFPN有効
+aDevice.Write(0xA200,1)
+aDevice.Write(0xA204,1)
+aDevice.Write(0xA208,1)
+
+# シェーディング無効
+aDevice.Write(0xA20C,0)
+
+# 左右反転設定:通常
+aDevice.Write(0xA220,0)
+
+# デジタルオフセット:0
+aDevice.Write(0xA280,0)
+
+# デジタルゲイン:1倍
+aDevice.Write(0xA270,8192)
+
+# テストパターン:カメラ画像
+aDevice.Write(0xA30C,0)
+
+# ライン間引き設定:間引きなし
+aDevice.Write(0xA320,0)
+
+# グレイフィルタ設定:PASS
+aDevice.Write(0xA330,0)
+
+# 出力BIT設定:8bit
+aDevice.PixelFormat=Mono8
+aDevice.Write(0xA348,0)
+
+# HFPNパラメータ設定:オフセット=6階調(8bit)
+aDevice.Write(0xA230,512)
+aDevice.Write(0xA234,96)
+
+#補正値の多重持ち有効化
+aDevice.Write(0xA460,1)
+aDevice.Write(0xA464,255)
+
+# カメラ設定Save
+aDevice.Write(0xA520,1)
+
+#ELITE HFPN Save
+aDevice.Write(0xA720,1)
+
+#リセット
+aDevice.WriteNoCheck(1)
+aDevice.Write(0xa914,1)
+aDevice.WriteNoCheck(0)
+Sleep(10000)
+
+
+#8K 9bitモードに設定
+CallScriptFile(ELLITO-CX_08K_09bit_INIT.txt)
+
+print(Check=OK)
+
+print=[-------------------初期値の書き込み_END]

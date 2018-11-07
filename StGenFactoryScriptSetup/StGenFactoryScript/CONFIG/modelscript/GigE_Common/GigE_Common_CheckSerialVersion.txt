@@ -1,0 +1,10 @@
+
+#★シリアルバージョン検査------------------------
+print([StCheckSerialVersion])
+StCheckSerialVersion aCheckSerialVersion(aDevice)
+aCheckSerialVersion.SetDeviceVersion=2.0012 (02.05.29)
+aCheckSerialVersion.Execute
+delete aCheckSerialVersion
+print(TIMESTAMP)
+
+

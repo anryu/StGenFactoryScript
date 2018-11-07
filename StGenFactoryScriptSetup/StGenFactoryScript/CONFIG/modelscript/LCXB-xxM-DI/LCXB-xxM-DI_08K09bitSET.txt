@@ -1,0 +1,14 @@
+#8K9bitƒ‚[ƒh‚Éİ’è
+CallScriptFile(ELLITO-CX_08K_09bit_SET.txt)
+
+aDevice.Close
+Sleep(500)
+delete aDevice
+
+#ƒJƒƒ‰Ú‘±
+StDeviceGenICam aDevice
+aDevice.Open(ELLITO 8K)
+aDevice.Endian=Big
+aDevice.LinkConfig=LINK4SPEED6250
+aDevice.DisplayHeight=512
+aDevice.SetBufferCount=100

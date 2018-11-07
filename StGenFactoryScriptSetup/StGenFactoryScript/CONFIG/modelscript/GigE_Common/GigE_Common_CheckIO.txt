@@ -1,0 +1,37 @@
+
+
+
+
+print=[★IO検査]
+print([StCheckIO])
+StCheckIO aCheckIO(aDevice)
+
+StIF aIF
+aIF.Start(aJType_IO==1)
+	# ラズパイIO治具
+	#aCheckIO.SetSerialComm=aJiguGigE
+	aCheckIO.SetTerminal=aJiguRPI_IO
+	# Mode 0:GigE冶具 1:【ラズパイIO冶具】
+	aCheckIO.Mode=1
+aIF.Else
+	# IEA治具
+	aCheckIO.SetSerialComm=aJiguGigE
+	# Mode 0:GigE冶具 1:【ラズパイIO冶具】
+	aCheckIO.Mode=0
+aIF.End
+delete aIF
+
+
+aCheckIO.CheckWaitTime=1000
+
+aCheckIO.SetLineCount=5
+aCheckIO.SetLineMode0=IN
+aCheckIO.SetLineMode1=IN
+aCheckIO.SetLineMode2=IN
+aCheckIO.SetLineMode3=OUT
+aCheckIO.SetLineMode4=OUT
+aCheckIO.Execute
+delete aCheckIO
+
+
+

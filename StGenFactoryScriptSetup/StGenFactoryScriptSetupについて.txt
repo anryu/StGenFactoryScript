@@ -1,0 +1,24 @@
+StGenFactoryScriptインストーラーは
+VS2010付属のVisual Studio インストーラーを使用して作成している。
+
+
+マイナーアップグレードの場合、
+RemovePreviousVersionsをTrueにする。
+Versionの変更。ProductCodeの変更。
+UpgradeCodeは変更しない。
+
+----製品コードをバージョンごとに保存しておく------------------------------------------------------------------
+
+
+■製品コード ProductCode
+
+
+v1.00.0002
+{03868B8B-7F70-48D1-8FF2-38AE2635CAE9}
+
+v1.00.0001
+{81D44815-AE89-41E8-97CB-0482F9278932}
+
+
+■アップグレードコード UpgradeCode　全バージョン共通
+UpgradeCode {4ECFD261-47C4-4F4C-96A6-ADA3EF541CDD}

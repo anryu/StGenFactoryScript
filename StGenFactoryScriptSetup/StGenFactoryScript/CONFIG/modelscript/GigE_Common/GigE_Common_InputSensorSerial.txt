@@ -1,0 +1,10 @@
+
+#★センサーシリアル入力--------------------------
+print([StInputSensorSerialDlg])
+StInputSensorSerialDlg aInputSensorSerialDlg
+aInputSensorSerialDlg.Execute
+delete aInputSensorSerialDlg
+print(TIMESTAMP)
+
+
+

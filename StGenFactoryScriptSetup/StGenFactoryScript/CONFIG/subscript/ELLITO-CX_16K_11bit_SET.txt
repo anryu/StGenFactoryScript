@@ -1,0 +1,33 @@
+#変更履歴
+#VER01(2018/4/6)
+#コメント修正(集計ソフトで集計可能にするため)
+
+print(SUBSCRIPT=ELLITO-CX_16K_11bit_SET.txt)
+print(SUBSCRIPT_VER=001)
+
+print=[-------------------16K設定]
+
+# レジスタセット選択:標準レジスタ
+aDevice.Write(0xA714,0xFF)
+
+# LVAL幅設定:16384画素
+aDevice.Write(0xA154,0)
+
+# テストPT疑似LVAL幅選択:16K
+aDevice.Write(0xA308,0)
+
+# 画像出力:11bit
+aDevice.Write(0xA948,0)
+
+# 垂直ピクセルサイズ設定:長方形モード
+aDevice.Write(0xA310,0)
+
+
+# ユーザ設定保存
+aDevice.Write(0xA520,1)
+
+# リセット
+aDevice.WriteNoCheck(1)
+aDevice.Write(0xa914,1)
+aDevice.WriteNoCheck(0)
+Sleep(10000)

@@ -1,0 +1,12 @@
+#初期設定に戻す
+# 出力BIT設定:8bit
+aDevice.PixelFormat=Mono8
+aDevice.Write(0xA348,0)
+#露光時間設定:18.7us(12.8ns単位)
+aDevice.Write(0xA120,1461)
+#ラインレート設定:40kHz(12.8ns単位)
+aDevice.Write(0xA110,1953)
+#露光モード設定:フル露光
+aDevice.Write(0xA104,0)
+# ユーザ設定保存
+aDevice.Write(0xA520,1)

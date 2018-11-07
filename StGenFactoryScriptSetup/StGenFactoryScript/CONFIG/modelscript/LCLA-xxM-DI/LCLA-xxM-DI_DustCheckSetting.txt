@@ -1,0 +1,19 @@
+# DSNU無効/PRNU無効/HFPN無効
+aControlRetry.SendData(0x02,"FFM 0",0x0d)
+aControlRetry.ReturnData(0x0d,0x0a,"USER>")
+aControlRetry.Execute
+
+#トリガモード設定:フリーラン
+aControlRetry.SendData(0x02,"STM 0",0x0d)
+aControlRetry.ReturnData(0x0d,0x0a,"USER>")
+aControlRetry.Execute
+
+#露光モード設定:フル露光
+aControlRetry.SendData(0x02,"SEM 1",0x0d)
+aControlRetry.ReturnData(0x0d,0x0a,"USER>")
+aControlRetry.Execute
+
+#ラインレート設定:1kHz
+aControlRetry.SendData(0x02,"SSF 1000",0x0d)
+aControlRetry.ReturnData(0x0d,0x0a,"USER>")
+aControlRetry.Execute

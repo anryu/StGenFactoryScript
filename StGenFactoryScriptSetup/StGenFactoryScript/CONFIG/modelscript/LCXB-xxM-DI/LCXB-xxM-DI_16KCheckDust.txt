@@ -1,0 +1,61 @@
+print=[-------------------ゴミ検査16K_START]
+# DSNU無効/PRNU無効/HFPN無効
+aDevice.Write(0xA200,0)
+aDevice.Write(0xA204,0)
+aDevice.Write(0xA208,0)
+
+#トリガモード設定:フリーラン
+aDevice.Write(0xA100,0)
+
+#ラインレート設定:1kHz(12.8ns単位)
+aDevice.Write(0xA110,80000)
+
+#露光モード設定:プログラマブル露光
+aDevice.Write(0xA104,1)
+
+#露光時間設定:1023us(12.8ns単位)
+aDevice.Write(0xA120,79900)
+
+aDevice.Start
+Sleep(1000)
+
+print(TIMESTAMP)
+
+#ﾒｯｾｰｼﾞ追加
+StImageMessageDlg aImageMessage
+aImageMessage.SetImageSizeX(0)
+aImageMessage.SetImageSizeY(0)
+aImageMessage.SetMessageSizeX(500)
+aImageMessage.SetMessageSizeY(200)
+
+aImageMessage.SetMessage(①ゴミ検査治具の照明を写して下さい。\n \n②右側に「照明を暗くして下さい。」または「照明を明るくして下さい。」の\n　表示が出ないように明るさを200階調付近に合わせて下さい。\n\n③画面上に除去可能なゴミがなくなるまでゴミ除去作業を行って下さい。\n\n④「Start」ボタンを押して下さい。\n\n⑤ゴミ検査治具とカメラを固定した状態で上下に振って下さい。\n\n⑥「OK」が表示されたら「Stop」ボタン⇒「End」ボタンを押し検査を終了して下さい。\n　「NG」が表示されたら③に戻り、ゴミの除去を行って下さい。\n　「OK」にならないときは「Stop」ボタン⇒「End」ボタンを押し検査を終了して下さい。)
+
+aImageMessage.SetWindowPosX(360)
+aImageMessage.SetWindowPosY(100)
+aImageMessage.open
+
+print=[ゴミ検査2]
+StCheckDustDlg aCheckDust(aDevice)
+aCheckDust.SetCheckMode(2)
+aCheckDust.SetContinuousCountMax(3)
+aCheckDust.SetStartLine(0)
+aCheckDust.SetEndLine(16383)
+aCheckDust.SetWidthLines(100)
+aCheckDust.SetDifferenceMax(3.6)
+aCheckDust.SetSeparate(1)
+aCheckDust.SetAverageLowLevel(180)
+aCheckDust.SetAverageHighLevel(220)
+aCheckDust.SetBMPFileName(DUST1_16K_1)
+aCheckDust.SetCSVFileName(DUST1_16K_1)
+aCheckDust.SetMode(0)
+aCheckDust.Execute
+delete aCheckDust
+
+aImageMessage.close
+delete aImageMessage
+
+print(TIMESTAMP)
+
+aDevice.Stop
+Sleep(500)
+print=[-------------------ゴミ検査16K_END]

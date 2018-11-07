@@ -1,0 +1,43 @@
+aDevice.Close
+Sleep(500)
+aDevice.SetBoardID=Full
+aDevice.SetBoardTopology=MONO_DECA
+aDevice.SetConnect=M
+aDevice.CameraFile(LCLA-16M_10TAP_sync10k_exp10us.cam)
+aDevice.Open
+
+StCheckMessage aMessage
+aMessage.SetOKButtonShow(true)
+aMessage.SetNGButtonShow(false)
+aMessage.SetTextButtonShow(false)
+aMessage.SetMessage(ゴミ検査治具にカメラをセットし、\n手で押さえた状態を維持して下さい。\n\nセット後、OKをクリックして下さい。)
+aMessage.Execute
+delete aMessage
+
+print=[-------------------ゴミ検査16K_START]
+print(TIMESTAMP)
+aDevice.Start
+Sleep(3000)
+
+print=[ゴミ検査3]
+StCheckDustDlg aCheckDust(aDevice)
+aCheckDust.SetCheckMode(2)
+aCheckDust.SetContinuousCountMax(3)
+aCheckDust.SetStartLine(0)
+aCheckDust.SetEndLine(16383)
+aCheckDust.SetWidthLines(100)
+aCheckDust.SetDifferenceMax(3.6)
+aCheckDust.SetSeparate(1)
+aCheckDust.SetAverageLowLevel(180)
+aCheckDust.SetAverageHighLevel(220)
+aCheckDust.SetBMPFileName(DUST1_16K_2)
+aCheckDust.SetCSVFileName(DUST1_16K_2)
+aCheckDust.SetMode=1
+aCheckDust.Execute
+delete aCheckDust
+
+print(TIMESTAMP)
+
+aDevice.Stop
+Sleep(500)
+print=[-------------------ゴミ検査16K_END]

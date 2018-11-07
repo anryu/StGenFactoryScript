@@ -1,0 +1,36 @@
+print=[-------------------バージョン検査_START]
+print=[バージョン検査]
+
+#FPGA ID1
+aControlRetry.SendData(0x02,"RID1",0x0d)
+aControlRetry.ReturnData(0x0d,0x0a,"1",0x0d,0x0a,"USER>")
+aControlRetry.Execute
+
+#FPGA ID2
+aControlRetry.SendData(0x02,"RID2",0x0d)
+aControlRetry.ReturnData(0x0d,0x0a,"4353",0x0d,0x0a,"USER>")
+aControlRetry.Execute
+
+#FPGA Ver.
+aControlRetry.SendData(0x02,"RVER",0x0d)
+aControlRetry.ReturnData(0x0d,0x0a,"0",0x0d,0x0a,"USER>")
+aControlRetry.Execute
+
+#FPGA Rev.
+aControlRetry.SendData(0x02,"RREV",0x0d)
+aControlRetry.ReturnData(0x0d,0x0a,"4",0x0d,0x0a,"USER>")
+aControlRetry.Execute
+
+#NIOS Ver.
+aControlRetry.SendData(0x02,"RNV",0x0d)
+aControlRetry.ReturnData(0x0d,0x0a,"2",0x0d,0x0a,"USER>")
+aControlRetry.Execute
+
+#NIOS Rev.
+aControlRetry.SendData(0x02,"RNR",0x0d)
+aControlRetry.ReturnData(0x0d,0x0a,"40",0x0d,0x0a,"USER>")
+aControlRetry.Execute
+
+print(Check=OK)
+
+print=[-------------------バージョン検査_END]

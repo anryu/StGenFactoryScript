@@ -1,0 +1,255 @@
+
+# aLineStartm
+# aLineEndm
+
+
+
+StIF aIF
+aIF.Start(aJType_Choko==1)
+	# ラズパイ調光時使用
+	aJigu.Command(ch1onoff=0&ch2onoff=0&ch3onoff=0)
+aIF.Else
+	# ラインセンサ治具
+	aJigu.Send(shade=0)
+aIF.End
+delete aIF
+
+print=[------------------------------------------------------オフセット調整5_START_AnalogGainOFF]
+print=[オフセット調整5]
+
+
+#ffmd=0
+aControlRetry.SendData=02 02 81 01 00 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#L2L_ON lnmd=1(L2L_OFF)
+aControlRetry.SendData=02 02 A3 01 01 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#L2Loffset=14hでとりあえず。OFFなので関係ないはず。
+aControlRetry.SendData=02 02 A4 01 14 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#Analog gain OFF (gbdt=0)
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 34 01 00 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#gcdt=255
+#gcdt=32
+#busyが解除されるのを待つ
+#aControlRetry.SendData=02 02 6C 01 FF 03
+aControlRetry.SendData=02 02 6C 01 20 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+
+#★GigEカメラスタート-----------------------
+aDevice.Start
+Sleep(2000)
+
+aControlRetry.SetRetry=1000
+aControlRetry.SetTimer=1000
+
+print=[オートオフセット調整スタート]
+#damd=1
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 E0 01 02 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+Sleep(2000)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(OffsetAdjust_LEDoff_AnalogGainOFF)
+aCommon.SaveAllExecute
+delete aCommon
+
+#STD:TK_TITLE=オフセット調整
+StCheckSpBehavior aCheckBehavior(aDevice)
+aCheckBehavior.SetStartLine(aLineStartm)
+aCheckBehavior.SetEndLine(aLineEndm)
+aCheckBehavior.SetMaxLevel(80)
+aCheckBehavior.SetMinLevel(3)
+aCheckBehavior.SetInOutMode(1)
+aCheckBehavior.SetContinuousCount(10)
+#aCheckBehavior.SetJudgeMode(1)  未使用
+aCheckBehavior.Execute
+delete aCheckBehavior
+
+#ログに残すため。。。。。。。。。。。。。。。。。
+print=[オフセット調整値5]
+
+#daa1u
+#daa1l
+#daa2u
+#daa2l
+aControlRetry.SendData=02 00 9A 04 00 03
+aControlRetry.ReturnData=02 04 XX XX XX XX 03
+aControlRetry.Execute
+
+
+
+print=[------------------------------------------------------オフセット調整5_END_START_AnalogGainOFF]
+print=[------------------------------------------------------line to line補正オフセット設定5_START]
+print=[line to line補正オフセット設定値の調整_遮光5]
+
+#L2L_ON lnmd=0(L2L_ON)
+aControlRetry.SendData=02 02 A3 01 00 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#L2Loffset=0でスタートし下で一個ずつ上げている。
+aControlRetry.SendData=02 02 A4 01 00 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+Sleep(2000)
+
+StCheckAdjustLinetoline aCheckLinetoline(aDevice)
+aCheckLinetoline.SetTimer(100)
+aCheckLinetoline.SetAdjustCount(100)
+aCheckLinetoline.SetStartLine(aLineStartm)
+aCheckLinetoline.SetEndLine(aLineEndm)
+aCheckLinetoline.SetDeviceCode(0)
+aCheckLinetoline.SetPage(0)
+aCheckLinetoline.SetAddress(0xA4)
+aCheckLinetoline.SetInitValue(0)
+aCheckLinetoline.SetMinAverage(5)
+aCheckLinetoline.SetMaxAverage(20)
+aCheckLinetoline.Execute
+delete aCheckLinetoline
+
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(StCheckAdjustLinetoline_result)
+aCommon.SaveAllExecute
+delete aCommon
+
+#ofsf
+#OFST save
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 E0 01 20 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+print=[------------------------------------------------------line to line補正オフセット設定5_END]
+
+print=[------------------------------------------------------オフセット調整6_START__AnalogGainON]
+print=[オフセット調整_AnalogGainON]
+aDevice.Stop
+Sleep(2000)
+
+
+#L2L_ON lnmd=1(L2L_OFF)
+aControlRetry.SendData=02 02 A3 01 01 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+
+#Analog gain ON (gbdt=1)
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 34 01 01 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+
+#gcdt=255
+#gcdt=32
+#busyが解除されるのを待つ
+#aControlRetry.SendData=02026C01FF03
+aControlRetry.SendData=02 02 6C 01 20 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+
+
+aDevice.Start
+Sleep(2000)
+
+#damd=1
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 E0 01 02 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+Sleep(2000)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(OffsetAdjust_LEDoff_AnalogGainON)
+aCommon.SaveAllExecute
+delete aCommon
+
+#STD:TK_TITLE=オフセット調整
+StCheckSpBehavior aCheckBehavior(aDevice)
+aCheckBehavior.SetStartLine(aLineStartm)
+aCheckBehavior.SetEndLine(aLineEndm)
+aCheckBehavior.SetMaxLevel(80)
+aCheckBehavior.SetMinLevel(3)
+aCheckBehavior.SetInOutMode(1)
+aCheckBehavior.SetContinuousCount(10)
+#aCheckBehavior.SetJudgeMode(1)  未使用
+aCheckBehavior.Execute
+delete aCheckBehavior
+
+#ログに残すため。。。。。。。。。。。。。。。。。
+print=[オフセット調整値6]
+#daa1l
+#daa1u
+#daa2l
+#daa2u
+aControlRetry.SendData=02 00 9A 04 00 03
+aControlRetry.ReturnData=02 04 XX XX XX XX 03
+aControlRetry.Execute
+
+print=[------------------------------------------------------オフセット調整6_END_opck11_gbdt1_gcdt255]
+print=[------------------------------------------------------line to line補正オフセット設定6_START]
+print=[line to line補正オフセット設定値の調整_遮光6]
+#lnmd=0
+#aControlRetry.SendData=0202A3010003
+#aControlRetry.ReturnData=02 00 01 03
+#aControlRetry.Execute
+
+#L2Loffset=0
+#aControlRetry.SendData=0202A4010003
+#aControlRetry.ReturnData=02 00 01 03
+#aControlRetry.Execute
+
+aControlRetry.SendData=02 02 A3 01 00 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+aControlRetry.SendData=02 02 A4 01 00 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+
+Sleep(2000)
+StCheckAdjustLinetoline aCheckLinetoline(aDevice)
+aCheckLinetoline.SetTimer(100)
+aCheckLinetoline.SetAdjustCount(100)
+aCheckLinetoline.SetStartLine(aLineStartm)
+aCheckLinetoline.SetEndLine(aLineEndm)
+aCheckLinetoline.SetDeviceCode(0)
+aCheckLinetoline.SetPage(0)
+aCheckLinetoline.SetAddress(0xA4)
+aCheckLinetoline.SetInitValue(0)
+aCheckLinetoline.SetMinAverage(5)
+aCheckLinetoline.SetMaxAverage(20)
+aCheckLinetoline.Execute
+delete aCheckLinetoline
+
+#ofsf
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 E0 01 20 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+print=[------------------------------------------------------line to line補正オフセット設定6_END]
+
+
+aDevice.Stop
+Sleep(1000)
+
+

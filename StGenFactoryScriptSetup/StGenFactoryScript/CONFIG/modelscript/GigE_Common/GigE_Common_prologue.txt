@@ -1,0 +1,80 @@
+
+print([ProductInfo])
+print(ProductNo=aModelName)
+print(SCRIPT_VER=005)
+Print(SOFTWAREVERSION)
+
+DeviceModelName = aModelName
+
+WriteScriptLogMode = 1
+
+
+
+
+StIF aIF
+aIF.Start(aJType_Choko==1)
+	#治具定義(【ラズパイ調光冶具】)
+	StTerminal aJigu(TERM1)
+aIF.Else
+	#治具定義(【LS冶具調光冶具】)
+	StSerialComm aJigu(JIGU1)
+aIF.End
+delete aIF
+
+
+
+
+StIF aIF
+aIF.Start(aJType_IO==1)
+	# ラズパイIO治具
+	#治具定義(【ラズパイIO冶具】)
+	StTerminal aJiguRPI_IO(TERM2)
+aIF.Else
+	#治具定義(GigE治具)(PoE消費電流で使用するので常時定義)
+	# ここで分岐定義にはしない
+aIF.End
+delete aIF
+
+#治具定義(GigE治具)(PoE消費電流のみで使用)
+StSerialComm aJiguGigE(JIGU2)
+
+
+#治具定義(テクシオ電源)
+StTexioControl aTexioControl
+aTexioControl.SetPCAddress(1) 
+aTexioControl.SetSystemAddress(1)
+aTexioControl.SetCurrentLimit(1.0)
+aTexioControl.SetVoltage(12.0)
+aTexioControl.PowerOff(1)
+aTexioControl.PowerOff(2)
+
+aTexioControl.MainPowerOn
+aTexioControl.SetChannel=2
+aTexioControl.SetVoltage(12.0)
+aTexioControl.PowerOff
+Sleep(2000)
+aTexioControl.PowerOn
+
+# NG時設定
+NGEndProcessRegister(Beep(1800,1000))
+NGEndProcessRegister(aTexioControl.MainPowerOff)
+
+
+#★シリアル入力--------------------------
+#logのファイル名を決めるために一番最初
+print([InputSerial])
+StInputSerialDlg aInputSerial
+aInputSerial.Execute
+delete aInputSerial
+print(TIMESTAMP)
+
+#★GigEカメラ接続------------------------
+print([Device])
+StDeviceEBus aDevice
+aDevice.Connect(aModelName)
+
+
+#★汎用インスタンス生成------------------------
+StCheckControlRetry aControlRetry(aDevice)
+StCheckMessage aMessage
+

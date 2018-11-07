@@ -1,0 +1,133 @@
+#変更履歴
+#VER01(2018/3/7)
+#・標準偏差の規格を変更(実測に合わせて変更)
+#　　-クランプレベル検査2(8/10/12bit)
+#　　-クランプレベル検査（8/10/12bit)HFPNoff2
+#・平均輝度の規格を変更(実測に合わせて変更)
+#　　-SN検査（8/10/12bit）FFC補正あり1
+#　　-SN検査（8/10/12bit）FFC補正あり2
+#・不飽和検出検査の位置を画素欠陥検査の前段に移動
+#　　(画素欠陥検査時にHFPNパラメータ設定を書き換えるため)
+#VER02(2018/3/8)
+#・スリープ追加
+#　(カメラにコマンド入力後、映像に反映されるまでウエイト)
+#・遮光時の輝度を未確認箇所に輝度確認追加
+#　(照明が消灯しない事例があったため追加。消灯しない場合、検査NGとなる。)
+#VER03(2018/3/16)
+#・LCLA-16M-DI・LCLA-08M-DI の共通箇所をsubscriptに移動
+#・平均輝度の規格を変更(実測に合わせて変更)
+#　　-クランプレベル検査（8/10/12bit）1
+#　　-クランプレベル検査（8/10/12bit）2
+#　　-SN検査（8/10/12bit）FFC補正あり_遮光1
+#　　-SN検査（8/10/12bit）FFC補正あり_遮光2
+#・8Kモードの「FFC調整・保存」の露光時間を変更(20us⇒18us)
+#　　(16Kモードより、8Kモードの方が感度が高いため同一露光時間ではFFC補正が正常に掛けられない)
+#・8Kモードの「SN検査」の露光時間を変更(80us⇒72us)
+#　　(FFC補正時の露光時間変更に合わせて変更)
+#・ゴミ検査の輝度規格を変更(160～240⇒180-220)
+#　　(変更前の上限値：240階調では、センタの画素が飽和し、ゴミ検査が正常に行えないため)
+#VER04(2018/3/27)
+#・Script誤記修正(検査には影響ない)
+#VER05(2018/10/29)
+#・下記SUBSCRIPT修正
+#　ELLITO-CL_08K_INS.txt(VER=000⇒001)
+#　ELLITO-CL_16K_INS.txt(VER=000⇒001)
+
+DeviceModelName = LCLA-08M-DI
+
+#横軸を500画素刻みにする
+RuledLine=500
+
+NGEndProcessRegister(aDevice.Stop)
+NGEndProcessRegister(Sleep(500))
+NGEndProcessRegister(aDevice.Close)
+NGEndProcessRegister(Sleep(500))
+NGEndProcessRegister(delete aDevice)
+NGEndProcessRegister(print([End]))
+NGEndProcessRegister(print(TIMESTAMP))
+NGEndProcessRegister(aTexioControl.MainPowerOff)
+
+WriteScriptLogMode=1
+
+print(TIMESTAMP)
+
+print=[-------------------スクリプトのバージョン]
+print(SCRIPT_VER=005)
+
+print=[-------------------機種名]
+print(ProductNo=LCLA-08M-DI)
+
+print=[-------------------検査ソフトバージョン]
+Print(SOFTWAREVERSION)
+
+print=[-------------------カメラシリアル入力]
+#例：16HA816_111111
+print([InputSerial])
+StInputSerialDlg aInputSerial
+#基準機シリアルチェック 0:チェックしない 1:ある場合NG(検査用) 2:ない場合NG(基準機用)
+aInputSerial.SetCheckMode=1
+aInputSerial.SetSerialNumberFile=Standard.txt
+aInputSerial.Execute
+delete aInputSerial
+
+
+##############################################################出荷検査除外
+CommentStart=2
+print=[-------------------センサシリアル入力]
+print([InputSensorSerial])
+StInputSensorSerialDlg aInputSensorSerialDlg
+aInputSensorSerialDlg.Execute
+delete aInputSensorSerialDlg
+##############################################################
+CommentEnd=2
+
+
+#テクシオ電源
+StTexioControl aTexioControl
+aTexioControl.MainPowerOn
+aTexioControl.SetChannel(1)
+aTexioControl.SetVoltage(24.0)
+
+#治具定義(ラズパイ治具)
+StTerminal aTerminal(TERM1)
+
+#カメラリンクカメラ接続
+print([Device])
+StDeviceMultiCam aDevice
+aDevice.SetBoardID=Full
+aDevice.SetBoardTopology=MONO_DECA
+aDevice.SetConnect=M
+aDevice.CameraFile(LCLA-08M_10TAP_sync10k_exp10us.cam)
+aDevice.Open
+
+StSerialComm aSerialComm
+aDevice.SetSerialComm(aSerialComm)
+aSerialComm.SetBaudRate(9600)
+aSerialComm.SetDelayTime(0)
+
+#繰り返し通信定義
+StCheckControlRetry aControlRetry(aDevice)
+#ポーリング
+#ビジー状態：CAN(0x18) 2回送信
+#アイドル状態：ACK(0x06) 2回送信
+#送受信間隔時間=100ms
+aControlRetry.SetTimer=100
+#送受信回数=300回=30s
+aControlRetry.SetRetry=300
+aControlRetry.SetBusyCommand=0x02,"POL",0x0d
+aControlRetry.SetBusyStatus=0x06,0x06
+
+aTexioControl.PowerOn
+#電源起動直後は通信が正常に行えないため、
+#正常動作開始時間：12.2s(実験報告書：17E004参照)待つ
+Sleep(13000)
+#ポーリング
+aControlRetry.SetRetry=300
+aControlRetry.SendData()
+aControlRetry.Execute
+aControlRetry.SetRetry=0
+
+#カメラシリアルライト等で必要
+aDevice.SetCheckControlRetry(aControlRetry)
+
+

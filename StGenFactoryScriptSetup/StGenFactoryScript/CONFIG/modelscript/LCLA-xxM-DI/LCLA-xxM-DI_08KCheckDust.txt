@@ -1,0 +1,51 @@
+aDevice.Close
+Sleep(500)
+aDevice.SetBoardID=Full
+aDevice.SetBoardTopology=MONO_DECA
+aDevice.SetConnect=M
+aDevice.CameraFile(LCLA-08M_10TAP_sync10k_exp10us.cam)
+aDevice.Open
+
+print=[-------------------ゴミ検査08K_START]
+aDevice.Start
+Sleep(1000)
+
+print(TIMESTAMP)
+
+#ﾒｯｾｰｼﾞ追加
+StImageMessageDlg aImageMessage
+aImageMessage.SetImageSizeX(0)
+aImageMessage.SetImageSizeY(0)
+aImageMessage.SetMessageSizeX(500)
+aImageMessage.SetMessageSizeY(200)
+
+aImageMessage.SetMessage(①ゴミ検査治具の照明を写して下さい。\n \n②右側に「照明を暗くして下さい。」または「照明を明るくして下さい。」の\n　表示が出ないように明るさを200階調付近に合わせて下さい。\n\n③画面上に除去可能なゴミがなくなるまでゴミ除去作業を行って下さい。\n\n④「Start」ボタンを押して下さい。\n\n⑤ゴミ検査治具とカメラを固定した状態で上下に振って下さい。\n\n⑥「OK」が表示されたら「Stop」ボタン⇒「End」ボタンを押し検査を終了して下さい。\n　「NG」が表示されたら③に戻り、ゴミの除去を行って下さい。\n　「OK」にならないときは「Stop」ボタン⇒「End」ボタンを押し検査を終了して下さい。)
+
+aImageMessage.SetWindowPosX(360)
+aImageMessage.SetWindowPosY(100)
+aImageMessage.open
+
+print=[ゴミ検査2]
+StCheckDustDlg aCheckDust(aDevice)
+aCheckDust.SetCheckMode(2)
+aCheckDust.SetContinuousCountMax(3)
+aCheckDust.SetStartLine(0)
+aCheckDust.SetEndLine(8191)
+aCheckDust.SetWidthLines(50)
+aCheckDust.SetDifferenceMax(3.6)
+aCheckDust.SetSeparate(1)
+aCheckDust.SetAverageLowLevel(180)
+aCheckDust.SetAverageHighLevel(220)
+aCheckDust.SetBMPFileName(DUST1_08K_1)
+aCheckDust.SetCSVFileName(DUST1_08K_1)
+aCheckDust.Execute
+delete aCheckDust
+
+aImageMessage.close
+delete aImageMessage
+
+print(TIMESTAMP)
+
+aDevice.Stop
+Sleep(500)
+print=[-------------------ゴミ検査08K_END]

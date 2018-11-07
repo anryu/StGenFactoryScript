@@ -1,0 +1,87 @@
+#変更履歴
+#VER01(2018/4/25)
+#・コメント修正(集計ソフトで集計可能にするため)
+#・LVDS調整時間を変更(5分⇒4分20s、実測に合わせて変更)
+#・[ゴミ検査1]の規格を変更(LVDS調整未調整に起因したノイズのため規格を緩和)
+#VER02(2018/5/14)
+#・FPGA Rev変更(設計変更：18C054)
+#VER03(2018/8/8)
+#・FPGA Rev変更(設計変更：18C079)
+#・光源調整の前にスリープ設ける(2s)(後段の光量調整エラー対策)
+#VER04(2018/10/29)
+#・下記SUBSCRIPT修正
+#　ELLITO-CX_16K_INS.txt(VER=002⇒003)
+#　ELLITO-CX_08K_INS.txt(VER=002⇒003)
+
+DeviceModelName = LCXB-16M-DI
+#横軸を500画素刻みにする
+RuledLine=500
+
+NGEndProcessRegister(aDevice.Stop)
+NGEndProcessRegister(Sleep(500))
+NGEndProcessRegister(aDevice.Close)
+NGEndProcessRegister(Sleep(500))
+NGEndProcessRegister(delete aDevice)
+NGEndProcessRegister(print([End]))
+NGEndProcessRegister(print(TIMESTAMP))
+NGEndProcessRegister(aTexioControl.MainPowerOff)
+
+WriteScriptLogMode=1
+
+print(TIMESTAMP)
+
+print=[-------------------スクリプトのバージョン]
+print(SCRIPT_VER=004)
+
+print=[-------------------機種名]
+print(ProductNo=LCXB-16M-DI)
+
+print=[-------------------検査ソフトバージョン]
+Print(SOFTWAREVERSION)
+
+print=[-------------------カメラシリアル入力]
+#例：16HA816_111111
+print([InputSerial])
+StInputSerialDlg aInputSerial
+#基準機シリアルチェック 0:チェックしない 1:ある場合NG(検査用) 2:ない場合NG(基準機用)
+aInputSerial.SetCheckMode=1
+aInputSerial.SetSerialNumberFile=Standard.txt
+aInputSerial.Execute
+delete aInputSerial
+
+
+##############################################################出荷検査除外
+CommentStart=2
+print=[-------------------センサシリアル入力]
+print([InputSensorSerial])
+StInputSensorSerialDlg aInputSensorSerialDlg
+aInputSensorSerialDlg.Execute
+delete aInputSensorSerialDlg
+##############################################################
+CommentEnd=2
+
+
+#治具定義(ラズパイ治具)
+StTerminal aTerminal(TERM1)
+
+StInterfaceGenICam aInterface(PC1633 - Coaxlink Quad G3 (1-camera, line-scan))
+aInterface.CxpPoCxpHostConnectionSelector=A
+aInterface.CxpPoCxpTurnOff
+delete aInterface
+
+#テクシオ電源
+StTexioControl aTexioControl
+aTexioControl.MainPowerOn
+aTexioControl.SetChannel(1)
+aTexioControl.SetVoltage(24.0)
+aTexioControl.SetCurrentLimit(1.0)
+aTexioControl.PowerOn
+
+Sleep(30000)
+StDeviceGenICam aDevice
+#Device Model Name
+aDevice.Open()
+aDevice.Endian=Big
+aDevice.LinkConfig=LINK4SPEED6250
+aDevice.DisplayHeight=512
+aDevice.SetBufferCount=100

@@ -1,0 +1,197 @@
+
+
+
+
+
+print=#############################################################################################START:受け入れ検査では除外する箇所
+CommentStart=6
+print=[------------------------------------------------------隠しコマンドの保存_START]
+print=[隠しコマンドの保存]
+
+aControlRetry.SetRetry=100
+
+aControlRetry.SetTimer=100
+aControlRetry.SetBusyCommand=02 00 AC 01 00 03
+aControlRetry.SetBusyStatus=02 01 00 03
+
+#ハードウェア・バージョン⇒検査工程で値を書き込む
+aControlRetry.SendData=aHardVerSet
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#MDAA_TARGET : DAC_AUTO_TARGET datg=6
+aControlRetry.SendData=02 02 98 01 06 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#opckの代わり
+aControlRetry.SendData=aOPCKSet
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ADCゲインに適切な値を入れる。[6Ch:20h] gcdt=32
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 6C 01 20 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#CMOSレジスタ値を入れる。(Default=0x46=8'b0100_0110) [bit7-5:nBANDGAP_SW] [bit4-3:Not Used] [bit2:nWHITE_CLAMPING] [bit1:nPIXCLK_OUT_ENB] [bit0:nENB_CTRL_VR]
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 CC 01 46 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#cEND_ADC(9bit:10h(16) 10bit:20h(32) 11bit:40h(64) 12bit:80h(128)=>12bit:80h(128))
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 C6 01 20 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#L2L_ON lnmd=0(L2L_ON)
+aControlRetry.SendData=02 02 A3 01 00 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#L2Lの対象ピクセルをOpticalにする。
+aControlRetry.SendData=02 02 C8 01 01 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#Load pulse内部生成をOFF。
+aControlRetry.SendData=02 02 D5 01 01 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+
+print(Check=OK)
+print=[------------------------------------------------------隠しコマンドの保存_END]
+
+
+print=[------------------------------------------------------ユーザコマンドのデフォルト値を保存_START]
+print=[ユーザコマンドのデフォルト値を保存]
+
+
+# Width aLineEnd
+aDevice.Width=aLineEnd
+
+# Height 600
+aDevice.Height=600
+
+aDevice.PixelFormat=Mono8
+
+aDevice.FFCMode=On
+
+aDevice.TargetForFFCGain=200
+
+aDevice.TargetForFFCOffset=3
+
+aDevice.SettingValueSelection=Gain
+
+aDevice.SettingValueTypeSelector=Upper
+
+# aDevice.AcquisitionLineRate=aLineRateM8
+
+StIF aIF
+aIF.Start(aBrandName==1)
+	aDevice.AcquisitionLineRateAbs=aLineRateM8
+aIF.Else
+	aDevice.AcquisitionLineRate=aLineRateM8
+aIF.End
+delete aIF
+
+aDevice.ExposureMode=aExposureModeM8
+aDevice.ExposureTime=aExposureTimeM8
+
+aDevice.AcquisitionBurstFrameCount=1
+
+aDevice.RotaryEncoderDivider=1
+
+aDevice.StrobeSignalOnTime=1
+
+aDevice.DataStoreMode=DefaultAccessArea
+
+#IO0 TermOn
+aDevice.LineSelector=Line0
+aDevice.LineFormat=TermOn
+
+#IO1 TermOn
+aDevice.LineSelector=Line1
+aDevice.LineFormat=TermOn
+
+#IO2 TermOn
+aDevice.LineSelector=Line2
+aDevice.LineFormat=TermOn
+
+
+#ii.リセット状態をUSER->REGに反映する。[E2h:02h] 
+# 00
+#aControlRetry.SendData=02 02 E2 01 02 03
+#aControlRetry.ReturnData=02 01 C4 03
+#aControlRetry.Execute
+
+#inmd
+aControlRetry.SendData=02 00 10 01 00 03
+aControlRetry.ReturnData=02 01 00 03
+aControlRetry.Execute
+
+#svpass=213
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 E2 01 04 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#cmsv
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 E2 01 01 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+# GenIcamコマンドでもsaveしないとプレオラIPのデフォルト値が反映されない
+aDevice.UserSetSelector=UserSet1
+aDevice.UserSetSave
+Sleep(2000)
+
+#aDevice.UserSetSelector=UserSet1
+#aDevice.UserSetSave
+
+print(TIMESTAMP)
+
+aDevice.Disconnect
+
+Sleep(2000)
+
+print=[------------------------------------------------------電源ONOFF_START]
+aTexioControl.SetChannel=2
+aTexioControl.SetVoltage(12.0)
+aTexioControl.PowerOff
+Sleep(2000)
+aTexioControl.PowerOn
+Sleep(1000)
+aTexioControl.PowerOff
+Sleep(2000)
+aTexioControl.PowerOn
+Sleep(1000)
+
+aDevice.Connect
+
+aDevice.GevSCPD=150
+
+# Busy
+aControlRetry.SetTimer=100
+aControlRetry.SetBusyCommand=02 00 AC 01 00 03
+aControlRetry.SetBusyStatus=02 01 00 03
+
+print(Check=OK)
+
+print=[------------------------------------------------------ユーザコマンドのデフォルト値を保存_END]
+print=#############################################################################################END:受け入れ検査では除外する箇所
+CommentEnd=6
+
+
+
+
+
+
+
+
+

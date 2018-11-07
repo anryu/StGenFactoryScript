@@ -1,0 +1,374 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{943CAD76-48A7-469F-B652-6BAD0058FBEC}</ProjectGuid>
+    <RootNamespace>StGenFactoryScript</RootNamespace>
+    <Keyword>MFCProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(PUREGEV_ROOT)Includes;C:\Program Files\Euresys\MultiCam\Include;..\libxml2-2.7.8.win32\include;..\libiconv\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\Debug;$(PUREGEV_ROOT)Libraries;C:\Program Files %28x86%29\Euresys\MultiCam\Lib;C:\Program Files\GenICam_v2_4\library\CPP\lib\Win32_i86;..\libxml2-2.7.8.win32\lib;C:\GenICam_Development\GenICam_V3_0_2-Win32_i86_VS120-Release-Development\library\CPP\lib\Win32_i86</AdditionalLibraryDirectories>
+      <AdditionalDependencies>StGenICamLib.lib;StGenUtilsLib.lib;MultiCam.lib;winhttp.lib;libxml2.lib</AdditionalDependencies>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0411</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(PUREGEV_ROOT)Includes;C:\Program Files\Euresys\MultiCam\Include;..\libxml2-2.7.8.win32\include;..\libiconv\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\Debug;$(PUREGEV_ROOT)Libraries;C:\Program Files %28x86%29\Euresys\MultiCam\Lib;C:\Program Files\GenICam_v2_4\library\CPP\lib\Win32_i86;..\libxml2-2.7.8.win32\lib;C:\GenICam_Development\GenICam_V3_0_2-Win32_i86_VS120-Release-Development\library\CPP\lib\Win32_i86</AdditionalLibraryDirectories>
+      <AdditionalDependencies>StGenICamLib.lib;StGenUtilsLib.lib;MultiCam.lib;winhttp.lib;libxml2.lib</AdditionalDependencies>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0411</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(PUREGEV_ROOT)Includes;C:\Program Files\Euresys\MultiCam\Include;..\libxml2-2.7.8.win32\include;..\libiconv\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>..\Release;$(PUREGEV_ROOT)Libraries;C:\Program Files %28x86%29\Euresys\MultiCam\Lib;C:\Program Files\GenICam_v2_4\library\CPP\lib\Win32_i86;..\libxml2-2.7.8.win32\lib;C:\GenICam_Development\GenICam_V3_0_2-Win32_i86_VS120-Release-Development\library\CPP\lib\Win32_i86</AdditionalLibraryDirectories>
+      <AdditionalDependencies>StGenICamLib.lib;StGenUtilsLib.lib;MultiCam.lib;winhttp.lib;libxml2.lib</AdditionalDependencies>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0411</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(PUREGEV_ROOT)Includes;C:\Program Files\Euresys\MultiCam\Include;..\libxml2-2.7.8.win32\include;..\libiconv\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>..\Release;$(PUREGEV_ROOT)Libraries;C:\Program Files %28x86%29\Euresys\MultiCam\Lib;C:\Program Files\GenICam_v2_4\library\CPP\lib\Win32_i86;..\libxml2-2.7.8.win32\lib;C:\GenICam_Development\GenICam_V3_0_2-Win32_i86_VS120-Release-Development\library\CPP\lib\Win32_i86</AdditionalLibraryDirectories>
+      <AdditionalDependencies>StGenICamLib.lib;StGenUtilsLib.lib;MultiCam.lib;winhttp.lib;libxml2.lib</AdditionalDependencies>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0411</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+    <None Include="res\StGenFactoryScript.ico" />
+    <None Include="res\StGenFactoryScript.rc2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CallbackThread.h" />
+    <ClInclude Include="CaptureThread.h" />
+    <ClInclude Include="CheckListBoxForCheck.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="ControlDlg.h" />
+    <ClInclude Include="CustomDialogEx.h" />
+    <ClInclude Include="CVersion.h" />
+    <ClInclude Include="ErrorListDlg.h" />
+    <ClInclude Include="HookMsgBox.h" />
+    <ClInclude Include="MessageDlg.h" />
+    <ClInclude Include="PowerCtrl.h" />
+    <ClInclude Include="Preview.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="ResourceString.h" />
+    <ClInclude Include="RS232C.h" />
+    <ClInclude Include="RS232C_DSP.h" />
+    <ClInclude Include="SelComPortDlg.h" />
+    <ClInclude Include="SettingLightChannelDlg.h" />
+    <ClInclude Include="SettingTerminalDlg.h" />
+    <ClInclude Include="StBufferInfo.h" />
+    <ClInclude Include="StCameraControlDlg.h" />
+    <ClInclude Include="StCheckAdjustGainDlg.h" />
+    <ClInclude Include="StCheckAdjustLinetoline.h" />
+    <ClInclude Include="StCheckAdjustLinetolineDlg.h" />
+    <ClInclude Include="StCheckAdjustOffset.h" />
+    <ClInclude Include="StCheckAdjustVolumeDlg.h" />
+    <ClInclude Include="StCheckBase.h" />
+    <ClInclude Include="StCheckBaudrate.h" />
+    <ClInclude Include="StCheckCommon.h" />
+    <ClInclude Include="StCheckControlRetry.h" />
+    <ClInclude Include="StCheckCSVDust.h" />
+    <ClInclude Include="StCheckDataLose.h" />
+    <ClInclude Include="StCheckDataLoseDlg.h" />
+    <ClInclude Include="StCheckDustDlg.h" />
+    <ClInclude Include="StCheckEffectivePixel.h" />
+    <ClInclude Include="StCheckEllitoLVDS.h" />
+    <ClInclude Include="StCheckEllitoLVDSDlg.h" />
+    <ClInclude Include="StCheckFramerate.h" />
+    <ClInclude Include="StCheckIO.h" />
+    <ClInclude Include="StCheckMessage.h" />
+    <ClInclude Include="StCheckPixelCorrect.h" />
+    <ClInclude Include="StCheckPixelDefect.h" />
+    <ClInclude Include="StCheckPower.h" />
+    <ClInclude Include="StCheckSerialVersion.h" />
+    <ClInclude Include="StCheckSN.h" />
+    <ClInclude Include="StCheckSNDlg.h" />
+    <ClInclude Include="StCheckSpBehavior.h" />
+    <ClInclude Include="StCheckSwitchDlg.h" />
+    <ClInclude Include="StCheckTemperature.h" />
+    <ClInclude Include="StCheckTestPattern.h" />
+    <ClInclude Include="StCommon.h" />
+    <ClInclude Include="StCommonBase.h" />
+    <ClInclude Include="StControl.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="StDeviceBase.h" />
+    <ClInclude Include="StDeviceEBus.h" />
+    <ClInclude Include="StDeviceGenICam.h" />
+    <ClInclude Include="StDeviceMultiCam.h" />
+    <ClInclude Include="StFileOperation.h" />
+    <ClInclude Include="StGenFactoryScript.h" />
+    <ClInclude Include="StGenFactoryScriptDlg.h" />
+    <ClInclude Include="StHttpControlDlg.h" />
+    <ClInclude Include="StIF.h" />
+    <ClInclude Include="StImageMessageDlg.h" />
+    <ClInclude Include="StInputSensorSerialDlg.h" />
+    <ClInclude Include="StInputSensorVersionDlg.h" />
+    <ClInclude Include="StInputSerialDlg.h" />
+    <ClInclude Include="StInspectMain.h" />
+    <ClInclude Include="StInterfaceGenICam.h" />
+    <ClInclude Include="StLightControl.h" />
+    <ClInclude Include="StLightControlDlg.h" />
+    <ClInclude Include="StLoop.h" />
+    <ClInclude Include="StPTouch.h" />
+    <ClInclude Include="StSerialComm.h" />
+    <ClInclude Include="StStruct.h" />
+    <ClInclude Include="StTerminal.h" />
+    <ClInclude Include="StTexioControl.h" />
+    <ClInclude Include="StValue.h" />
+    <ClInclude Include="StWriteFileData.h" />
+    <ClInclude Include="StWriteSerial.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="Tmi_Api.h" />
+    <ClInclude Include="WaveformDlg.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CallbackThread.cpp" />
+    <ClCompile Include="CaptureThread.cpp" />
+    <ClCompile Include="CheckListBoxForCheck.cpp" />
+    <ClCompile Include="Common.cpp" />
+    <ClCompile Include="ControlDlg.cpp" />
+    <ClCompile Include="CustomDialogEx.cpp" />
+    <ClCompile Include="CVersion.cpp" />
+    <ClCompile Include="ErrorListDlg.cpp" />
+    <ClCompile Include="HookMsgBox.cpp" />
+    <ClCompile Include="MessageDlg.cpp" />
+    <ClCompile Include="PowerCtrl.cpp" />
+    <ClCompile Include="Preview.cpp" />
+    <ClCompile Include="RS232C.cpp" />
+    <ClCompile Include="RS232C_DSP.cpp" />
+    <ClCompile Include="SelComPortDlg.cpp" />
+    <ClCompile Include="SettingLightChannelDlg.cpp" />
+    <ClCompile Include="SettingTerminalDlg.cpp" />
+    <ClCompile Include="StBufferInfo.cpp" />
+    <ClCompile Include="StCameraControlDlg.cpp" />
+    <ClCompile Include="StCheckAdjustGainDlg.cpp" />
+    <ClCompile Include="StCheckAdjustLinetoline.cpp" />
+    <ClCompile Include="StCheckAdjustLinetolineDlg.cpp" />
+    <ClCompile Include="StCheckAdjustOffset.cpp" />
+    <ClCompile Include="StCheckAdjustVolumeDlg.cpp" />
+    <ClCompile Include="StCheckBase.cpp" />
+    <ClCompile Include="StCheckBaudrate.cpp" />
+    <ClCompile Include="StCheckCommon.cpp" />
+    <ClCompile Include="StCheckControlRetry.cpp" />
+    <ClCompile Include="StCheckCSVDust.cpp" />
+    <ClCompile Include="StCheckDataLose.cpp" />
+    <ClCompile Include="StCheckDataLoseDlg.cpp" />
+    <ClCompile Include="StCheckDustDlg.cpp" />
+    <ClCompile Include="StCheckEffectivePixel.cpp" />
+    <ClCompile Include="StCheckEllitoLVDS.cpp" />
+    <ClCompile Include="StCheckEllitoLVDSDlg.cpp" />
+    <ClCompile Include="StCheckFramerate.cpp" />
+    <ClCompile Include="StCheckIO.cpp" />
+    <ClCompile Include="StCheckMessage.cpp" />
+    <ClCompile Include="StCheckPixelCorrect.cpp" />
+    <ClCompile Include="StCheckPixelDefect.cpp" />
+    <ClCompile Include="StCheckPower.cpp" />
+    <ClCompile Include="StCheckSerialVersion.cpp" />
+    <ClCompile Include="StCheckSN.cpp" />
+    <ClCompile Include="StCheckSNDlg.cpp" />
+    <ClCompile Include="StCheckSpBehavior.cpp" />
+    <ClCompile Include="StCheckSwitchDlg.cpp" />
+    <ClCompile Include="StCheckTemperature.cpp" />
+    <ClCompile Include="StCheckTestPattern.cpp" />
+    <ClCompile Include="StCommon.cpp" />
+    <ClCompile Include="StCommonBase.cpp" />
+    <ClCompile Include="StControl.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="StDeviceBase.cpp" />
+    <ClCompile Include="StDeviceEBus.cpp" />
+    <ClCompile Include="StDeviceGenICam.cpp" />
+    <ClCompile Include="StDeviceMultiCam.cpp" />
+    <ClCompile Include="StFileOperation.cpp" />
+    <ClCompile Include="StGenFactoryScript.cpp" />
+    <ClCompile Include="StGenFactoryScriptDlg.cpp" />
+    <ClCompile Include="StHttpControlDlg.cpp" />
+    <ClCompile Include="StIF.cpp" />
+    <ClCompile Include="StImageMessageDlg.cpp" />
+    <ClCompile Include="StInputSensorSerialDlg.cpp" />
+    <ClCompile Include="StInputSensorVersionDlg.cpp" />
+    <ClCompile Include="StInputSerialDlg.cpp" />
+    <ClCompile Include="StInspectMain.cpp" />
+    <ClCompile Include="StInterfaceGenICam.cpp" />
+    <ClCompile Include="StLightControl.cpp" />
+    <ClCompile Include="StLightControlDlg.cpp" />
+    <ClCompile Include="StLoop.cpp" />
+    <ClCompile Include="StPTouch.cpp" />
+    <ClCompile Include="StSerialComm.cpp" />
+    <ClCompile Include="StTerminal.cpp" />
+    <ClCompile Include="StTexioControl.cpp" />
+    <ClCompile Include="StValue.cpp" />
+    <ClCompile Include="StWriteFileData.cpp" />
+    <ClCompile Include="StWriteSerial.cpp" />
+    <ClCompile Include="tmi_api.cpp" />
+    <ClCompile Include="WaveformDlg.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="StGenFactoryScript.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="StGenFactoryScript.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

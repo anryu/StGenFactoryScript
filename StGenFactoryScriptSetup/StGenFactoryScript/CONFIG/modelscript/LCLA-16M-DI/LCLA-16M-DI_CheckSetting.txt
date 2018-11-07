@@ -1,0 +1,115 @@
+print=[-------------------出荷状態確認_START]
+print=[出荷状態確認]
+
+aTexioControl.PowerOff
+Sleep(5000)
+aTexioControl.PowerOn
+Sleep(13000)
+#ポーリング
+aControlRetry.SetRetry=300
+aControlRetry.SendData()
+aControlRetry.Execute
+aControlRetry.SetRetry=0
+
+#シリアルバージョン検査
+StCheckSerialVersion aCheckSerialVersion(aDevice)
+aCheckSerialVersion.AddSensorSerialETX(-SI)
+aCheckSerialVersion.AddSensorSerialETX(-DI)
+aCheckSerialVersion.SetEllitoSerialNumberFilename(EllitoSerialNumber.txt)
+#タカノモード
+aCheckSerialVersion.SetMode(2)
+aCheckSerialVersion.Execute
+delete aCheckSerialVersion
+
+# LVAL幅設定:16384画素
+aControlRetry.ReturnData(0x0d,0x0a,"0",0x0d,0x0a,"USER>")
+aControlRetry.SendData(0x02,"RLV",0x0d)
+aControlRetry.Execute
+
+#トリガモード設定:フリーラン
+aControlRetry.ReturnData(0x0d,0x0a,"0",0x0d,0x0a,"USER>")
+aControlRetry.SendData(0x02,"RTM",0x0d)
+aControlRetry.Execute
+
+#露光モード設定:フル露光
+aControlRetry.ReturnData(0x0d,0x0a,"1",0x0d,0x0a,"USER>")
+aControlRetry.SendData(0x02,"REM",0x0d)
+aControlRetry.Execute
+
+#トリガアクティブパルス設定:ポジティブ
+aControlRetry.ReturnData(0x0d,0x0a,"0",0x0d,0x0a,"USER>")
+aControlRetry.SendData(0x02,"RTP",0x0d)
+aControlRetry.Execute
+
+#ラインレート設定:40kHz
+aControlRetry.ReturnData(0x0d,0x0a,"40000",0x0d,0x0a,"USER>")
+aControlRetry.SendData(0x02,"RSF",0x0d)
+aControlRetry.Execute
+
+#露光時間設定:18.7us
+aControlRetry.ReturnData(0x0d,0x0a,"18660",0x0d,0x0a,"USER>")
+aControlRetry.SendData(0x02,"RET",0x0d)
+aControlRetry.Execute
+
+#アナログゲイン:1倍
+aControlRetry.ReturnData(0x0d,0x0a,"0",0x0d,0x0a,"USER>")
+aControlRetry.SendData(0x02,"RAG",0x0d)
+aControlRetry.Execute
+
+# DSNU有効/PRNU有効/HFPN有効
+aControlRetry.ReturnData(0x0d,0x0a,"1 1 1 0 0",0x0d,0x0a,"USER>")
+aControlRetry.SendData(0x02,"RFFM",0x0d)
+aControlRetry.Execute
+
+# 左右反転設定:通常
+aControlRetry.ReturnData(0x0d,0x0a,"0",0x0d,0x0a,"USER>")
+aControlRetry.SendData(0x02,"RMM",0x0d)
+aControlRetry.Execute
+
+# デジタルオフセット:0
+aControlRetry.ReturnData(0x0d,0x0a,"0",0x0d,0x0a,"USER>")
+aControlRetry.SendData(0x02,"RSB",0x0d)
+aControlRetry.Execute
+
+# デジタルゲイン:1倍
+aControlRetry.ReturnData(0x0d,0x0a,"10000",0x0d,0x0a,"USER>")
+aControlRetry.SendData(0x02,"RSG",0x0d)
+aControlRetry.Execute
+
+# テストパターン:カメラ画像
+aControlRetry.ReturnData(0x0d,0x0a,"0",0x0d,0x0a,"USER>")
+aControlRetry.SendData(0x02,"RVM",0x0d)
+aControlRetry.Execute
+
+# 垂直ピクセルサイズ設定:長方形モード
+aControlRetry.ReturnData(0x0d,0x0a,"0",0x0d,0x0a,"USER>")
+aControlRetry.SendData(0x02,"RVP",0x0d)
+aControlRetry.Execute
+
+# ライン間引き設定:間引きなし
+aControlRetry.ReturnData(0x0d,0x0a,"0",0x0d,0x0a,"USER>")
+aControlRetry.SendData(0x02,"RLM",0x0d)
+aControlRetry.Execute
+
+# グレイフィルタ設定:PASS
+aControlRetry.ReturnData(0x0d,0x0a,"0",0x0d,0x0a,"USER>")
+aControlRetry.SendData(0x02,"RGF",0x0d)
+aControlRetry.Execute
+
+# 出力BIT設定:8bit
+aControlRetry.ReturnData(0x0d,0x0a,"0",0x0d,0x0a,"USER>")
+aControlRetry.SendData(0x02,"ROB",0x0d)
+aControlRetry.Execute
+
+# 出力TAP設定:10TAP
+aControlRetry.ReturnData(0x0d,0x0a,"4",0x0d,0x0a,"USER>")
+aControlRetry.SendData(0x02,"ROT",0x0d)
+aControlRetry.Execute
+
+# ステートマシン設定
+aControlRetry.ReturnData(0x0d,0x0a,"4030201",0x0d,0x0a,"USER>")
+aControlRetry.SendData(0x02,"RSM",0x0d)
+aControlRetry.Execute
+
+print(Check=OK)
+print=[-------------------出荷状態確認_END]

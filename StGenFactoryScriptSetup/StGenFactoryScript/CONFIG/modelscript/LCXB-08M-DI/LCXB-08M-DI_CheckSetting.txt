@@ -1,0 +1,119 @@
+print=[-------------------出荷状態確認_START]
+print=[出荷状態確認]
+
+aDevice.Close
+Sleep(500)
+delete aDevice
+
+aTexioControl.PowerOff
+Sleep(1000)
+aTexioControl.PowerOn
+Sleep(30000)
+
+#カメラ接続
+StDeviceGenICam aDevice
+aDevice.Open(ELLITO 8K)
+aDevice.Endian=Big
+aDevice.LinkConfig=LINK4SPEED6250
+aDevice.DisplayHeight=512
+aDevice.SetBufferCount=100
+
+#シリアルバージョン検査
+StCheckSerialVersion aCheckSerialVersion(aDevice)
+aCheckSerialVersion.AddSensorSerialETX(-SI)
+aCheckSerialVersion.AddSensorSerialETX(-DI)
+aCheckSerialVersion.SetEllitoSerialNumberFilename(EllitoSerialNumber.txt)
+#タカノモード
+aCheckSerialVersion.SetMode(2)
+aCheckSerialVersion.SetAddress(0xB000)
+aCheckSerialVersion.SetSelectorAddress(0xafe0)
+aCheckSerialVersion.SetDeviceSerialNumberSelectorValue(12)
+aCheckSerialVersion.SetSensorSerialNumberSelectorValue(11)
+aCheckSerialVersion.SetSensorSerialNumberLength(24)
+aCheckSerialVersion.Execute
+delete aCheckSerialVersion
+
+# LVAL幅設定:8192画素
+aDevice.ReadCheckData(1)
+aDevice.ReadExecute(0xA154)
+
+# テストPT疑似LVAL幅選択:8K
+aDevice.ReadCheckData(1)
+aDevice.ReadExecute(0xA308)
+
+# 11bit出力
+aDevice.ReadCheckData(0)
+aDevice.ReadExecute(0xA948)
+
+# レジスタセット選択: 標準レジスタ
+aDevice.ReadCheckData(255)
+aDevice.ReadExecute(0xA714)
+
+#トリガモード設定:フリーラン
+aDevice.ReadCheckData(0)
+aDevice.ReadExecute(0xA100)
+
+#露光モード設定:フル露光
+aDevice.ReadCheckData(0)
+aDevice.ReadExecute(0xA104)
+
+#トリガアクティブパルス設定:ポジティブ
+aDevice.ReadCheckData(0)
+aDevice.ReadExecute(0xA108)
+
+#ラインレート設定:40kHz(12.8ns単位)
+aDevice.ReadCheckData(1953)
+aDevice.ReadExecute(0xA110)
+
+#露光時間設定:18.7us(12.8ns単位)
+aDevice.ReadCheckData(1461)
+aDevice.ReadExecute(0xA120)
+
+#アナログゲイン:1倍
+aDevice.ReadCheckData(0)
+aDevice.ReadExecute(0xA130)
+
+# DSNU有効/PRNU有効/HFPN有効
+aDevice.ReadCheckData(1)
+aDevice.ReadExecute(0xA200)
+aDevice.ReadExecute(0xA204)
+aDevice.ReadExecute(0xA208)
+
+# シェーディング無効
+aDevice.ReadCheckData(0)
+aDevice.ReadExecute(0xA20C)
+
+# 左右反転設定:通常
+aDevice.ReadCheckData(0)
+aDevice.ReadExecute(0xA220)
+
+# デジタルオフセット:0
+aDevice.ReadCheckData(0)
+aDevice.ReadExecute(0xA280)
+
+# デジタルゲイン:1倍
+aDevice.ReadCheckData(8192)
+aDevice.ReadExecute(0xA270)
+
+# テストパターン:カメラ画像
+aDevice.ReadCheckData(0)
+aDevice.ReadExecute(0xA30C)
+
+# 垂直ピクセルサイズ設定:正方形モード
+aDevice.ReadCheckData(1)
+aDevice.ReadExecute(0xA310)
+
+# ライン間引き設定:間引きなし
+aDevice.ReadCheckData(0)
+aDevice.ReadExecute(0xA320)
+
+# グレイフィルタ設定:PASS
+aDevice.ReadCheckData(0)
+aDevice.ReadExecute(0xA330)
+
+# 出力BIT設定:8bit
+aDevice.ReadCheckData(0)
+aDevice.ReadExecute(0xA348)
+
+print(Check=OK)
+print=[-------------------出荷状態確認_END]

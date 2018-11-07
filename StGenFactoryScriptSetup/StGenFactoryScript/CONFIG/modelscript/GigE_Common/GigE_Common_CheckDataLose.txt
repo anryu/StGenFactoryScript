@@ -1,0 +1,16 @@
+aDevice.Start
+
+print=[------------------------------------------------------デジタルデータ取りこぼし検出（8bit）1_START]
+print=[デジタルデータ取りこぼし検出（8bit）1]
+
+StCheckDataLose aCheckDataLose(aDevice)
+aCheckDataLose.SetStartLine(aLineStartm)
+aCheckDataLose.SetEndLine(aLineEndm)
+aCheckDataLose.SetDifferenceMax(20)
+aCheckDataLose.SetCSVFileName(DigitalDataError_8bit_9bitMODE.csv)
+aCheckDataLose.Execute
+delete aCheckDataLose
+
+print=[------------------------------------------------------デジタルデータ取りこぼし検出（8bit）1_END]
+
+aDevice.Stop

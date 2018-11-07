@@ -1,0 +1,40 @@
+
+
+
+
+#SAV:1
+
+print(TIMESTAMP)
+
+aMessage.SetMessage(検査が正常に終了しました。カメラを交換してください。)
+aMessage.SetOKButtonShow(true)
+aMessage.SetNGButtonShow(false)
+aMessage.SetTextButtonShow(false)
+aMessage.DoModal
+delete aMessage
+
+delete aControlRetry
+
+delete aDevice
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

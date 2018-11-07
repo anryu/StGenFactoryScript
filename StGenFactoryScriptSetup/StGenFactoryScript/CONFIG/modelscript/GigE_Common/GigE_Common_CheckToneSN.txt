@@ -1,0 +1,289 @@
+
+
+print=[------------------------------------------------------äKí≤ïœâªÇ…ÇÊÇÈSNåüç∏_START]
+
+
+StIF aIF
+aIF.Start(aJType_Choko==1)
+	# ÉâÉYÉpÉCí≤åıéûégóp
+	aJigu.Command(ch1onoff=1&ch2onoff=1&ch3onoff=1)
+aIF.Else
+	# ÉâÉCÉìÉZÉìÉTé°ãÔ
+	aJigu.Send(shade=1)
+aIF.End
+delete aIF
+
+#òIåıéûä‘Çç≈è¨Ç…Ç≈Ç´ÇÈÇÊÇ§Ç…äOïîfixÇ…Ç∑ÇÈÅB(GigEÇÃèÍçáäOïîÇ…ÇµÇƒÇ‡Syncì¸ÇÍÇÈÇÊÇ§Ç»é°ãÔÇ…Ç»Ç¡ÇƒÇ»Ç¢)
+# aDevice.AcquisitionLineRate=aExposureTimeToneSNStart
+
+StIF aIF
+aIF.Start(aBrandName==1)
+	aDevice.AcquisitionLineRateAbs=aExposureTimeToneSNStart
+aIF.Else
+	aDevice.AcquisitionLineRate=aExposureTimeToneSNStart
+aIF.End
+delete aIF
+
+aDevice.ExposureMode=aExposureModeToneSNStart
+
+aDevice.Start
+
+
+
+print=[äKí≤ïœâªÇ…ÇÊÇÈSNåüç∏1]
+
+aDevice.ExposureTime=aExposureTimeToneSN1
+
+Sleep(2000)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(LevelVariationSN1)
+aCommon.SaveAllExecute
+delete aCommon
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(aLineStartm)
+aCheckSN.SetEndLine(aLineEndm)
+aCheckSN.SetAverageMin(0)
+aCheckSN.SetAverageMax(255)
+aCheckSN.SetSN(aSNToneSN1)
+aCheckSN.SetSNMax(aSNMaxToneSN1)
+aCheckSN.Execute
+
+
+
+print=[äKí≤ïœâªÇ…ÇÊÇÈSNåüç∏2]
+
+aDevice.ExposureTime=aExposureTimeToneSN2
+
+Sleep(2000)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(LevelVariationSN2)
+aCommon.SaveAllExecute
+delete aCommon
+
+
+aCheckSN.SetStartLine(aLineStartm)
+aCheckSN.SetEndLine(aLineEndm)
+aCheckSN.SetAverageMin(0)
+aCheckSN.SetAverageMax(255)
+aCheckSN.SetSN(aSNToneSN2)
+aCheckSN.SetSNMax(aSNMaxToneSN2)
+aCheckSN.Execute
+
+
+
+print=[äKí≤ïœâªÇ…ÇÊÇÈSNåüç∏3]
+
+aDevice.ExposureTime=aExposureTimeToneSN3
+
+Sleep(2000)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(LevelVariationSN3)
+aCommon.SaveAllExecute
+delete aCommon
+
+
+aCheckSN.SetStartLine(aLineStartm)
+aCheckSN.SetEndLine(aLineEndm)
+aCheckSN.SetAverageMin(0)
+aCheckSN.SetAverageMax(255)
+aCheckSN.SetSN(aSNToneSN3)
+aCheckSN.SetSNMax(aSNMaxToneSN3)
+aCheckSN.Execute
+
+
+
+print=[äKí≤ïœâªÇ…ÇÊÇÈSNåüç∏4]
+
+aDevice.ExposureTime=aExposureTimeToneSN4
+
+Sleep(2000)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(LevelVariationSN4)
+aCommon.SaveAllExecute
+delete aCommon
+
+aCheckSN.SetStartLine(aLineStartm)
+aCheckSN.SetEndLine(aLineEndm)
+aCheckSN.SetAverageMin(0)
+aCheckSN.SetAverageMax(255)
+aCheckSN.SetSN(aSNToneSN4)
+aCheckSN.SetSNMax(aSNMaxToneSN4)
+aCheckSN.Execute
+
+
+
+print=[äKí≤ïœâªÇ…ÇÊÇÈSNåüç∏5]
+
+aDevice.ExposureTime=aExposureTimeToneSN5
+
+Sleep(2000)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(LevelVariationSN5)
+aCommon.SaveAllExecute
+delete aCommon
+
+
+aCheckSN.SetStartLine(aLineStartm)
+aCheckSN.SetEndLine(aLineEndm)
+aCheckSN.SetAverageMin(0)
+aCheckSN.SetAverageMax(255)
+aCheckSN.SetSN(aSNToneSN5)
+aCheckSN.SetSNMax(aSNMaxToneSN5)
+aCheckSN.Execute
+
+
+
+print=[äKí≤ïœâªÇ…ÇÊÇÈSNåüç∏6]
+
+aDevice.ExposureTime=aExposureTimeToneSN6
+
+Sleep(2000)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(LevelVariationSN6)
+aCommon.SaveAllExecute
+delete aCommon
+
+
+aCheckSN.SetStartLine(aLineStartm)
+aCheckSN.SetEndLine(aLineEndm)
+aCheckSN.SetAverageMin(0)
+aCheckSN.SetAverageMax(255)
+aCheckSN.SetSN(aSNToneSN6)
+aCheckSN.SetSNMax(aSNMaxToneSN6)
+aCheckSN.Execute
+
+
+
+print=[äKí≤ïœâªÇ…ÇÊÇÈSNåüç∏7]
+
+aDevice.ExposureTime=aExposureTimeToneSN7
+
+Sleep(2000)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(LevelVariationSN7)
+aCommon.SaveAllExecute
+delete aCommon
+
+
+aCheckSN.SetStartLine(aLineStartm)
+aCheckSN.SetEndLine(aLineEndm)
+aCheckSN.SetAverageMin(0)
+aCheckSN.SetAverageMax(255)
+aCheckSN.SetSN(aSNToneSN7)
+aCheckSN.SetSNMax(aSNMaxToneSN7)
+aCheckSN.Execute
+
+
+
+print=[äKí≤ïœâªÇ…ÇÊÇÈSNåüç∏8]
+
+aDevice.ExposureTime=aExposureTimeToneSN8
+
+Sleep(2000)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(LevelVariationSN8)
+aCommon.SaveAllExecute
+delete aCommon
+
+
+aCheckSN.SetStartLine(aLineStartm)
+aCheckSN.SetEndLine(aLineEndm)
+aCheckSN.SetAverageMin(0)
+aCheckSN.SetAverageMax(255)
+aCheckSN.SetSN(aSNToneSN8)
+aCheckSN.SetSNMax(aSNMaxToneSN8)
+aCheckSN.Execute
+
+
+
+print=[äKí≤ïœâªÇ…ÇÊÇÈSNåüç∏9]
+
+aDevice.ExposureTime=aExposureTimeToneSN9
+
+Sleep(2000)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(LevelVariationSN9)
+aCommon.SaveAllExecute
+delete aCommon
+
+
+aCheckSN.SetStartLine(aLineStartm)
+aCheckSN.SetEndLine(aLineEndm)
+aCheckSN.SetAverageMin(0)
+aCheckSN.SetAverageMax(255)
+aCheckSN.SetSN(aSNToneSN9)
+aCheckSN.SetSNMax(aSNMaxToneSN9)
+aCheckSN.Execute
+
+
+
+print=[äKí≤ïœâªÇ…ÇÊÇÈSNåüç∏10]
+
+aDevice.ExposureTime=aExposureTimeToneSN10
+
+Sleep(2000)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(LevelVariationSN10)
+aCommon.SaveAllExecute
+delete aCommon
+
+
+aCheckSN.SetStartLine(aLineStartm)
+aCheckSN.SetEndLine(aLineEndm)
+aCheckSN.SetAverageMin(0)
+aCheckSN.SetAverageMax(255)
+aCheckSN.SetSN(aSNToneSN10)
+aCheckSN.SetSNMax(aSNMaxToneSN10)
+aCheckSN.Execute
+
+
+
+print=[äKí≤ïœâªÇ…ÇÊÇÈSNåüç∏11]
+
+aDevice.ExposureTime=aExposureTimeToneSN11
+
+Sleep(2000)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(LevelVariationSN11)
+aCommon.SaveAllExecute
+delete aCommon
+
+
+aCheckSN.SetStartLine(aLineStartm)
+aCheckSN.SetEndLine(aLineEndm)
+aCheckSN.SetAverageMin(0)
+aCheckSN.SetAverageMax(255)
+aCheckSN.SetSN(aSNToneSN11)
+aCheckSN.SetSNMax(aSNMaxToneSN11)
+aCheckSN.Execute
+delete aCheckSN
+
+
+print=[------------------------------------------------------äKí≤ïœâªÇ…ÇÊÇÈSNåüç∏_END]
+
+
+
+
+
+
+
+
+aDevice.Stop
+
+
+# aDevice.AcquisitionLineRate=aLineRateM8
+
+StIF aIF
+aIF.Start(aBrandName==1)
+	aDevice.AcquisitionLineRateAbs=aLineRateM8
+aIF.Else
+	aDevice.AcquisitionLineRate=aLineRateM8
+aIF.End
+delete aIF
+
+aDevice.ExposureTime=aExposureTimeM8
+aDevice.ExposureMode=aExposureModeM8
+
+
+

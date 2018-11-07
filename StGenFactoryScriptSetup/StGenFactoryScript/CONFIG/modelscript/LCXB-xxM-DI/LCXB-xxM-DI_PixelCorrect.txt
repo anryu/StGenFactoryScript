@@ -1,0 +1,48 @@
+print=[-------------------画素欠陥データ書き込み_START]
+print=[画素欠陥データ書き込み]
+
+#欠陥画素自動補正
+aDevice.Write(0xA298,1)
+
+StValue aCount(0)
+#欠陥数リード
+aDevice.ReadCheckData()
+aDevice.ReadExecute(0xA290)
+aCount = aDevice.GetReadData
+
+#補正点数
+StValue aText
+aText="Count="
+aText+=aCount
+print(aText)
+
+#汎用のデータ領域設定
+aDevice.Write(0xAFE0,0x0d)
+
+StLoop aLoop
+StValue aValue(0)
+StValue aVal
+
+#0xB000
+StValue aAddress(45056)
+
+aLoop.Start( aValue<aCount )
+
+aDevice.ReadCheckData()
+aDevice.ReadExecute(aAddress)
+aVal = aDevice.GetReadData
+
+#Column Address
+aText="ColumnAddress_"
+aText+=aValue
+aText+="="
+aText+=aVal
+print(aText)
+
+aValue+=1
+aAddress+=4
+aLoop.End 
+
+print(Check=OK)
+
+print=[-------------------画素欠陥データ書き込み_END]

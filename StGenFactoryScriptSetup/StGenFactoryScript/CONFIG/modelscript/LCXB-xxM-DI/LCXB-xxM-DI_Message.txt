@@ -1,0 +1,9 @@
+StCheckMessage aMessage
+aMessage.SetOKButtonShow(true)
+aMessage.SetNGButtonShow(false)
+aMessage.SetTextButtonShow(false)
+aMessage.SetMessage(KTA平行光治具にカメラをセットして下さい。\nセット後、OKをクリックして下さい。)
+aMessage.Execute
+delete aMessage
+
+print(TIMESTAMP)

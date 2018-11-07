@@ -1,0 +1,86 @@
+
+
+aDevice.Disconnect
+
+print=[------------------------------------------------------消費電流1_START]
+print=[消費電流1]
+
+StCheckPower aCheckPower
+
+# 6pin On / 12pin Off
+aTexioControl.SetChannel=1
+aTexioControl.SetVoltage(12.0)
+aTexioControl.PowerOff
+aTexioControl.SetChannel=2
+aTexioControl.SetVoltage(12.0)
+aTexioControl.PowerOn
+
+Sleep(2000)
+
+print(6pin ON : check 6pin)
+# 6pin
+aTexioControl.SetChannel=2
+aCheckPower.SetTexioControl=aTexioControl
+aCheckPower.SetMode=2
+aCheckPower.SetCurrentMax=aCurrentMax12V
+aCheckPower.SetCurrentMin=aCurrentMin12V
+aCheckPower.Execute
+
+print(6pin ON : check 12pin)
+# 12pin
+aTexioControl.SetChannel=1
+aCheckPower.SetTexioControl=aTexioControl
+aCheckPower.SetMode=2
+aCheckPower.SetCurrentMax=10
+aCheckPower.SetCurrentMin=0
+aCheckPower.Execute
+
+
+#電源 ON (テクシオ電源)
+aTexioControl.SetChannel=1
+aTexioControl.PowerOn
+aTexioControl.SetChannel=2
+aTexioControl.PowerOff
+
+Sleep(2000)
+
+print(12pin ON : check 6pin)
+# 6pin
+aTexioControl.SetChannel=2
+aCheckPower.SetTexioControl=aTexioControl
+aCheckPower.SetMode=2
+aCheckPower.SetCurrentMax=10
+aCheckPower.SetCurrentMin=0
+aCheckPower.Execute
+
+print(12pin ON : check 12pin)
+# 12pin
+aTexioControl.SetChannel=1
+aCheckPower.SetTexioControl=aTexioControl
+aCheckPower.SetMode=2
+aCheckPower.SetCurrentMax=aCurrentMax12V
+aCheckPower.SetCurrentMin=aCurrentMin12V
+aCheckPower.Execute
+
+#電源 OFF (テクシオ電源)
+aTexioControl.SetChannel=1
+aTexioControl.PowerOff
+aTexioControl.SetChannel=2
+aTexioControl.PowerOn
+
+
+delete aCheckPower
+
+print(TIMESTAMP)
+
+print=[------------------------------------------------------消費電流1_END]
+
+aDevice.Connect
+
+aDevice.GevSCPD=150
+
+aControlRetry.SetRetry=20
+aControlRetry.SetTimer=100
+aControlRetry.SetBusyCommand=02 00 AC 01 00 03
+aControlRetry.SetBusyStatus=02 01 00 03
+

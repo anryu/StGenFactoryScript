@@ -1,0 +1,309 @@
+#変更履歴
+#VER01(2018/3/27)
+#・ゴミ検査の輝度規格を変更(160～240⇒180-220)
+#　　(変更前の上限値：240階調では、センタの画素が飽和し、ゴミ検査が正常に行えないため)
+
+DeviceModelName = LCLA-16M_08M-DI_基準機
+
+#横軸を500画素刻みにする
+RuledLine=500
+
+NGEndProcessRegister(aDevice.Stop)
+NGEndProcessRegister(Sleep(500))
+NGEndProcessRegister(aDevice.Close)
+NGEndProcessRegister(Sleep(500))
+NGEndProcessRegister(delete aDevice)
+NGEndProcessRegister(print([End]))
+NGEndProcessRegister(print(TIMESTAMP))
+#NGEndProcessRegister(aTexioControl.PowerOff)
+NGEndProcessRegister(aTexioControl.MainPowerOff)
+
+WriteScriptLogMode=1
+
+print(TIMESTAMP)
+
+print=[-------------------スクリプトのバージョン]
+print(SCRIPT_VER=001)
+
+print=[-------------------機種名]
+print(ProductNo=LCLA-16M)
+
+print=[-------------------検査ソフトバージョン]
+Print(SOFTWAREVERSION)
+
+print=[-------------------カメラシリアル入力]
+#例：16HA816_111111
+print([InputSerial])
+StInputSerialDlg aInputSerial
+#基準機シリアルチェック 0:チェックしない 1:ある場合NG(検査用) 2:ない場合NG(基準機用)
+aInputSerial.SetCheckMode=2
+aInputSerial.SetSerialNumberFile=Standard.txt
+aInputSerial.Execute
+delete aInputSerial
+
+
+#テクシオ電源
+StTexioControl aTexioControl
+aTexioControl.MainPowerOn
+aTexioControl.SetChannel(1)
+aTexioControl.SetVoltage(24.0)
+
+#治具定義(ラズパイ治具)
+StTerminal aTerminal(TERM1)
+
+#カメラリンクカメラ接続
+print([Device])
+StDeviceMultiCam aDevice
+aDevice.SetBoardID=Full
+aDevice.SetBoardTopology=MONO_DECA
+aDevice.SetConnect=M
+aDevice.CameraFile(LCLA-16M_10TAP_sync10k_exp10us.cam)
+aDevice.Open
+
+StSerialComm aSerialComm
+aDevice.SetSerialComm(aSerialComm)
+aSerialComm.SetBaudRate(9600)
+aSerialComm.SetDelayTime(0)
+
+#繰り返し通信定義
+StCheckControlRetry aControlRetry(aDevice)
+#ポーリング
+#ビジー状態：CAN(0x18) 2回送信
+#アイドル状態：ACK(0x06) 2回送信
+#送受信間隔時間=100ms
+aControlRetry.SetTimer=100
+#送受信回数=300回=30s
+aControlRetry.SetRetry=300
+aControlRetry.SetBusyCommand=0x02,"POL",0x0d
+aControlRetry.SetBusyStatus=0x06,0x06
+
+aTexioControl.PowerOn
+Sleep(13000)
+#ポーリング
+aControlRetry.SetRetry=300
+aControlRetry.SendData()
+aControlRetry.Execute
+aControlRetry.SetRetry=0
+
+aDevice.SetCheckControlRetry(aControlRetry)
+
+
+#シリアルバージョン検査
+StCheckSerialVersion aCheckSerialVersion(aDevice)
+#タカノモード
+aCheckSerialVersion.SetMode(2)
+aCheckSerialVersion.Execute
+delete aCheckSerialVersion
+
+
+print=[-------------------ゴミ検査_START]
+print(TIMESTAMP)
+
+# DSNU無効/PRNU無効/HFPN無効
+aControlRetry.SendData(0x02,"FFM 0",0x0d)
+aControlRetry.ReturnData(0x0d,0x0a,"USER>")
+aControlRetry.Execute
+
+#トリガモード設定:フリーラン
+aControlRetry.SendData(0x02,"STM 0",0x0d)
+aControlRetry.ReturnData(0x0d,0x0a,"USER>")
+aControlRetry.Execute
+
+
+#露光モード設定:フル露光
+aControlRetry.SendData(0x02,"SEM 1",0x0d)
+aControlRetry.ReturnData(0x0d,0x0a,"USER>")
+aControlRetry.Execute
+
+#ラインレート設定:1kHz
+aControlRetry.SendData(0x02,"SSF 1000",0x0d)
+aControlRetry.ReturnData(0x0d,0x0a,"USER>")
+aControlRetry.Execute
+
+aDevice.Start
+Sleep(1500)
+
+#ﾒｯｾｰｼﾞ追加
+StImageMessageDlg aImageMessage
+aImageMessage.SetImageSizeX(0)
+aImageMessage.SetImageSizeY(0)
+aImageMessage.SetMessageSizeX(500)
+aImageMessage.SetMessageSizeY(200)
+
+aImageMessage.SetMessage(①ゴミ検査治具の照明を写して下さい。\n \n②右側に「照明を暗くして下さい。」または「照明を明るくして下さい。」の\n　表示が出ないように明るさを200階調付近に合わせて下さい。\n\n③画面上に除去可能なゴミがなくなるまでゴミ除去作業を行って下さい。\n\n④「Start」ボタンを押して下さい。\n\n⑤ゴミ検査治具とカメラを固定した状態で上下に振って下さい。\n\n⑥「OK」が表示されたら「Stop」ボタン⇒「End」ボタンを押し検査を終了して下さい。\n　「NG」が表示されたら③に戻り、ゴミの除去を行って下さい。\n　「OK」にならないときは「Stop」ボタン⇒「End」ボタンを押し検査を終了して下さい。)
+
+aImageMessage.SetWindowPosX(360)
+aImageMessage.SetWindowPosY(100)
+aImageMessage.open
+
+print=[ゴミ検査1]
+
+StCheckDustDlg aCheckDust(aDevice)
+aCheckDust.SetCheckMode(2)
+aCheckDust.SetContinuousCountMax(3)
+aCheckDust.SetStartLine(0)
+aCheckDust.SetEndLine(16383)
+aCheckDust.SetWidthLines(100)
+aCheckDust.SetDifferenceMax(3.6)
+aCheckDust.SetSeparate(1)
+aCheckDust.SetAverageLowLevel(180)
+aCheckDust.SetAverageHighLevel(220)
+aCheckDust.SetBMPFileName(DUST1)
+aCheckDust.SetCSVFileName(DUST1)
+aCheckDust.Execute
+
+aImageMessage.close
+delete aImageMessage
+
+aDevice.Stop
+
+print(TIMESTAMP)
+print=[-------------------ゴミ検査_END]
+
+StCheckMessage aMessage
+aMessage.SetOKButtonShow(true)
+aMessage.SetNGButtonShow(false)
+aMessage.SetTextButtonShow(false)
+aMessage.SetMessage(KTA平行光治具にカメラをセットして下さい。\nセット後、OKをクリックして下さい。)
+aMessage.Execute
+
+print(TIMESTAMP)
+
+print=[-------------------検査設定_START]
+# DSNU無効/PRNU無効/HFPN無効
+aControlRetry.SendData(0x02,"FFM 0",0x0d)
+aControlRetry.ReturnData(0x0d,0x0a,"USER>")
+aControlRetry.Execute
+
+#トリガモード設定 外部トリガ
+aControlRetry.SendData(0x02,"STM 1",0x0d)
+aControlRetry.Execute
+
+#露光モード設定:プログラマブル露光
+aControlRetry.SendData(0x02,"SEM 0",0x0d)
+aControlRetry.Execute
+
+#露光時間設定:80us
+aControlRetry.SendData(0x02,"SET 80000",0x0d)
+aControlRetry.Execute
+
+print=[-------------------検査設定_END]
+
+
+print=[-------------------ゴミ検査_START]
+aDevice.Start
+
+print=[光源調整1]
+StLightControl aLightControl(aDevice)
+aLightControl.SetTerminal(aTerminal)
+aLightControl.SetStartLine(0)
+aLightControl.SetEndLine(16383)
+aLightControl.SetTimer(1500)
+aLightControl.SetColor(W)
+aLightControl.SetMaxValueW(1000)
+aLightControl.SetInitValueW(1000)
+aLightControl.SetTargetW(200)
+aLightControl.SetTargetRangeW(1)
+aLightControl.Execute
+
+Sleep(1500)
+
+print=[ゴミ検査2]
+aCheckDust.SetWidthLines(500)
+aCheckDust.SetDifferenceMax(3)
+aCheckDust.SetBMPFileName(DUST2)
+aCheckDust.SetCSVFileName(DUST2)
+aCheckDust.SetMode=1
+aCheckDust.Execute
+delete aCheckDust
+
+aDevice.Stop
+
+print=[-------------------ゴミ検査_END]
+
+
+# DSNU有効/PRNU有効/HFPN有効
+aControlRetry.SendData(0x02,"FFM 1",0x0d)
+aControlRetry.Execute
+
+aDevice.Start
+
+#露光時間設定:20us
+aControlRetry.SendData(0x02,"SET 20000",0x0d)
+aControlRetry.Execute
+
+#アナログゲイン:4倍
+aControlRetry.SendData(0x02,"SAG 2",0x0d)
+aControlRetry.Execute
+
+print=[光源調整2]
+aLightControl.Execute
+aLightControl.InfoFileName=.\LightInfo1.txt
+aLightControl.SaveFileExecute
+
+Sleep(1500)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(LightInfo1)
+aCommon.SaveCSVExecute
+delete aCommon
+
+
+
+
+
+
+#露光時間設定:80us
+aControlRetry.SendData(0x02,"SET 80000",0x0d)
+aControlRetry.Execute
+
+#アナログゲイン:1倍
+aControlRetry.SendData(0x02,"SAG 0",0x0d)
+aControlRetry.Execute
+
+print=[光源調整3]
+aLightControl.Execute
+aLightControl.InfoFileName=.\LightInfo2.txt
+aLightControl.SaveFileExecute
+delete aLightControl
+
+Sleep(1500)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(LightInfo2)
+aCommon.SaveCSVExecute
+delete aCommon
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(0)
+aCheckSN.SetEndLine(16383)
+aCheckSN.SetSN(4)
+aCheckSN.SetSNMax(5)
+aCheckSN.SetAverageMin(190)
+aCheckSN.SetAverageMax(210)
+aCheckSN.SetLineAverageMin(190)
+aCheckSN.SetLineAverageMax(210)
+aCheckSN.Execute
+delete aCheckSN
+
+Sleep(500)
+StCheckPower aCheckPower
+aCheckPower.SetTexioControl=aTexioControl
+aCheckPower.SetMode=2
+aCheckPower.SetCurrentMax=291
+aCheckPower.SetCurrentMin=150
+aCheckPower.Execute
+delete aCheckPower
+
+aDevice.Stop
+Sleep(500)
+aDevice.Close
+Sleep(500)
+delete aDevice
+
+#安定化電源の電圧表示が見えるようにMain電源を切る。
+#aTexioControl.PowerOff
+aTexioControl.MainPowerOff
+delete aTexioControl
+
+delete aTerminal
+
+print(TIMESTAMP)

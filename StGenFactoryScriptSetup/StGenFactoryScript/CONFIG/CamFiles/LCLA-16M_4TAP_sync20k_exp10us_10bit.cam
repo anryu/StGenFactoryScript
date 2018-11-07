@@ -1,0 +1,161 @@
+;*********************************************************************************************
+; Camera Manufacturer: TAKANO
+; Camera Model: LCLA-16M
+; Camera Configuration: LCLA-16M_4TAP_sync20k_exp10us_10bit
+; Board: Grablink
+;*********************************************************************************************
+; This CAM file template is suitable for the following camera configuration:
+;   - Line-scan camera
+;   - Grabber-controlled rate
+;   - Pulse-Width grabber-controlled exposure
+; This CAM file template is suitable for the following system configuration:
+;   - WEB, PAGE, or LONGPAGE Acquisition Modes
+;   - Take all lines
+;
+; ********************************************************************************
+; ** CAUTION:                                                                   **
+; ** This file is a template, it can be further customized!                     **
+; ** The lines that can be edited are marked with an arrow followed by the most **
+; ** popular alternate values for that parameter.                               **
+; ** For a complete list of possible values; refer to MultiCam Studio and/or to **
+; ** the MultiCam Reference documentation.                                      **
+; ********************************************************************************
+;
+;*********************************************************************************************
+; ==Begin of "Camera properties Section"==
+;
+; -Camera Specification category-
+    Camera =            MyCameraLink;
+    CamConfig =         LxxxxRG;
+    Imaging =           LINE;
+    Spectrum =          BW;                 <== BW COLOR ...
+;
+; -Camera Features category-
+    TapConfiguration =  MEDIUM_4T10;           <== BASE_1T8 BASE_1T10 BASE_1T24 ...
+    TapGeometry =       1X4;                 <== 1X 1X2 2X ...
+;   Expose is           WIDTH;
+;   Readout is          INTCTL;
+    ColorMethod =       NONE;               <== NONE PRISM TRILINEAR RGB
+;
+; --Downstream signals--
+    FvalMode =          FN;
+    LvalMode =          LA;
+    DvalMode =          DN;                 <== DN DG
+;
+; --Upstream signals--
+    ResetCtl =          DIFF;
+    ResetEdge =         GOHIGH;             <== GOHIGH GOLOW
+    CC1Usage =          RESET;              <== LOW HIGH RESET SOFT
+    CC2Usage =          LOW;                <== LOW HIGH RESET SOFT
+    CC3Usage =          LOW;                <== LOW HIGH RESET SOFT READOUTALLOWED
+    CC4Usage =          LOW;                <== LOW HIGH RESET SOFT TRIGGERALLOWED
+;
+; -Camera Timing category-
+    Hactive_Px  =       16920;               <==
+    HSyncAft_Tk =       0;                  <==
+    LineRate_Hz =       40000;               <==
+    ExposeRecovery_us = 10;                 <==
+    ReadoutRecovery_us = 10;                <==
+    ExposeMin_us =      5;                  <==
+    ExposeMax_us =      10000;              <==
+    ResetDur =          3000;               <==
+;
+; ==End of "Camera properties Section"==
+;*********************************************************************************************
+; ==Begin of "System properties Section"==
+;
+; -Acquisition Control category-
+    AcquisitionMode =   WEB;                <== WEB PAGE LONGPAGE
+    TrigMode =          IMMEDIATE;          <== IMMEDIATE HARD SOFT COMBINED
+    NextTrigMode =      REPEAT;             <== REPEAT (when AcquisitionMode = WEB or LONGPAGE)
+;                                           <== SAME REPEAT HARD SOFT COMBINED (when AcquisitionMode = PAGE)
+    EndTrigMode =       AUTO;               <== AUTO HARD (when AcquisitionMode = LONGPAGE)
+;                                           <== AUTO (when AcquisitionMode = WEB or PAGE)
+    BreakEffect =       FINISH;             <== FINISH ABORT
+    SeqLength_Pg =      -1;                 <== -1 1 .. 65534 (when AcquisitionMode = PAGE)
+    SeqLength_Ln =      -1;                 <== -1 1 .. 65534 (when AcquisitionMode = WEB or LONGPAGE)
+    PageLength_Ln =     1000;                <== 1 .. 65535
+;
+; -Trigger Control category-
+;       The set of values and the default value assigned by MultiCam for the parameter TrigCtl are board specific!
+;       If the default value is not adequate for your application, it is then necessary to edit the value and
+;       to remove the leading semi-column of one of the following 3 lines
+;   TrigCtl =           ISO;                <== Full/DualBase/Base: ISO DIFF
+;   TrigCtl =           ITTL;               <== Avenue/Express: TTL ITTL I12V LVDS
+;   TrigCtl =           ITTL;               <== Value/Expert 2: TTL ITTL I12V
+    TrigEdge =          GOHIGH;             <== GOHIGH GOLOW
+    TrigFilter =        MEDIUM;             <== OFF ON MEDIUM STRONG
+    TrigLine =          NOM;                <== NOM ...
+;
+;       The following 4 parameters are relevant only when EndTrigMode = HARD!
+;       The set of values and the default value assigned by MultiCam for the parameter EndTrigCtl are board specific!
+;       If the default value is not adequate for your application, it is then necessary to edit the value and
+;       to remove the leading semi-column of one of the following 3 lines
+;   EndTrigCtl =        ISO;                <== Full/DualBase/Base: ISO DIFF
+;   EndTrigCtl =        ITTL;               <== Avenue/Express: TTL ITTL I12V LVDS
+;   EndTrigCtl =        ITTL;               <== Value/Expert 2: TTL ITTL I12V
+    EndTrigEdge =       GOLOW;              <== GOHIGH GOLOW
+    EndTrigFilter =     MEDIUM;             <== OFF ON MEDIUM STRONG
+    EndTrigLine =       NOM;                <== NOM ...
+;
+; -Exposure Control category-
+    Expose_us =         10;                 <==
+    ExposeTrim =        0;                  <==
+;
+; -Encoder Control category-
+    LineCaptureMode =   ALL;
+    LineRateMode =      PERIOD;             <= PERIOD PULSE CONVERT
+;       The following 2 parameters are relevant only when LineRateMode = PERIOD:
+    Period_us =         50;               <=
+    PeriodTrim =        0;                  <=
+;       The following 5 parameters are relevant only when LineRateMode = CONVERT:
+    MaxSpeed =          30000;             <=
+    LinePitch =         100;                <=
+    EncoderPitch =      100;                <=
+    ConverterTrim =     0;                  <=
+    OnMinSpeed =        IDLING;             <= IDLING MUTING
+;       The following 4 parameters are relevant only when LineRateMode = PULSE or CONVERT:
+;       The set of values and the default value assigned by MultiCam for the parameter LineTrigCtl are board specific!
+;       If the default value is not adequate for your application, it is then necessary to edit the value and
+;       to remove the leading semi-column of one of the following 3 lines
+;   LineTrigCtl =       DIFF_PAIRED;        <== Full/DualBase/Base: ISO DIFF ISO_PAIRED DIFF_PAIRED
+;   LineTrigCtl =       ITTL;               <== Avenue/Express: TTL ITTL I12V LVDS
+;   LineTrigCtl =       ITTL;               <== Value/Expert 2: TTL ITTL I12V
+    LineTrigEdge =      GOHIGH;             <== GOHIGH GOLOW RISING_A FALLING_A ALL_A (when LineTrigCtl = ISO or DIFF)
+;                                           <== ALL_A_B (when LineTrigCtl = ISO_PAIRED or DIFF_PAIRED)
+;                                           <== GOHIGH GOLOW (when LineTrigCtl = TTL ITTL I12V or LVDS)
+    LineTrigFilter =    MEDIUM;             <== OFF ON MEDIUM STRONG
+    LineTrigLine =      NOM;                <== NOM ...
+;       The following parameter controls the Rate divider circuit that is available 
+;       exclusively on Grablink Full/DualBase/Base boards when LineRateMode = PULSE.
+;       Remove the leading semi-column if the function is required!
+;   RateDivisionFactor = 1;                 <== 1..512
+;       The following 2 parameters are controlling the Backward Motion Cancellation circuit that is available 
+;       exclusively on Grablink Full/DualBase/Base boards when LineTrigCtl = ISO_PAIRED or DIFF_PAIRED.
+;       Remove the leading semi-column on both parameters if the function is required!
+;   ForwardDirection  = A_LEADS_B;          <== A_LEADS_B B_LEADS_A
+;   BackwardMotionCancellationMode = OFF;   <== OFF FILTERED COMPENSATE
+;
+; ==End of "System properties Section"==
+;*********************************************************************************************
+; ==Begin of "Grabber properties Section"==
+;
+; -Grabber Configuration, Timing & Conditioning categories-
+    GrabWindow =        NOBLACK;            <== NOBLACK MAN ...
+;       The following 2 parameters are relevant only when GrabWindow = MAN:
+    WindowX_Px =        16920;               <==
+    OffsetX_Px =        0;                  <==
+;
+; -Look-Up Tables category-
+;   The Look-Up Table operator is available exclusively on Grablink Full/DualBase/Base boards.
+;   LUT configuration parameters can be inserted here if required by the application
+;
+; -Cluster category-
+    ColorFormat =       Y10;                 <== Y8 Y10 RGB24 RGB24PL ...
+    ImageFlipX =        OFF;                <== OFF ON
+;
+; End of "Grabber properties Section"
+;*********************************************************************************************
+; End of File
+;=============
+

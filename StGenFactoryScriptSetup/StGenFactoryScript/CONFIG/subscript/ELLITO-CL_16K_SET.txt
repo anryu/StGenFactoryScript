@@ -1,0 +1,30 @@
+print=[ELLITO-CL_16K_SET]
+print(SUBSCRIPT=ELLITO-CL_16K_SET.txt)
+print(SUBSCRIPT_VER=000)
+
+print=[-------------------16K設定]
+
+# LVAL幅設定:16384画素
+aControlRetry.SendData(0x02,"SLV 0",0x0d)
+aControlRetry.Execute
+
+# 垂直ピクセルサイズ設定:長方形モード
+aControlRetry.SendData(0x02,"SVP 0",0x0d)
+aControlRetry.Execute
+
+aControlRetry.SetRetry=300
+# ユーザ設定保存
+aControlRetry.SendData(0x02,"USS",0x0d)
+aControlRetry.Execute
+aControlRetry.SetRetry=0
+
+# リセット
+aControlRetry.SendData(0x02,"RST",0x0d)
+aControlRetry.Execute
+
+Sleep(13000)
+#ポーリング
+aControlRetry.SetRetry=300
+aControlRetry.SendData()
+aControlRetry.Execute
+aControlRetry.SetRetry=0

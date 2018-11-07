@@ -1,0 +1,23 @@
+print=[-------------------IO端子検査_START]
+print=[IO端子検査1]
+#アドレス：0xA430
+#[15](モード設定) 1:0xA430[19]の論理を出力, 0:そのまま出力
+#[18]:EPIのステータス
+#[19]:EPOに出力する値
+
+#EPOに0を出力(0x0_8000)
+aDevice.Write(0xA430,32768)
+#0を確認(0x0_8000)
+aDevice.ReadCheckData(32768)
+aDevice.ReadExecute(0xA430)
+
+print=[IO端子検査2]
+#EPOに1を出力(0x8_8000)
+aDevice.Write(0xA430,557056)
+#1を確認(0xC_8000)
+aDevice.ReadCheckData(819200)
+aDevice.ReadExecute(0xA430)
+
+#元に戻す
+aDevice.Write(0xA430,0)
+print=[-------------------IO端子検査_END]

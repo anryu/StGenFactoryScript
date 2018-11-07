@@ -1,0 +1,23 @@
+print=[-------------------温度センサ検査_START]
+#I/O基板
+print=[温度センサ1]
+StCheckTemperature aCheckTemperature(aDevice)
+aCheckTemperature.MinTemperature=10000
+aCheckTemperature.MaxTemperature=70000
+aCheckTemperature.Recieve(0x0d,0x0a,"*",0x0d,0x0a,"USER>")
+aCheckTemperature.Command(0x02,"RTMP 0",0x0d)
+aCheckTemperature.Execute
+
+#センサ基板
+print=[温度センサ2]
+aCheckTemperature.Command(0x02,"RTMP 1",0x0d)
+aCheckTemperature.Execute
+
+#センサ
+print=[温度センサ3]
+aCheckTemperature.Command(0x02,"RTMP 2",0x0d)
+aCheckTemperature.Execute
+
+delete aCheckTemperature
+
+print=[-------------------温度センサ検査_END]

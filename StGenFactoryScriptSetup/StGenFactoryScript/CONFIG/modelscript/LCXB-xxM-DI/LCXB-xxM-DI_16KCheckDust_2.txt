@@ -1,0 +1,52 @@
+StCheckMessage aMessage
+aMessage.SetOKButtonShow(true)
+aMessage.SetNGButtonShow(false)
+aMessage.SetTextButtonShow(false)
+aMessage.SetMessage(ゴミ検査治具にカメラをセットし、\n手で押さえた状態を維持して下さい。\n\nセット後、OKをクリックして下さい。)
+aMessage.Execute
+delete aMessage
+
+print=[-------------------ゴミ検査16K_START]
+# DSNU無効/PRNU無効/HFPN無効
+aDevice.Write(0xA200,0)
+aDevice.Write(0xA204,0)
+aDevice.Write(0xA208,0)
+
+#トリガモード設定:フリーラン
+aDevice.Write(0xA100,0)
+
+#ラインレート設定:1kHz(12.8ns単位)
+aDevice.Write(0xA110,80000)
+
+#露光モード設定:プログラマブル露光
+aDevice.Write(0xA104,1)
+
+#露光時間設定:1023us(12.8ns単位)
+aDevice.Write(0xA120,79900)
+
+print(TIMESTAMP)
+
+aDevice.Start
+Sleep(3000)
+
+print=[ゴミ検査4]
+StCheckDustDlg aCheckDust(aDevice)
+aCheckDust.SetCheckMode(2)
+aCheckDust.SetContinuousCountMax(3)
+aCheckDust.SetStartLine(0)
+aCheckDust.SetEndLine(16383)
+aCheckDust.SetWidthLines(100)
+aCheckDust.SetDifferenceMax(3.6)
+aCheckDust.SetSeparate(1)
+aCheckDust.SetAverageLowLevel(180)
+aCheckDust.SetAverageHighLevel(220)
+aCheckDust.SetBMPFileName(DUST1_16K_2)
+aCheckDust.SetCSVFileName(DUST1_16K_2)
+aCheckDust.SetMode(1)
+aCheckDust.Execute
+delete aCheckDust
+
+print(TIMESTAMP)
+aDevice.Stop
+Sleep(500)
+print=[-------------------ゴミ検査16K_END]

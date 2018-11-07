@@ -1,0 +1,212 @@
+
+
+aControlRetry.SetRetry=1000
+aControlRetry.SetTimer=1000
+
+print=[------------------------------------------------------検査設定_START]
+print=[検査設定]
+
+StIF aIF
+aIF.Start(aBrandName==1)
+	aDevice.AcquisitionLineRateAbs=aLineRateM8
+aIF.Else
+	aDevice.AcquisitionLineRate=aLineRateM8
+aIF.End
+delete aIF
+
+aDevice.ExposureMode=aExposureModeM8
+aDevice.ExposureTime=aExposureTimeM8
+
+#Analog gain OFF (gbdt=0)
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 34 01 00 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffmd=0
+aControlRetry.SendData=02 02 81 01 00 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+Sleep(2000)
+
+print=[------------------------------------------------------検査設定_END]
+
+
+
+aDevice.Start
+
+
+print=#############################################################################################START:受け入れ検査では除外する箇所
+CommentStart=6
+
+
+
+print=[------------------------------------------------------遮光レベル1_START]
+print=[遮光(FFC無効)]
+
+StIF aIF
+aIF.Start(aJType_Choko==1)
+	# ラズパイ調光時使用
+	aJigu.Command(ch1onoff=0&ch2onoff=0&ch3onoff=0)
+aIF.Else
+	# ラインセンサ治具
+	aJigu.Send(shade=0)
+aIF.End
+delete aIF
+
+
+aControlRetry.SetBusyCommand=02 00 AC 01 00 03
+aControlRetry.SetBusyStatus=02 01 00 03
+
+print=[画像取得(FFC無効)]
+#ffmd=0
+aControlRetry.SendData=02 02 81 01 00 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(ffmd=0_LEDoff_SN検査遮光（8bit）前)
+aCommon.SaveAllExecute
+delete aCommon
+
+print=[遮光レベル1]
+#STD:TK_TITLE=遮光レベル_opck=11
+StCheckSpBehavior aCheckBehavior(aDevice)
+aCheckBehavior.SetStartLine(aLineStartm)
+aCheckBehavior.SetEndLine(aLineEndm)
+aCheckBehavior.SetMaxLevel(80)
+aCheckBehavior.SetMinLevel(3)
+aCheckBehavior.SetInOutMode(1)
+aCheckBehavior.SetContinuousCount(10)
+#aCheckBehavior.SetJudgeMode(1)  未使用
+aCheckBehavior.Execute
+delete aCheckBehavior
+
+
+print=[SN検査遮光（8bit）1]
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(aLineStartm)
+aCheckSN.SetEndLine(aLineEndm)
+aCheckSN.SetAverageMin(3)
+aCheckSN.SetAverageMax(80)
+aCheckSN.SetSNMax(4)
+aCheckSN.SetSN(2)
+aCheckSN.Execute
+delete aCheckSN
+
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(ffmd=0_LEDoff_SN検査遮光（8bit）後)
+aCommon.SaveAllExecute
+delete aCommon
+
+print=[------------------------------------------------------遮光レベル1_END]
+
+print=[------------------------------------------------------遮光レベル2_START]
+#gbdt=1
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 34 01 01 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+Sleep(2000)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(ffmd=0_LEDoff_opck=11_gbdt=1)
+aCommon.SaveAllExecute
+delete aCommon
+
+print=[遮光レベル2]
+StCheckSpBehavior aCheckBehavior(aDevice)
+aCheckBehavior.SetStartLine(aLineStartm)
+aCheckBehavior.SetEndLine(aLineEndm)
+aCheckBehavior.SetMaxLevel(80)
+aCheckBehavior.SetMinLevel(3)
+aCheckBehavior.SetInOutMode(1)
+aCheckBehavior.SetContinuousCount(10)
+#aCheckBehavior.SetJudgeMode(1)  未使用
+aCheckBehavior.Execute
+delete aCheckBehavior
+
+print=[SN検査遮光（8bit）2]
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(aLineStartm)
+aCheckSN.SetEndLine(aLineEndm)
+aCheckSN.SetAverageMin(3)
+aCheckSN.SetAverageMax(80)
+aCheckSN.SetSNMax(8)
+aCheckSN.SetSN(4)
+aCheckSN.Execute
+delete aCheckSN
+
+#元に戻す
+#gbdt=0
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 34 01 00 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+print=[------------------------------------------------------遮光レベル2_END]
+
+
+
+print=[------------------------------------------------------FFCオフセット補正1_START]
+#ffcg
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 E1 01 02 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffmd=6
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 81 01 06 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffcの補正が成功したかどうか。成功なら0が返される。
+aControlRetry.SendData=02 00 B7 01 00 03
+aControlRetry.ReturnData=02 01 00 03
+aControlRetry.Execute
+
+Sleep(2000)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(ffmd=6_LEDoff_opck=11)
+aCommon.SaveAllExecute
+delete aCommon
+
+print=[FFCオフセット補正1]
+#STD:TK_TITLE=ffmd=6_LEDoff_opck=11
+StCheckSpBehavior aCheckBehavior(aDevice)
+aCheckBehavior.SetStartLine(aLineStartm)
+aCheckBehavior.SetEndLine(aLineEndm)
+aCheckBehavior.SetMaxLevel(5)
+aCheckBehavior.SetMinLevel(1)
+aCheckBehavior.SetInOutMode(1)
+aCheckBehavior.SetContinuousCount(10)
+#aCheckBehavior.SetJudgeMode(1)  未使用
+aCheckBehavior.Execute
+delete aCheckBehavior
+
+#ffmd=0
+aControlRetry.SendData=02 02 81 01 00 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+Sleep(2000)
+
+print=[------------------------------------------------------FFCオフセット補正1_END]
+print=#############################################################################################END:受け入れ検査では除外する箇所
+CommentEnd=6
+
+
+
+
+
+
+aDevice.Stop
+
+
+
+
+
+
+
+

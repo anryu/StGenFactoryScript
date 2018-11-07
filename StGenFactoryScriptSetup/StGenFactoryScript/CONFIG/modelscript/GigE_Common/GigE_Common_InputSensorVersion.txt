@@ -1,0 +1,17 @@
+
+#★センサーバージョン入力--------------------------
+print([StInputSensorVersionDlg])
+StInputSensorVersionDlg aInputSensorVersionDlg
+aInputSensorVersionDlg.AddCheckVersion=aCheckVersion1
+aInputSensorVersionDlg.AddCheckVersion=aCheckVersion2
+aInputSensorVersionDlg.AddCheckVersion=aCheckVersion3
+aInputSensorVersionDlg.AddCheckVersion=aCheckVersion4
+aInputSensorVersionDlg.AddCheckVersion=aCheckVersion5
+
+aInputSensorVersionDlg.Execute
+delete aInputSensorVersionDlg
+print(TIMESTAMP)
+
+
+
+

@@ -1,0 +1,120 @@
+print=[-------------------初期値の書き込み_START]
+print=[初期値の書き込み]
+aControlRetry.SetRetry=0
+
+# DSNU/PRNU/HFPN初期化
+aControlRetry.SendData(0x02,"FFM 2",0x0d)
+aControlRetry.ReturnData(0x0d,0x0a,"USER>")
+aControlRetry.Execute
+
+# LVAL幅設定:8192画素
+aControlRetry.SendData(0x02,"SLV 1",0x0d)
+aControlRetry.Execute
+
+# レジスタセット選択:標準レジスタ
+aControlRetry.SendData(0x02,"SRS 0xff",0x0d)
+aControlRetry.Execute
+
+#トリガモード設定:フリーラン
+aControlRetry.SendData(0x02,"STM 0",0x0d)
+aControlRetry.Execute
+
+#露光モード設定:フル露光
+aControlRetry.SendData(0x02,"SEM 1",0x0d)
+aControlRetry.Execute
+
+#トリガアクティブパルス設定:ポジティブ
+aControlRetry.SendData(0x02,"STP 0",0x0d)
+aControlRetry.Execute
+
+#ラインレート設定:40kHz
+aControlRetry.SendData(0x02,"SSF 40000",0x0d)
+aControlRetry.Execute
+
+#露光時間設定:18.7us
+aControlRetry.SendData(0x02,"SET 18700",0x0d)
+aControlRetry.Execute
+
+#SAGコマンドの戻り値受信に時間を要し、タイムアウトエラーとなったため、待ち時間を設ける。
+aSerialComm.SetRecieveDelayTime(5000)
+#アナログゲイン:1倍
+aControlRetry.SendData(0x02,"SAG 0",0x0d)
+aControlRetry.Execute
+aSerialComm.SetRecieveDelayTime(0)
+
+# DSNU有効/PRNU有効/HFPN有効
+aControlRetry.SendData(0x02,"FFM 1",0x0d)
+aControlRetry.Execute
+
+# 左右反転設定:通常
+aControlRetry.SendData(0x02,"SMM 0",0x0d)
+aControlRetry.Execute
+
+# デジタルオフセット:0
+aControlRetry.SendData(0x02,"SSB 0",0x0d)
+aControlRetry.Execute
+
+# デジタルゲイン:1倍
+aControlRetry.SendData(0x02,"SSG 10000",0x0d)
+aControlRetry.Execute
+
+# テストパターン:カメラ画像
+aControlRetry.SendData(0x02,"SVM 0",0x0d)
+aControlRetry.Execute
+
+# 垂直ピクセルサイズ設定:正方形モード
+aControlRetry.SendData(0x02,"SVP 1",0x0d)
+aControlRetry.Execute
+
+# ライン間引き設定:間引きなし
+aControlRetry.SendData(0x02,"SLM 0",0x0d)
+aControlRetry.Execute
+
+# グレイフィルタ設定:PASS
+aControlRetry.SendData(0x02,"SGF 0",0x0d)
+aControlRetry.Execute
+
+# 出力BIT設定:8bit
+aControlRetry.SendData(0x02,"SOB 0",0x0d)
+aControlRetry.Execute
+
+# 出力TAP設定:10TAP
+aControlRetry.SendData(0x02,"SOT 4",0x0d)
+aControlRetry.Execute
+
+# HFPNパラメータ設定:オフセット=6階調(8bit)
+aControlRetry.SendData(0x02,"SHP 512 96",0x0d)
+aControlRetry.Execute
+
+# ステートマシン設定
+aControlRetry.SendData(0x02,"SSM 0x04030201",0x0d)
+aControlRetry.Execute
+
+
+aControlRetry.SetRetry=300
+# ユーザ設定保存
+aControlRetry.SendData(0x02,"USS",0x0d)
+aControlRetry.Execute
+# 工場設定保存
+aControlRetry.SendData(0x02,"USD",0x0d)
+aControlRetry.Execute
+#補正データ保存
+aControlRetry.SendData(0x02,"WCD",0x0d)
+aControlRetry.Execute
+aControlRetry.SetRetry=0
+
+# リセット
+aControlRetry.SendData(0x02,"RST",0x0d)
+aControlRetry.Execute
+
+Sleep(13000)
+#ポーリング
+aControlRetry.SetRetry=300
+aControlRetry.SendData()
+aControlRetry.Execute
+aControlRetry.SetRetry=0
+Sleep(1000)
+
+print(Check=OK)
+
+print=[-------------------初期値の書き込み_END]

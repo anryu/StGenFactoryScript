@@ -1,0 +1,2 @@
+#8KÉÇÅ[Éhåüç∏
+CallScriptFile(ELLITO-CL_08K_INS.txt)

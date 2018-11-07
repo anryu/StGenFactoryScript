@@ -1,0 +1,181 @@
+
+# aLineStartm
+# aLineEndm
+
+
+
+StIF aIF
+aIF.Start(aJType_Choko==1)
+	# ラズパイ調光時使用
+	aJigu.Command(ch1onoff=0&ch2onoff=0&ch3onoff=0)
+aIF.Else
+	# ラインセンサ治具
+	aJigu.Send(shade=0)
+aIF.End
+delete aIF
+
+
+print=[------------------------------------------------------オフセット調整5_START_AnalogGainOFF]
+print=[オフセット調整5]
+
+
+#ffmd=0
+aControlRetry.SendData=02 02 81 01 00 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#L2L_ON lnmd=1(L2L_OFF)
+aControlRetry.SendData=02 02 A3 01 01 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#L2Loffset=14hでとりあえず。OFFなので関係ないはず。
+aControlRetry.SendData=02 02 A4 01 14 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#Analog gain ON
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 34 01 01 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#gcdt=255
+#gcdt=32
+#busyが解除されるのを待つ
+#aControlRetry.SendData=02 02 6C 01 FF 03
+aControlRetry.SendData=02 02 6C 01 20 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+
+#★GigEカメラスタート-----------------------
+aDevice.Start
+Sleep(2000)
+
+aControlRetry.SetRetry=1000
+aControlRetry.SetTimer=1000
+
+print=[オートオフセット調整スタート]
+
+
+# :宣言 aCheckAdjustOffset(変数名) aDevice(デバイスクラスの変数名)
+StCheckAdjustOffset aCheckAdjustOffset(aDevice)
+# :最初のオフセット設定値
+aCheckAdjustOffset.SetStartValue=2000
+# :オフセットの最大設定値
+aCheckAdjustOffset.SetMaxValue=4095
+# :チャンネル数
+aCheckAdjustOffset.SetChannelCount=2
+# :Lowデータ設定コマンドテキスト 例:da_m%dl(Ascii用)
+# aCheckAdjustOffset.SetCMDL=
+# :Highデータ設定コマンドテキスト 例:da_m%dh(Ascii用)
+# aCheckAdjustOffset.SetCMDH=
+# :Lowデータ部分のビット数 4
+aCheckAdjustOffset.SetLBIT=4
+# :OFFSET_CMDL,OFFSET_CMDHのコマンドを入力した後に入力するコマンド litr(Ascii用)
+# aCheckAdjustOffset.SetTrigger
+# :オフセットを設定してからデータを取得するまでの待ち時間(mSec)
+aCheckAdjustOffset.SetTimer=3000
+# :データ取得するための画像開始位置(ピクセル)
+aCheckAdjustOffset.SetStartLine=aLineStartm
+# :データ取得するための画像終了位置(ピクセル)
+aCheckAdjustOffset.SetEndLine=aLineEndm
+# :OFFSET_STとOFFSET_ENDの間の画素値の最小値を求め、
+#  OFFSET_BACE以上になるオフセット値の最大値を求める
+aCheckAdjustOffset.SetBase=5
+# :決定したオフセット値からOFFSET_INC足した値を最終オフセット値として設定する。
+aCheckAdjustOffset.SetInc=0
+# :調整時、次のオフセット設定を決めるための変化量(初期値16)
+aCheckAdjustOffset.SetDiffValue=16
+# :Lowデータ設定アドレス　チャンネル0(Binary用)
+aCheckAdjustOffset.SetAddressL0=0x9E
+# :Highデータ設定アドレス　チャンネル0(Binary用)
+aCheckAdjustOffset.SetAddressH0=0x9F
+# :Lowデータ設定アドレス　チャンネル1(Binary用)
+aCheckAdjustOffset.SetAddressL1=0xA0
+# :Highデータ設定アドレス　チャンネル1(Binary用)
+aCheckAdjustOffset.SetAddressH1=0xA1
+# :Trigger設定アドレス(Binary用)
+aCheckAdjustOffset.SetTriggerAddress=0xE2
+# :TriggerのBit位置 0～7のいずれか(Binary用)
+aCheckAdjustOffset.SetTriggerBit=5
+# :0:Binary 1:Ascii(MultiCam用,GigEはBinary固定)
+aCheckAdjustOffset.SetCtrl=0
+# :オフセット調整開始
+aCheckAdjustOffset.Execute
+# :オフセット調整終了(インスタンス破棄)
+delete aCheckAdjustOffset
+
+#ログに残すため。。。。。。。。。。。。。。。。。
+print=[オフセット調整値5]
+
+Sleep(2000)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(OffsetAdjust_LEDoff_AnalogGainOFF)
+aCommon.SaveAllExecute
+delete aCommon
+
+#STD:TK_TITLE=オフセット調整
+StCheckSpBehavior aCheckBehavior(aDevice)
+aCheckBehavior.SetStartLine(aLineStartm)
+aCheckBehavior.SetEndLine(aLineEndm)
+aCheckBehavior.SetMaxLevel(80)
+aCheckBehavior.SetMinLevel(3)
+aCheckBehavior.SetInOutMode(1)
+aCheckBehavior.SetContinuousCount(10)
+#aCheckBehavior.SetJudgeMode(1)  未使用
+aCheckBehavior.Execute
+delete aCheckBehavior
+
+#ログに残すため。。。。。。。。。。。。。。。。。
+print=[オフセット調整値6]
+#daa1l
+#daa1u
+#daa2l
+#daa2u
+aControlRetry.SendData=02 00 9E 04 00 03
+aControlRetry.ReturnData=02 04 XX XX XX XX 03
+aControlRetry.Execute
+
+print=[------------------------------------------------------オフセット調整6_END_opck11_gbdt1_gcdt255]
+print(TIMESTAMP)
+print=[------------------------------------------------------line to line補正オフセット設定6_START]
+print=[line to line補正オフセット設定値の調整_遮光6]
+
+aControlRetry.SendData=02 02 A3 01 00 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+aControlRetry.SendData=02 02 A4 01 3C 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#Analog gain OFFに戻す
+aControlRetry.SendData=02 02 34 01 00 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ofsf
+#busyが解除されるのを待つ
+#aControlRetry.SendData=02 02 E0 01 20 03
+#aControlRetry.ReturnData=02 00 01 03
+#aControlRetry.Execute
+
+#svpass=213
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 E2 01 04 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#cmsv
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 E2 01 01 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+print=[------------------------------------------------------line to line補正オフセット設定6_END]
+
+
+
+aDevice.Stop

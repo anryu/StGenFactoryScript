@@ -1,0 +1,32 @@
+print=[-------------------製造番号入力_START]
+
+#出荷検査ではシリアルライトを行わない。
+##############################################################出荷検査除外
+CommentStart=2
+
+print=[製造番号入力]
+StWriteSerial aWriteSerial(aDevice)
+aWriteSerial.SetMode(2)
+aWriteSerial.ReturnData(0x0d,0x0a,"USER>")
+
+#カメラシリアルライト
+aWriteSerial.SetSerialMode(1)
+aWriteSerial.SetCommand(0x02,"SSNC %s",0x0d)
+aWriteSerial.Execute
+
+delete aWriteSerial
+
+##############################################################
+CommentEnd=2
+
+#シリアルバージョン検査
+StCheckSerialVersion aCheckSerialVersion(aDevice)
+aCheckSerialVersion.AddSensorSerialETX(-SI)
+aCheckSerialVersion.AddSensorSerialETX(-DI)
+aCheckSerialVersion.SetEllitoSerialNumberFilename(EllitoSerialNumber.txt)
+#タカノモード
+aCheckSerialVersion.SetMode(2)
+aCheckSerialVersion.Execute
+delete aCheckSerialVersion
+
+print=[-------------------製造番号入力_END]

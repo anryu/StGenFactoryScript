@@ -1,0 +1,103 @@
+
+
+#Åöã@éÌàÀë∂ïœêîê∂ê¨------------------------
+
+StValue aCheckVersion1("VER4.004.11")
+StValue aCheckVersion2("VER5.0")
+StValue aCheckVersion3("V5")
+#StValue aCheckVersion4("")
+#StValue aCheckVersion5("")
+
+#opckÇÃë„ÇÌÇË
+StValue aOPCKSet("02 02 16 08 03 1E 10 20 01 00 00 0C 03")
+StValue aOPCKRet("02 08 03 1E 10 20 01 00 00 0C 03")
+
+StValue aWidthRet("02 02 00 20 03")
+
+StValue aLineStartm(0)
+StValue aLineEndm(8191)
+StValue aLineEndPixDfct(8189)
+StValue aLineEnd(8192)
+
+StValue aLineDetectStart(3996)
+StValue aLineDetectEnd(4196)
+
+# Params for [Current]
+StValue aCurrentMax12V(550)
+StValue aCurrentMin12V(220)
+StValue aCurrentMaxPoE(100)
+StValue aCurrentMinPoE(30)
+
+# Params for [Dust]
+StValue aLineRateDust(900)
+
+# Params for [Mono12]
+StValue aLineRateM12(500)
+StValue aExposureTimeM12(125)
+StValue aExposureModeM12("Timed")
+
+# Params for [Mono8]
+StValue aLineRateM8(3000)
+StValue aExposureTimeM8(50)
+StValue aExposureModeM8("Off")
+
+# Params for [SatuAGoff]
+StValue aLineRateSatuAGoff(1000)
+StValue aExposureTimeSatuAGoff(600)
+StValue aExposureModeSatuAGoff("Timed")
+
+# Params for [SatuAGon]
+StValue aExposureTimeSatuAGon(200.0)
+
+# Params for [ToneSNStart]
+StValue aExposureTimeToneSNStart(6000)
+StValue aExposureModeToneSNStart("Timed")
+
+
+# Params for [ToneSN]
+StValue aExposureTimeToneSN1(150.0)
+StValue aExposureTimeToneSN2(136.0)
+StValue aExposureTimeToneSN3(122.0)
+StValue aExposureTimeToneSN4(108.0)
+StValue aExposureTimeToneSN5(94.0)
+StValue aExposureTimeToneSN6(80.0)
+StValue aExposureTimeToneSN7(66.0)
+StValue aExposureTimeToneSN8(52.0)
+StValue aExposureTimeToneSN9(38.0)
+StValue aExposureTimeToneSN10(24.0)
+StValue aExposureTimeToneSN11(2.2)
+
+StValue aSNToneSN1(7)
+StValue aSNMaxToneSN1(8)
+
+StValue aSNToneSN2(7)
+StValue aSNMaxToneSN2(8)
+
+StValue aSNToneSN3(6)
+StValue aSNMaxToneSN3(7)
+
+StValue aSNToneSN4(6)
+StValue aSNMaxToneSN4(7)
+
+StValue aSNToneSN5(6)
+StValue aSNMaxToneSN5(7)
+
+StValue aSNToneSN6(5)
+StValue aSNMaxToneSN6(6)
+
+StValue aSNToneSN7(5)
+StValue aSNMaxToneSN7(6)
+
+StValue aSNToneSN8(4)
+StValue aSNMaxToneSN8(5)
+
+StValue aSNToneSN9(3)
+StValue aSNMaxToneSN9(4)
+
+StValue aSNToneSN10(3)
+StValue aSNMaxToneSN10(4)
+
+StValue aSNToneSN11(2)
+StValue aSNMaxToneSN11(3)
+
+

@@ -1,0 +1,31 @@
+#初期設定に戻す
+
+#トリガモード設定:フリーラン
+aControlRetry.SendData(0x02,"STM 0",0x0d)
+aControlRetry.ReturnData(0x0d,0x0a,"USER>")
+aControlRetry.Execute
+
+# 出力BIT設定:8bit
+aControlRetry.SendData(0x02,"SOB 0",0x0d)
+aControlRetry.Execute
+
+# 出力TAP設定:10TAP
+aControlRetry.SendData(0x02,"SOT 4",0x0d)
+aControlRetry.Execute
+
+#露光時間設定:18.7us
+aControlRetry.SendData(0x02,"SET 18700",0x0d)
+aControlRetry.Execute
+
+#ラインレート設定:40kHz
+aControlRetry.SendData(0x02,"SSF 40000",0x0d)
+aControlRetry.Execute
+
+#露光モード設定:フル露光
+aControlRetry.SendData(0x02,"SEM 1",0x0d)
+aControlRetry.Execute
+
+# ユーザ設定保存
+aControlRetry.SendData(0x02,"USS",0x0d)
+aControlRetry.Execute
+aControlRetry.SetRetry=0

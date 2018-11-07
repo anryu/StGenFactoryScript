@@ -1,0 +1,21 @@
+
+
+print=[LED点灯確認]
+
+
+StIF aIF
+aIF.Start(aBrandName==1)
+	# TAKEX
+	aMessage.SetMessage(LEDの点灯を確認して下さい。\n・カメラ後面の赤、オレンジLEDが常時点灯していること。\n・カメラ後面の緑LEDが点滅していること。)
+aIF.Else
+	# STC
+	aMessage.SetMessage(LEDの点灯を確認して下さい。\n・カメラ後面のGigEコネクタの緑LEDが常時点灯していること。\n・カメラ後面のGigEコネクタのオレンジLEDが点滅していること。)
+aIF.End
+delete aIF
+
+
+aMessage.SetOKButtonShow(true)
+aMessage.SetNGButtonShow(true)
+aMessage.SetTextButtonShow(false)
+aMessage.Execute
+

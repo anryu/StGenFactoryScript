@@ -1,0 +1,6 @@
+[Setting]
+DisplayName=LCXB-16M_08M-DI_Šî€‹@
+BaseDirectory=LCXB-xxM-DI
+
+[Features]
+FileName=LCXB-16M_08M-DI_Šî€‹@.txt

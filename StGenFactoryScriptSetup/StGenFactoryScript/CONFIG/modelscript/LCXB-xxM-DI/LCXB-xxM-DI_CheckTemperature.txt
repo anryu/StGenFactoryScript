@@ -1,0 +1,22 @@
+print=[-------------------温度センサ検査_START]
+#I/O基板
+print=[温度センサ1]
+StCheckTemperature aCheckTemperature(aDevice)
+aCheckTemperature.MinTemperature=10
+aCheckTemperature.MaxTemperature=70
+aCheckTemperature.SetAddress(0xA560)
+aCheckTemperature.Execute
+
+#センサ基板
+print=[温度センサ2]
+aCheckTemperature.SetAddress(0xA564)
+aCheckTemperature.Execute
+
+#センサ
+print=[温度センサ3]
+aCheckTemperature.SetAddress(0xA568)
+aCheckTemperature.Execute
+
+delete aCheckTemperature
+
+print=[-------------------温度センサ検査_END]

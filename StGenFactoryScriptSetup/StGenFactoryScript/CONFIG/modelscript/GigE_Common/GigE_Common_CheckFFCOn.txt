@@ -1,0 +1,655 @@
+
+# aLineDetectStart
+# aLineDetectEnd
+# aLineStartm
+# aLineEndm
+
+print=[------------------------------------------------------SN検査（12bit）FFC補正あり1_START]
+
+#フレームレート設定
+
+
+aDevice.PixelFormat=Mono12
+# aDevice.AcquisitionLineRate=aLineRateM12
+
+StIF aIF
+aIF.Start(aBrandName==1)
+	aDevice.AcquisitionLineRateAbs=aLineRateM12
+aIF.Else
+	aDevice.AcquisitionLineRate=aLineRateM12
+aIF.End
+delete aIF
+
+aDevice.ExposureTime=aExposureTimeM12
+aDevice.ExposureMode=aExposureModeM12
+
+aDevice.Start
+Sleep(2000)
+
+print=[光源調整1]
+StLightControl aLightControl(aDevice)
+aLightControl.SetStartLine(aLineDetectStart)
+aLightControl.SetEndLine(aLineDetectEnd)
+aLightControl.SetTimer=2000
+aLightControl.SetColor=R
+aLightControl.SetMaxValueR=1000
+aLightControl.SetInitValueR=1000
+aLightControl.SetTargetR=3200
+aLightControl.SetTargetRangeR=160
+
+StIF aIF
+aIF.Start(aJType_Choko==1)
+	# ラズパイ調光時使用
+	aLightControl.SetTerminal(aJigu)
+aIF.Else
+	# ラインセンサ治具
+	aLightControl.SetSerialComm(aJigu)
+aIF.End
+delete aIF
+
+aLightControl.Execute
+delete aLightControl      
+
+
+# 調光後
+Sleep(2000)
+
+
+print=[受光(FFC無効)]
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(ffmd=1_LEDon_opck=11_12bit)
+aCommon.SaveAllExecute
+delete aCommon
+
+
+print=[SN検査（12bit）1]
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(aLineStartm)
+aCheckSN.SetEndLine(aLineEndm)
+aCheckSN.SetAverageMin(3120)
+aCheckSN.SetAverageMax(3280)
+aCheckSN.SetSNMax(80)
+aCheckSN.SetSN(64)
+aCheckSN.Execute
+
+print=[------------------------------------------------------SN検査（12bit）FFC補正あり1_END]
+
+print=[------------------------------------------------------SN検査（8bit）FFC補正あり1_START]
+
+
+aDevice.Stop
+Sleep(2000)
+
+aDevice.PixelFormat=Mono8
+# aDevice.AcquisitionLineRate=aLineRateM8
+
+StIF aIF
+aIF.Start(aBrandName==1)
+	aDevice.AcquisitionLineRateAbs=aLineRateM8
+aIF.Else
+	aDevice.AcquisitionLineRate=aLineRateM8
+aIF.End
+delete aIF
+
+aDevice.ExposureTime=aExposureTimeM8
+aDevice.ExposureMode=aExposureModeM8
+
+aDevice.Start
+Sleep(2000)
+
+
+#↓12bitでやってるから要らない。要るみたい。bit数でレベル変動があるのかNGで落ちたので復活。
+print=[光源調整1]
+StLightControl aLightControl(aDevice)
+aLightControl.SetStartLine(aLineDetectStart)
+aLightControl.SetEndLine(aLineDetectEnd)
+aLightControl.SetTimer=2000
+aLightControl.SetColor=R
+aLightControl.SetMaxValueR=1000
+aLightControl.SetInitValueR=1000
+aLightControl.SetTargetR=200
+aLightControl.SetTargetRangeR=10
+
+StIF aIF
+aIF.Start(aJType_Choko==1)
+	# ラズパイ調光時使用
+	aLightControl.SetTerminal(aJigu)
+aIF.Else
+	# ラインセンサ治具
+	aLightControl.SetSerialComm(aJigu)
+aIF.End
+delete aIF
+
+aLightControl.Execute
+delete aLightControl      
+
+
+# 調光後
+Sleep(2000)
+
+
+print=[受光FFC確認]
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(ffmd=1_LEDon_opck=11_8bit)
+aCommon.SaveAllExecute
+delete aCommon
+
+
+print=[SN検査（8bit）FFC補正あり1]
+aCheckSN.SetStartLine(aLineStartm)
+aCheckSN.SetEndLine(aLineEndm)
+aCheckSN.SetAverageMin(195)
+aCheckSN.SetAverageMax(205)
+aCheckSN.SetSNMax(6)
+aCheckSN.SetSN(5)
+aCheckSN.Execute
+delete aCheckSN
+
+print(gadt=0)
+print(gbdt=0)
+
+
+
+print=[------------------------------------------------------SN検査（8bit）FFC補正あり1_END]
+
+print=[------------------------------------------------------飽和レベル1_START]
+print=[飽和レベル1]
+
+aDevice.Stop
+
+aDevice.ExposureMode=aExposureModeSatuAGoff
+aDevice.ExposureTime=aExposureTimeSatuAGoff
+# aDevice.AcquisitionLineRate=aLineRateSatuAGoff
+
+StIF aIF
+aIF.Start(aBrandName==1)
+	aDevice.AcquisitionLineRateAbs=aLineRateSatuAGoff
+aIF.Else
+	aDevice.AcquisitionLineRate=aLineRateSatuAGoff
+aIF.End
+delete aIF
+
+
+
+aDevice.Start
+Sleep(2000)
+
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(ffmd=1_Saturation_opck=11_gbdt=0)
+aCommon.SaveAllExecute
+delete aCommon
+
+#STD:TK_TITLE=飽和レベル_opck=11
+StCheckSpBehavior aCheckBehavior(aDevice)
+aCheckBehavior.SetStartLine(aLineStartm)
+aCheckBehavior.SetEndLine(aLineEndm)
+aCheckBehavior.SetMaxLevel(255)
+aCheckBehavior.SetMinLevel(255)
+aCheckBehavior.SetInOutMode(1)
+aCheckBehavior.SetContinuousCount(0)
+#aCheckBehavior.SetJudgeMode(1)  未使用
+aCheckBehavior.Execute
+delete aCheckBehavior
+
+print=[------------------------------------------------------飽和レベル1_END]
+
+print=[------------------------------------------------------飽和レベル2_START]
+
+aDevice.ExposureTime=aExposureTimeSatuAGon
+
+#cMANA_GAIN
+aDevice.GainSelector=AnalogAll
+aDevice.Gain=4
+
+
+Sleep(2000)
+
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(ffmd=1_Saturation_opck=11_gbdt=1)
+aCommon.SaveAllExecute
+delete aCommon
+
+print=[飽和レベル2]
+#STD:TK_TITLE=飽和レベル_opck=11
+StCheckSpBehavior aCheckBehavior(aDevice)
+aCheckBehavior.SetStartLine(aLineStartm)
+aCheckBehavior.SetEndLine(aLineEndm)
+aCheckBehavior.SetMaxLevel(255)
+aCheckBehavior.SetMinLevel(255)
+aCheckBehavior.SetInOutMode(1)
+aCheckBehavior.SetContinuousCount(0)
+#aCheckBehavior.SetJudgeMode(1)  未使用
+aCheckBehavior.Execute
+delete aCheckBehavior
+
+aDevice.Stop
+
+aDevice.ExposureMode=aExposureModeM8
+aDevice.ExposureTime=aExposureTimeM8
+# aDevice.AcquisitionLineRate=aLineRateM8
+
+StIF aIF
+aIF.Start(aBrandName==1)
+	aDevice.AcquisitionLineRateAbs=aLineRateM8
+aIF.Else
+	aDevice.AcquisitionLineRate=aLineRateM8
+aIF.End
+delete aIF
+
+
+#元に戻す
+#cMANA_GAIN
+aDevice.GainSelector=AnalogAll
+aDevice.Gain=1
+
+aDevice.Start
+
+print=[------------------------------------------------------飽和レベル2_END]
+
+
+
+print=#############################################################################################START:受け入れ検査では除外する箇所
+CommentStart=6
+print=[------------------------------------------------------FFC係数保存1_START]
+#RET:OK
+#ffum=0
+aControlRetry.SendData=02 02 8C 01 00 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffsv
+#busyが解除されるのを待つ
+aControlRetry.SetRetry=20
+aControlRetry.SendData=02 02 E1 01 40 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#RET:OK
+#ffum=1
+aControlRetry.SendData=02 02 8C 01 01 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffsb=0
+aControlRetry.SendData=02 02 8D 01 00 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffsv
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 E1 01 40 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffsb=1
+aControlRetry.SendData=02 02 8D 01 01 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffsv
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 E1 01 40 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffsb=2
+aControlRetry.SendData=02 02 8D 01 02 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffsv
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 E1 01 40 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffsb=3
+aControlRetry.SendData=02 02 8D 01 03 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffsv
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 E1 01 40 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffsb=4
+aControlRetry.SendData=02 02 8D 01 04 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffsv
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 E1 01 40 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffsb=5
+aControlRetry.SendData=02 02 8D 01 05 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffsv
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 E1 01 40 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffsb=6
+aControlRetry.SendData=02 02 8D 01 06 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffsv
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 E1 01 40 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffsb=7
+aControlRetry.SendData=02 02 8D 01 07 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffsv
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 E1 01 40 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffum=0
+aControlRetry.SendData=02 02 8C 01 00 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffsf
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 E1 01 04 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+
+#cmsv
+#busyが解除されるのを待つ
+aControlRetry.SetRetry=20
+aControlRetry.SendData=02 02 E2 01 01 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+
+
+print=(Check=OK)
+print=[------------------------------------------------------FFC係数保存1_END]
+print=#############################################################################################END:受け入れ検査では除外する箇所
+CommentEnd=6
+
+
+
+print=[------------------------------------------------------FFC補正値保存確認1_START]
+print=[FFC補正値保存確認1]
+
+Sleep(2000)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(FFC補正値保存確認1)
+aCommon.SaveAllExecute
+delete aCommon
+
+#STD:TK_TITLE=FFC補正値保存確認_opck=11
+StCheckSpBehavior aCheckBehavior(aDevice)
+aCheckBehavior.SetStartLine(aLineStartm)
+aCheckBehavior.SetEndLine(aLineEndm)
+aCheckBehavior.SetMaxLevel(210)
+aCheckBehavior.SetMinLevel(190)
+aCheckBehavior.SetInOutMode(1)
+aCheckBehavior.SetContinuousCount(10)
+#aCheckBehavior.SetJudgeMode(1)  未使用
+aCheckBehavior.Execute
+delete aCheckBehavior
+
+print=[------------------------------------------------------FFC補正値保存確認1_END]
+
+print=#############################################################################################START:受け入れ検査では除外する箇所
+CommentStart=6
+
+aDevice.Stop
+aDevice.Disconnect
+
+
+Sleep(2000)
+
+print=[------------------------------------------------------電源ONOFF_START]
+aTexioControl.SetChannel=2
+aTexioControl.SetVoltage(12.0)
+aTexioControl.PowerOff
+Sleep(2000)
+aTexioControl.PowerOn
+Sleep(1000)
+aTexioControl.PowerOff
+Sleep(2000)
+aTexioControl.PowerOn
+Sleep(1000)
+
+aDevice.Connect
+
+aDevice.GevSCPD=150
+
+aControlRetry.SetRetry=20
+aControlRetry.SetTimer=100
+aControlRetry.SetBusyCommand=02 00 AC 01 00 03
+aControlRetry.SetBusyStatus=02 01 00 03
+
+#busyが解除されるのを待つ
+aControlRetry.SetRetry=20
+aControlRetry.SendData=02 02 E2 01 01 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+print=[------------------------------------------------------電源ONOFF_END]
+
+# aDevice.AcquisitionLineRate=aLineRateM8
+
+StIF aIF
+aIF.Start(aBrandName==1)
+	aDevice.AcquisitionLineRateAbs=aLineRateM8
+aIF.Else
+	aDevice.AcquisitionLineRate=aLineRateM8
+aIF.End
+delete aIF
+
+aDevice.ExposureTime=aExposureTimeM8
+aDevice.ExposureMode=aExposureModeM8
+
+aDevice.Start
+
+Sleep(2000)
+
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(ffmd=1_LEDon_AfterPowerONOFF_opck=11)
+aCommon.SaveAllExecute
+delete aCommon
+
+
+print=[------------------------------------------------------FFC補正値保存確認2_START]
+print=[FFC補正値保存確認2]
+#STD:TK_TITLE=FFC補正値保存確認_opck=11
+StCheckSpBehavior aCheckBehavior(aDevice)
+aCheckBehavior.SetStartLine(aLineStartm)
+aCheckBehavior.SetEndLine(aLineEndm)
+aCheckBehavior.SetMaxLevel(210)
+aCheckBehavior.SetMinLevel(190)
+aCheckBehavior.SetInOutMode(1)
+aCheckBehavior.SetContinuousCount(10)
+#aCheckBehavior.SetJudgeMode(1)  未使用
+aCheckBehavior.Execute
+delete aCheckBehavior
+
+print=[------------------------------------------------------FFC補正値保存確認2_END]
+print=#############################################################################################END:受け入れ検査では除外する箇所
+CommentEnd=6
+
+
+print=[------------------------------------------------------FFCon時遮光レベル1_START]
+print=[FFCon時遮光レベル3]
+
+StIF aIF
+aIF.Start(aJType_Choko==1)
+	# ラズパイ調光時使用
+	aJigu.Command(ch1onoff=0&ch2onoff=0&ch3onoff=0)
+aIF.Else
+	# ラインセンサ治具
+	aJigu.Send(shade=0)
+aIF.End
+delete aIF
+
+Sleep(2000)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(1_LEDoff_opck=11)
+aCommon.SaveAllExecute
+delete aCommon
+
+
+#STD:TK_TITLE=ffmd=1_LEDoff_opck=11
+StCheckSpBehavior aCheckBehavior(aDevice)
+aCheckBehavior.SetStartLine(aLineStartm)
+aCheckBehavior.SetEndLine(aLineEndm)
+aCheckBehavior.SetMaxLevel(5)
+aCheckBehavior.SetMinLevel(1)
+aCheckBehavior.SetInOutMode(1)
+aCheckBehavior.SetContinuousCount(10)
+#aCheckBehavior.SetJudgeMode(1)  未使用
+aCheckBehavior.Execute
+delete aCheckBehavior
+
+
+print=[------------------------------------------------------FFCon時遮光レベル1_END]
+
+print=#############################################################################################START:受け入れ検査では除外する箇所
+CommentStart=6
+print=[------------------------------------------------------FFC補正値出力1_START]
+print=[FFC補正値出力1]
+
+#ffmd=2
+ 
+aControlRetry.SendData=02 02 81 01 02 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffgo=1
+aControlRetry.SendData=02 02 82 01 01 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#fful=0
+aControlRetry.SendData=02 02 83 01 00 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+Sleep(2000)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(ffmd=2_ffgo=1_fful=0_opck=11)
+aCommon.SaveAllExecute
+delete aCommon
+
+#fful=1
+aControlRetry.SendData=02 02 83 01 01 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+Sleep(2000)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(ffmd=2_ffgo=1_fful=1_opck=11)
+aCommon.SaveAllExecute
+delete aCommon
+
+#ffmd=2
+aControlRetry.SendData=02 02 81 01 02 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffgo=2
+aControlRetry.SendData=02 02 82 01 02 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#fful=0
+aControlRetry.SendData=02 02 83 01 00 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+Sleep(2000)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(ffmd=2_ffgo=2_fful=0_opck=11)
+aCommon.SaveAllExecute
+delete aCommon
+
+#fful=1
+aControlRetry.SendData=02 02 83 01 01 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+
+Sleep(2000)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(ffmd=2_ffgo=2_fful=1_opck=11)
+aCommon.SaveAllExecute
+delete aCommon
+
+
+#元に戻す
+#ffmd=1
+aControlRetry.SendData=02 02 81 01 01 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffgo=1
+aControlRetry.SendData=02 02 82 01 01 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+
+
+print=[------------------------------------------------------FFC補正値出力1_END]
+print=#############################################################################################END:受け入れ検査では除外する箇所
+CommentEnd=6
+
+
+
+
+aDevice.Stop
+Sleep(2000)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

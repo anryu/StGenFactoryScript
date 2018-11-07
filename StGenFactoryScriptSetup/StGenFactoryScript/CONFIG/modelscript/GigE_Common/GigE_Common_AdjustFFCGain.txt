@@ -1,0 +1,131 @@
+
+# aLineDetectStart
+# aLineDetectEnd
+# aLineStartm
+# aLineEndm
+
+aControlRetry.SetRetry=1000
+aControlRetry.SetTimer=1000
+
+#フレームレート設定
+StIF aIF
+aIF.Start(aBrandName==1)
+	aDevice.AcquisitionLineRateAbs=aLineRateM8
+aIF.Else
+	aDevice.AcquisitionLineRate=aLineRateM8
+aIF.End
+delete aIF
+
+aDevice.ExposureTime=aExposureTimeM8
+aDevice.ExposureMode=aExposureModeM8
+
+
+aDevice.Start
+
+
+
+print=[光源調整2]
+StLightControl aLightControl(aDevice)
+aLightControl.SetStartLine(aLineDetectStart)
+aLightControl.SetEndLine(aLineDetectEnd)
+aLightControl.SetTimer=2000
+aLightControl.SetColor=R
+aLightControl.SetMaxValueR=1000
+aLightControl.SetInitValueR=1000
+aLightControl.SetTargetR=140
+aLightControl.SetTargetRangeR=10
+
+StIF aIF
+aIF.Start(aJType_Choko==1)
+	# ラズパイ調光時使用
+	aLightControl.SetTerminal(aJigu)
+aIF.Else
+	# ラインセンサ治具
+	aLightControl.SetSerialComm(aJigu)
+aIF.End
+delete aIF
+
+aLightControl.Execute
+delete aLightControl   
+
+# 調光後
+Sleep(2000)
+
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(ffc_possible_9bitMODE)
+aCommon.SaveAllExecute
+delete aCommon
+
+print=[FFC補正可能レベル確認1]
+#STD:TK_TITLE=FFC補正可能レベル確認
+StCheckSpBehavior aCheckBehavior(aDevice)
+aCheckBehavior.SetStartLine(aLineStartm)
+aCheckBehavior.SetEndLine(aLineEndm)
+aCheckBehavior.SetMaxLevel(190)
+aCheckBehavior.SetMinLevel(60)
+aCheckBehavior.SetInOutMode(1)
+aCheckBehavior.SetContinuousCount(10)
+#aCheckBehavior.SetJudgeMode(1)  未使用
+aCheckBehavior.Execute
+delete aCheckBehavior
+
+#ffmd=0
+aControlRetry.SendData=02 02 81 01 01 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+Sleep(2000)
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(0_LEDon_ffmd=5_opck=11_8bit)
+aCommon.SaveAllExecute
+delete aCommon
+
+print=[------------------------------------------------------FFCゲイン補正_START]
+print=[受光FFC補正]
+print=[ffmd=5]
+
+
+#ffmd=5
+#busyが解除されるのを待つ
+aControlRetry.SendData=02 02 81 01 05 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+#ffcの補正が成功したかどうか。成功なら0が返される。
+aControlRetry.SendData=02 00 B7 01 00 03
+aControlRetry.ReturnData=02 01 00 03
+aControlRetry.Execute
+
+print=[------------------------------------------------------FFCゲイン補正_END]
+
+print=[ffmd=1]
+#ffmd=1
+aControlRetry.SendData=02 02 81 01 01 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+
+
+aDevice.Stop
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

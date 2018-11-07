@@ -1,0 +1,107 @@
+﻿2018/10/16 19:04:12 にビルドを開始しました。
+     1>ノード 2 上のプロジェクト "C:\anryu\LineSensor\StGenFactoryScript v1.00.1071_20180604\StGenICamLib\StGenICamLib.vcxproj" (rebuild ターゲット)。
+     1>_PrepareForClean:
+         ファイル "Debug\StGenICamLib.lastbuildstate" を削除しています。
+       InitializeBuildStatus:
+         "AlwaysCreate" が指定されたため "Debug\StGenICamLib.unsuccessfulbuild" を作成しています。
+       ClCompile:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I..\CommonHeader /I"C:\Program Files\GenICam_v2_4\library\CPP\include" /I"C:\GenICam_Development\GenICam_V3_0_2-Win32_i86_VS120-Release-Development\library\CPP\include" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _LIB /D _UNICODE /D UNICODE /D _AFXDLL /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt GenTLZip.cpp stdafx.cpp StGenCTI.cpp StGenDevice.cpp StGenDeviceInfo.cpp StGenDeviceManager.cpp StGenGCLib.cpp StGenInterface.cpp StGenPort.cpp StGenStream.cpp StGenTL.cpp
+         GenTLZip.cpp
+         stdafx.cpp
+         StGenCTI.cpp
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgencti.cpp(35): warning C4018: '<' : signed と unsigned の数値を比較しようとしました。
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgencti.cpp(63): warning C4101: 'e' : ローカル変数は 1 度も使われていません。
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgencti.cpp(74): warning C4101: 'e' : ローカル変数は 1 度も使われていません。
+         StGenDevice.cpp
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgendevice.cpp(880): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgendevice.cpp(912): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgendevice.cpp(945): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgendevice.cpp(996): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgendevice.cpp(1028): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgendevice.cpp(1062): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgendevice.cpp(1093): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgendevice.cpp(1126): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgendevice.cpp(1157): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgendevice.cpp(1189): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgendevice.cpp(1222): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgendevice.cpp(1253): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgendevice.cpp(1662): warning C4996: 'swprintf': swprintf has been changed to conform with the ISO C standard, adding an extra character count parameter. To use traditional Microsoft swprintf, set _CRT_NON_CONFORMING_SWPRINTFS.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\swprintf.inl(85) : 'swprintf' の宣言を確認してください。
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgendevice.cpp(1672): warning C4996: 'swprintf': swprintf has been changed to conform with the ISO C standard, adding an extra character count parameter. To use traditional Microsoft swprintf, set _CRT_NON_CONFORMING_SWPRINTFS.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\swprintf.inl(85) : 'swprintf' の宣言を確認してください。
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgendevice.cpp(1680): warning C4996: 'swprintf': swprintf has been changed to conform with the ISO C standard, adding an extra character count parameter. To use traditional Microsoft swprintf, set _CRT_NON_CONFORMING_SWPRINTFS.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\swprintf.inl(85) : 'swprintf' の宣言を確認してください。
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgendevice.cpp(1688): warning C4996: 'swprintf': swprintf has been changed to conform with the ISO C standard, adding an extra character count parameter. To use traditional Microsoft swprintf, set _CRT_NON_CONFORMING_SWPRINTFS.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\swprintf.inl(85) : 'swprintf' の宣言を確認してください。
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgendevice.cpp(1696): warning C4996: 'swprintf': swprintf has been changed to conform with the ISO C standard, adding an extra character count parameter. To use traditional Microsoft swprintf, set _CRT_NON_CONFORMING_SWPRINTFS.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\swprintf.inl(85) : 'swprintf' の宣言を確認してください。
+         StGenDeviceInfo.cpp
+         StGenDeviceManager.cpp
+         StGenGCLib.cpp
+         StGenInterface.cpp
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgeninterface.cpp(325): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgeninterface.cpp(354): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgeninterface.cpp(383): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgeninterface.cpp(411): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgeninterface.cpp(441): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+         StGenPort.cpp
+         StGenStream.cpp
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(746): warning C4101: 'e' : ローカル変数は 1 度も使われていません。
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(772): warning C4101: 'e' : ローカル変数は 1 度も使われていません。
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(797): warning C4101: 'e' : ローカル変数は 1 度も使われていません。
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(811): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(822): warning C4101: 'e' : ローカル変数は 1 度も使われていません。
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(841): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(852): warning C4101: 'e' : ローカル変数は 1 度も使われていません。
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(871): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(898): warning C4101: 'e' : ローカル変数は 1 度も使われていません。
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(917): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(928): warning C4101: 'e' : ローカル変数は 1 度も使われていません。
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(947): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(959): warning C4101: 'e' : ローカル変数は 1 度も使われていません。
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(978): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(988): warning C4101: 'e' : ローカル変数は 1 度も使われていません。
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(1007): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(1019): warning C4101: 'e' : ローカル変数は 1 度も使われていません。
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(1038): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(1048): warning C4101: 'e' : ローカル変数は 1 度も使われていません。
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(1067): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(1078): warning C4101: 'e' : ローカル変数は 1 度も使われていません。
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(1097): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(1108): warning C4101: 'e' : ローカル変数は 1 度も使われていません。
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(1128): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(1138): warning C4101: 'e' : ローカル変数は 1 度も使われていません。
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(1157): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(1169): warning C4101: 'e' : ローカル変数は 1 度も使われていません。
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(1189): warning C4482: 非標準の拡張機能が使用されています: enum 'GenApi::_EInterfaceType' が限定名で使用されます
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(1200): warning C4101: 'e' : ローカル変数は 1 度も使われていません。
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(1284): warning C4800: 'INT' : ブール値を 'true' または 'false' に強制的に設定します (警告の処理)
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(1327): warning C4800: 'double' : ブール値を 'true' または 'false' に強制的に設定します (警告の処理)
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(1573): warning C4800: 'int' : ブール値を 'true' または 'false' に強制的に設定します (警告の処理)
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(1592): warning C4800: 'double' : ブール値を 'true' または 'false' に強制的に設定します (警告の処理)
+     1>c:\anryu\linesensor\stgenfactoryscript v1.00.1071_20180604\stgenicamlib\stgenstream.cpp(1602): warning C4800: 'int' : ブール値を 'true' または 'false' に強制的に設定します (警告の処理)
+         StGenTL.cpp
+         コードを生成中...
+       Lib:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\Lib.exe /OUT:"C:\anryu\LineSensor\StGenFactoryScript v1.00.1071_20180604\Debug\StGenICamLib.lib" StGenUtilsLib.lib zlib.lib /LIBPATH:..\Debug /LIBPATH:..\libping\Debug /LIBPATH:"C:\Program Files\GenICam_v2_4\library\Cpp\lib\Win32_i86" /LIBPATH:"C:\GenICam_Development\GenICam_V3_0_2-Win32_i86_VS120-Release-Development\library\CPP\lib\Win32_i86" /NOLOGO Debug\GenTLZip.obj
+         Debug\stdafx.obj
+         Debug\StGenCTI.obj
+         Debug\StGenDevice.obj
+         Debug\StGenDeviceInfo.obj
+         Debug\StGenDeviceManager.obj
+         Debug\StGenGCLib.obj
+         Debug\StGenInterface.obj
+         Debug\StGenPort.obj
+         Debug\StGenStream.obj
+         Debug\StGenTL.obj
+         Debug\stdafx.obj を置換
+     1>stdafx.obj : warning LNK4221: このオブジェクト ファイルは、以前に未定義であったパブリック シンボルを定義していないため、このライブラリを使用するリンク操作では使用されません
+         StGenICamLib.vcxproj -> C:\anryu\LineSensor\StGenFactoryScript v1.00.1071_20180604\Debug\StGenICamLib.lib
+       FinalizeBuildStatus:
+         ファイル "Debug\StGenICamLib.unsuccessfulbuild" を削除しています。
+         "Debug\StGenICamLib.lastbuildstate" のタッチ タスクを実行しています。
+     1>プロジェクト "C:\anryu\LineSensor\StGenFactoryScript v1.00.1071_20180604\StGenICamLib\StGenICamLib.vcxproj" (rebuild ターゲット) のビルドが完了しました。
+
+ビルドに成功しました。
+
+経過時間 00:00:17.08

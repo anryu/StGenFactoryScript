@@ -1,0 +1,83 @@
+# aLineDetectStart
+# aLineDetectEnd
+# aLineStartm
+# aLineEndm
+
+aDevice.Start
+
+print=[------------------------------------------------------アナログゲイン_START]
+print=[アナログゲイン]
+
+StLightControl aLightControl(aDevice)
+aLightControl.SetStartLine(aLineDetectStart)
+aLightControl.SetEndLine(aLineDetectEnd)
+aLightControl.SetTimer=2000
+aLightControl.SetColor=R
+aLightControl.SetMaxValueR=1000
+aLightControl.SetInitValueR=1000
+aLightControl.SetTargetR=210
+aLightControl.SetTargetRangeR=10
+
+StIF aIF
+aIF.Start(aJType_Choko==1)
+	# ラズパイ調光時使用
+	aLightControl.SetTerminal(aJigu)
+aIF.Else
+	# ラインセンサ治具
+	aLightControl.SetSerialComm(aJigu)
+aIF.End
+delete aIF
+
+aLightControl.Execute
+delete aLightControl    
+
+Sleep(2000)
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(aLineStartm)
+aCheckSN.SetEndLine(aLineEndm)
+aCheckSN.SetAverageMin(100)
+aCheckSN.SetAverageMax(230)
+aCheckSN.SetSNMax(100)
+aCheckSN.SetSN(100)
+aCheckSN.Execute
+delete aCheckSN
+
+
+#gbdt=1
+#busyが解除されるのを待つ
+aControlRetry.SetRetry=20
+aControlRetry.SendData=02 02 34 01 01 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+Sleep(2000)
+
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(aLineStartm)
+aCheckSN.SetEndLine(aLineEndm)
+aCheckSN.SetAverageMin(240)
+aCheckSN.SetAverageMax(255)
+aCheckSN.SetSNMax(100)
+aCheckSN.SetSN(100)
+aCheckSN.Execute
+delete aCheckSN
+
+#gbdt=0
+#busyが解除されるのを待つ
+aControlRetry.SetRetry=20
+aControlRetry.SendData=02 02 34 01 00 03
+aControlRetry.ReturnData=02 00 01 03
+aControlRetry.Execute
+
+print=[------------------------------------------------------アナログゲイン_END]
+
+
+
+
+
+aDevice.Stop
+
+
+
+

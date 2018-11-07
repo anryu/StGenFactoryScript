@@ -1,0 +1,6 @@
+[Setting]
+DisplayName=LCLA-16M_08M-DI_Šî€‹@
+BaseDirectory=LCLA-xxM-DI
+
+[Features]
+FileName=LCLA-16M_08M-DI_Šî€‹@.txt

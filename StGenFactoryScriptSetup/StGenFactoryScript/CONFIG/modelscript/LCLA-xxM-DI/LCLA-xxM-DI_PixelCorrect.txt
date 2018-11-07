@@ -1,0 +1,71 @@
+print=[-------------------画素欠陥データ書き込み_START]
+print=[画素欠陥データ書き込み]
+
+aControlRetry.SetRetry=300
+
+#欠陥画素自動補正
+aControlRetry.SendData(0x02,"PDI 3",0x0d)
+aControlRetry.ReturnData(0x0d,0x0a,"USER>")
+aControlRetry.Execute
+
+aControlRetry.SetRetry=0
+
+#REEPコマンドの戻り値受信に時間を要し、タイムアウトエラーとなったため、待ち時間を設ける。
+aSerialComm.SetRecieveDelayTime(500)
+
+StValue aCount(0)
+aControlRetry.ReturnData(0x0d,0x0a,"*",0x0d,0x0a,"USER>")
+aControlRetry.SendData(0x02,"REEP 32",0x0d)
+aControlRetry.Execute
+aCount = aControlRetry.GetRecieveValue
+
+#補正点数
+StValue aText
+aText="Count="
+aText+=aCount
+print(aText)
+
+StValue aVal
+StValue aVal0
+StValue aVal1
+StValue aAddress
+StValue aReep("REEP ")
+StValue aCommand
+
+
+StLoop aLoop
+StValue aValue(0)
+
+aLoop.Start( aValue<aCount )
+
+aCommand=aReep
+aAddress = 33 + aValue * 2
+aCommand += aAddress
+aControlRetry.SendData(0x02,aCommand,0x0d)
+aControlRetry.Execute
+aVal0 = aControlRetry.GetRecieveValue
+
+aAddress += 1
+aCommand=aReep
+aCommand += aAddress
+aControlRetry.SendData(0x02,aCommand,0x0d)
+aControlRetry.Execute
+aVal1 = aControlRetry.GetRecieveValue
+
+aVal=aVal0*256+aVal1
+
+#Column Address
+aText="ColumnAddress_"
+aText+=aValue
+aText+="="
+aText+=aVal
+print(aText)
+
+aValue+=1
+aLoop.End
+
+#元に戻す
+aSerialComm.SetRecieveDelayTime(0)
+print(Check=OK)
+
+print=[-------------------画素欠陥データ書き込み_END]

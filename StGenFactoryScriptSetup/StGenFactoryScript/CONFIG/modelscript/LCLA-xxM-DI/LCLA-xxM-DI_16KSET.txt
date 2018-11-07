@@ -1,0 +1,2 @@
+#16KÉÇÅ[ÉhÇ…ê›íË
+CallScriptFile(ELLITO-CL_16K_SET.txt)

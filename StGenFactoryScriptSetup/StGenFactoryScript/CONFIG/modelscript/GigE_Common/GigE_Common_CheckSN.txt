@@ -1,0 +1,154 @@
+# aLineDetectStart
+# aLineDetectEnd
+# aLineStartm
+# aLineEndm
+
+
+print=[------------------------------------------------------SN検査（12bit）1_START]
+
+
+
+aDevice.PixelFormat=Mono12
+# aDevice.AcquisitionLineRate=aLineRateM12
+
+StIF aIF
+aIF.Start(aBrandName==1)
+	aDevice.AcquisitionLineRateAbs=aLineRateM12
+aIF.Else
+	aDevice.AcquisitionLineRate=aLineRateM12
+aIF.End
+delete aIF
+
+aDevice.ExposureTime=aExposureTimeM12
+aDevice.ExposureMode=aExposureModeM12
+
+aDevice.Start
+#Sleep(2000)
+
+
+
+print=[光源調整1]
+StLightControl aLightControl(aDevice)
+aLightControl.SetStartLine(aLineDetectStart)
+aLightControl.SetEndLine(aLineDetectEnd)
+aLightControl.SetTimer=2000
+aLightControl.SetColor=R
+aLightControl.SetMaxValueR=1000
+aLightControl.SetInitValueR=1000
+aLightControl.SetTargetR=3200
+aLightControl.SetTargetRangeR=160
+
+StIF aIF
+aIF.Start(aJType_Choko==1)
+	# ラズパイ調光時使用
+	aLightControl.SetTerminal(aJigu)
+aIF.Else
+	# ラインセンサ治具
+	aLightControl.SetSerialComm(aJigu)
+aIF.End
+delete aIF
+
+aLightControl.Execute
+delete aLightControl      
+
+
+# 調光後
+Sleep(2000)
+
+
+print=[受光(FFC無効)]
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(0_LEDon_opck=11_12bit)
+aCommon.SaveAllExecute
+delete aCommon
+
+print=[SN検査（12bit）1]
+StCheckSN aCheckSN(aDevice)
+aCheckSN.SetStartLine(aLineStartm)
+aCheckSN.SetEndLine(aLineEndm)
+aCheckSN.SetAverageMin(1600)
+aCheckSN.SetAverageMax(3312)
+aCheckSN.SetSNMax(80)
+aCheckSN.SetSN(64)
+aCheckSN.Execute
+
+print=[------------------------------------------------------SN検査（12bit）1_END]
+
+print=[------------------------------------------------------SN検査（8bit）1_START]
+
+
+aDevice.Stop
+Sleep(2000)
+
+aDevice.PixelFormat=Mono8
+# aDevice.AcquisitionLineRate=aLineRateM8
+
+StIF aIF
+aIF.Start(aBrandName==1)
+	aDevice.AcquisitionLineRateAbs=aLineRateM8
+aIF.Else
+	aDevice.AcquisitionLineRate=aLineRateM8
+aIF.End
+delete aIF
+
+aDevice.ExposureTime=aExposureTimeM8
+aDevice.ExposureMode=aExposureModeM8
+
+aDevice.Start
+#Sleep(2000)
+
+print=[光源調整1]
+StLightControl aLightControl(aDevice)
+aLightControl.SetStartLine(aLineDetectStart)
+aLightControl.SetEndLine(aLineDetectEnd)
+aLightControl.SetTimer=2000
+aLightControl.SetColor=R
+aLightControl.SetMaxValueR=1000
+aLightControl.SetInitValueR=1000
+aLightControl.SetTargetR=200
+aLightControl.SetTargetRangeR=10
+
+StIF aIF
+aIF.Start(aJType_Choko==1)
+	# ラズパイ調光時使用
+	aLightControl.SetTerminal(aJigu)
+aIF.Else
+	# ラインセンサ治具
+	aLightControl.SetSerialComm(aJigu)
+aIF.End
+delete aIF
+
+aLightControl.Execute
+delete aLightControl      
+
+# 調光後
+Sleep(2000)
+
+print=[受光(FFC無効)]
+StCheckCommon aCommon(aDevice)
+aCommon.SetFileName(0_LEDon_opck=11_8bit)
+aCommon.SaveAllExecute
+delete aCommon
+
+
+print=[SN検査（8bit）1]
+aCheckSN.SetStartLine(aLineStartm)
+aCheckSN.SetEndLine(aLineEndm)
+aCheckSN.SetAverageMin(100)
+aCheckSN.SetAverageMax(207)
+aCheckSN.SetSNMax(5)
+aCheckSN.SetSN(4)
+aCheckSN.Execute
+delete aCheckSN
+
+print=gadt=0
+print=gbdt=0
+
+
+
+print=[------------------------------------------------------SN検査（8bit）1_END]
+
+
+aDevice.Stop
+Sleep(2000)
+

@@ -1,0 +1,2 @@
+#8KÉÇÅ[ÉhÇ…ê›íË
+CallScriptFile(ELLITO-CL_08K_SET.txt)

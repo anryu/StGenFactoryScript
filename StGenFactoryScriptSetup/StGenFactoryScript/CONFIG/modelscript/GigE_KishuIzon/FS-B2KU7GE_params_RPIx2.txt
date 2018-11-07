@@ -1,0 +1,22 @@
+
+
+#★機種依存変数生成------------------------
+
+# 0:STC, 1:TAKEX
+StValue aBrandName(0)
+
+# 0:LS治具, 1:RPI
+StValue aJType_Choko(1)
+
+# 0:IEA治具, 1:RPI(ラズパイIO治具)
+StValue aJType_IO(1)
+
+StValue aModelName("FS_B2KU7GE")
+
+StValue aKishuCodeL("02 01 F0 03")
+StValue aKishuCodeU("02 01 00 03")
+StValue aKishuCodeLine("02 01 37 03")
+StValue aFirmVerLine("02 01 04 03")
+StValue aHardVerSet("02 02 01 01 01 03")
+StValue aHardVerRet("02 01 01 03")
+

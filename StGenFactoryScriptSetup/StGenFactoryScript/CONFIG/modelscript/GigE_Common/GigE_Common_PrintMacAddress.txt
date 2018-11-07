@@ -1,0 +1,31 @@
+
+print=#############################################################################################START:受け入れ検査では除外する箇所
+CommentStart=6
+#:宣言 aPTouch(変数名) aDevice(デバイスクラスの変数名)
+StPTouch aPTouch(aDevice)
+aPTouch.SetLabel(GigE-Factory.lbx)
+#:ラベルファイルの設定(ファイル名) このファイルを.\\CONFIG\\PTouch\\フォルダに置く必要あり
+aPTouch.SetConfirmMessage=1
+#:確認ダイアログ表示 0:なし 1:あり 
+#aPTouch.SetDeviceModelName=FS-B4KU7GE
+#:QRLONGやMODELNAMEで使用する型名の設定
+#aPTouch.AddID=MAC                                   :ラベルファイルに記載されているID文字列をセット■未使用。。。
+aPTouch.MAC=MACADDRESS
+#:ラベルファイルに記載されているID文字列 ... IDに代入する文字列(MACADDRESS:マックアドレス,SERIALNUMBER:シリアル番号,MODELNAME:型名,
+# QRLONG:QRコード シリアル番号_品目コード_型名,QRSHORT:QRコード シリアル番号_品目コード,その他:記述した文字列)
+#aPTouch.Clear
+#:AddIDしたID文字列の全削除
+
+# =================================================================== KS
+aPTouch.Execute
+# =================================================================== KS
+
+#:PTouch印刷実行
+delete aPTouch
+#:PTouch印刷終了(インスタンス破棄)
+
+StValue aMacAddress("MACAddress=")
+StValue aTMP
+aTMP = aDevice.MACAddressStr
+aMacAddress+=aTMP
+print(aMacAddress)
