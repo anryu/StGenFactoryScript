@@ -1,0 +1,1114 @@
+■ログファイル
+ファイル名: DeviceModelName_SerialNumber_Date.log
+フォルダ名: SaveFilePath\\DeviceModelName\\Date\\log\\(SaveFilePathの初期値:Iniファイルと同じPATH)
+
+■コメントアウト-----------------------------------------
+CommentStart=1                 :コメントアウトスタート 数値(D0:工程内 D1:出荷 D8:Japanモード D9:Koreaモード)
+CommentEnd=1                   :コメントアウト終了
+
+■コマンド-----------------------------------------
+DeviceModelName=STC_CMB2MPOE   :機種名代入
+SaveFilePath=??????            :LOGファイル等の保存PATHのROOT代入(初期値:INIファイルと同じPATH)(一度決定したら変更不可)
+MessageBox(???)                :メッセージボックス表示
+Sleep(1000)                    :設定時間(mSec)Sleepする
+Print(???)		       :LOGファイルにプリントする
+                               : 予約されている文字  ･TIMESTAMP:日付時間  ･SOFTWAREVERSION:ソフトウェアバージョン  ･SCRIPTFILEINFO:スクリプト情報
+
+#LogFileName                    :----なし
+Beep(100,100)                  :ビープ音(Freq,Duration)
+#SaveBitmap=ファイル名          :DeviceModelName_SerialNumber_DateFormat_ファイル名.bmpで画像保存 保存フォルダ(SaveFilePath\DeviceModelName\dateFormat\bmp)--映像出力中に行う----
+#SaveCSV=ファイル名             :DeviceModelName_SerialNumber_DateFormat_ファイル名.csvでCSVファイル保存 保存フォルダ(SaveFilePath\DeviceModelName\dateFormat\csv)--映像出力中に行う----
+WriteScriptLogMode             :スクリプトの記述をLOGに保存する。0:なし 1:あり  最初に記述する。(初期値:0)
+RetryMode=1                    :OKで検査終了しても繰り返し同じ検査を行う。0:なし 1:あり  なるべく最初に記述する。(初期値:0)　
+　　　　　　　　　　　　　　　　　#RetryMode=1終了させる場合:NGの時終了 
+NGContinuousMode=1             :NGの場合でも続けて検査を行う。0:なし 1:あり    なるべく最初に記述する。(初期値:0)
+NGEndProcessRegister(??)       :NG終了時に実行するコマンド　例　aJigu.Send(bit=10)
+
+DisplayPositionX(100)          : X位置
+DisplayPositionY(100)          : Y位置
+DisplayRatio(4)          　　　: 画像表示倍率 -1:1/16倍 0:1/8倍 1:1/4倍 2:1/2倍 3:等倍 4:2倍 5:4倍 6:8倍 
+                               : ※旧CLラインセンサー検査ソフト(POS:RATIO)では　0:0.5倍 1:0.75倍 2:等倍 3:1.5倍　4:2.0倍　5:4.0倍　6:8.0倍　7:16.0倍
+
+CallScriptFile(xxx.txt)        : CONFIG\subscriptフォルダにあるxxx.txtファイルを読み込み、記述位置にスクリプトを挿入する。
+
+
+
+
+NoOKMessage=1   :OKメッセージ 1:なし 0:あり
+NoNGMessage=1   :NGメッセージ 1:なし 0:あり
+RuledLine=500   :グラフ罫線間隔
+
+
+
+
+
+■メッセージ表示--------------------------------
+StCheckMessage aMessage
+aMessage.SetTextButton(対象外)
+aMessage.SetMessage(text)
+aMessage.SetOKButtonShow(true)
+aMessage.SetNGButtonShow(true)
+aMessage.SetTextButtonShow(true)
+aMessage.Execute
+
+
+
+
+■イメージ付メッセージ表示--------------------------------
+StImageMessageDlg aImageMessage　          :宣言 aImageMessage(変数名)
+aImageMessage.SetImageSizeX(292)           :イメージ部の横サイズ
+aImageMessage.SetImageSizeY(252)           :イメージ部の縦サイズ
+aImageMessage.SetMessageSizeX(150)         :メッセージ部の横サイズ
+aImageMessage.SetMessageSizeY(200)         :メッセージ部の縦サイズ
+aImageMessage.SetMessage(調整を行ってください) :メッセージ部の表示メッセージ
+aImageMessage.SetImageFile(CONFIG\Image\EO調整_TL-1024UCL-C.bmp) :イメージ部の画像BMPファイル名
+aImageMessage.SetWindowPosX(0)             :ウィンドウ表示位置横
+aImageMessage.SetWindowPosY(200)           :ウィンドウ表示位置縦
+aImageMessage.open                         :ウィンドウ表示
+aImageMessage.close                        :ウィンドウ非表示
+delete aImageMessage                       :メッセージ表示終了(インスタンス破棄)
+
+
+
+■デバイスクラス-----------------------------------------
+▼---------eBUS--------------
+StDeviceEBus aDevice           :デバイスクラス宣言 Pleoraデバイス--後ろは変数名
+aDevice.Connect                :デバイスの接続
+aDevice.Disconnect             :デバイスの切断
+aDevice.Start		       :デバイスのスタート
+aDevice.Stop		       :デバイスのストップ
+delete aDevice　　　　　　　　 :デバイスクラスのインスタンス破棄
+○デバイス通信
+例
+(GenICam)
+aDevice.ExposureTime=1000
+(UART)
+aDevice.UART0=020230010003     :UART通信(UART0,UART1,BULK0)
+
+(個別)
+aValue=aDevice.MACAddressStr         :MACアドレス文字列取得(StValueに代入)
+aValue=aDevice.IPAddressStr          :IPアドレス文字列取得(StValueに代入)
+aValue=aDevice.SubnetMaskStr         :サブネットマスク文字列取得(StValueに代入)
+
+○GenICam通信チェックモード
+aDevice.CheckGenICamControlMode(1)    : 0:Checkしない 1:Checkする 
+aDevice.CheckGenICamControlValue(100) : 数値または文字列(""付)、またはStValue
+
+
+○デバイス通信ダイアログ表示
+aDevice.ControlDialog(Show)    :表示
+aDevice.ControlDialog(delete)  :削除
+
+▼---------MultiCam--------------通信はCOM2固定
+StDeviceMultiCam aDevice       :デバイスクラス宣言 MultiCam--後ろは変数名
+aDevice.SetBoardID=Full        :ボードIDセット  Value:7 Expert2:19 Full:44 文字列または数値
+aDevice.SetBoardTopology=MONO_DECA       :ボードトポロジーセット MONO:24 DUO:25 BASE_MEDIUM_FULL:39 DECA:40 MONO_DECA:41 MONO_SLOW:45 DUO_SLOW:46 文字列または数値
+aDevice.CameraFile=xxx.cam     :ファイル名設定 
+aDevice.SetCameraFilePath=C:\xx :カメラファイルがあるフォルダ指定。指定しない場合、EXE位置から\\CONFIG\\CamFilesの相対パス(通常は相対パスを使用)
+aDevice.SetComPortName=COM2    :カメラ通信の為のポート名。ボードに設定する。Open前に指定(初期値:COM2)
+aDevice.SetConnect             :ボードConnectセット M or A (初期値M)
+aDevice.Open                   :デバイスのオープン　(管理者モードで実行しないとCOM2を設定するときエラーになる。)
+aDevice.Close                  :デバイスのクローズ 
+aDevice.Start		       :デバイスのスタート
+aDevice.Stop		       :デバイスのストップ
+
+aDevice.SetControyRetry        :StCheckControlRetry設定 CLタカノ用
+
+delete aDevice　　　　　　　　 :デバイスクラスのインスタンス破棄
+
+○デバイス通信 COM2固定なのでStCheckControlRetryクラス、StSerialCommクラスで行う。
+StCheckControlRetry aControlRetry(aDevice)
+StSerialComm aJigu(COM2)      :StSerialCommを使用する　　　間違い-？？---StSerialCommは治具用なのでStCheckControlRetryのほうがよい
+
+StSerialComm aSerialComm
+aDevice.SetSerialComm(aSerialComm)
+aSerialComm.SetRecieveData(02000103)
+aSerialComm.AutoBaudRate(020278010003)
+
+▼---------GenICam--------------
+StDeviceGenICam aDevice       :デバイスクラス宣言 GenICam--後ろは変数名
+aDevice.Open                   :デバイスのオープン
+aDevice.Close                  :デバイスのクローズ 
+aDevice.Start		       :デバイスのスタート
+aDevice.Stop		       :デバイスのストップ
+aDevice.SetBufferCount         :バッファ数設定
+aDevice.SetDisplayHeight       :画像取得縦サイズ設定(タカノ用、PayloadSizeが正常に取得できない為)
+aDevice.Write(0xa104,1)        :デバイス通信(4BYTE固定) 引数(アドレス,値)
+aDevice.SetEndian              : Little or Big or Auto
+aDevice.SetReadCheckData       : ReadExecuteを行ったときに比較する値
+aDevice.SetReadCheckAddress    : ReadExecuteを行うアドレス
+aDevice.ReadExecute            : 読込み比較実行
+
+aDevice.GetReadData            :最終読込みデータ取得
+
+○デバイス通信
+例
+(GenICam)
+aDevice.LinkConfig=LINK4SPEED6250
+(アドレス指定)
+aDevice.Write(0xa104,1)        :4BYTE固定 引数(アドレス,値)
+
+○GenICam通信チェックモード
+aDevice.CheckGenICamControlMode()  : 0:Checkしない 1:Checkする 
+aDevice.CheckGenICamControlValue() : 数値または文字列(""付)、またはStValue
+
+
+
+
+★カメラ通信-------------------------------
+StCameraControlDlg aControlDlg(aDevice) : 
+aControlDlg.DoModal            :DoModal表示
+aControlDlg.Open               :表示
+aControlDlg.Close              :非表示
+aControlDlg.SetEndian          :Big or Little or Auto(Autoの場合、DeviceRegistersEndiannessまたはDeviceTLTypeで判断)
+aControlDlg.SetWindowPosX      :ウィンドウ左位置(Open時に使用)
+aControlDlg.SetWindowPosY      :ウィンドウ上位置(Open時に使用)
+delete aControlDlg             :インスタンス破棄
+
+
+■治具クラス-----------------------------------------
+シリアル通信
+StSerialComm aJigu(COM3)       :宣言 aJigu(変数名) COM3(ポート名)[JIGU1,JIGU2,JIGU3 メニューで設定したポート]　aDevice(カメラデバイスクラス、カメラリンクのみ)
+                               :引数ない場合、StDeviceMultiCamのSetSerialCommの引数にする。
+aJigu.SetBaudRate(115200)      :9600,38400,58600,115200(初期値9600)
+
+aJigu.AutoBaudRate()           :自動ボーレート調整
+
+
+aJigu.SetParity(EVEN)         :パリティ NONE or EVEN or ODD (Default:NONE)
+aJigu.SetStopBits(2.0)        :ストップビット 1.0 or 1.5 or 2.0 (Default:1.0) 
+aJigu.SetByteSize(7)          :ワード長 7 or 8 (Default:8)
+
+aJigu.Send(test)
+
+aJigu.SetRecieveData()        :リターン値と比較するデータ ない場合は比較しない
+aJigu.SetSendSTX              :送信データの前につけるデータ
+aJigu.SetSendETX              :送信データの後につけるデータ　センテックアスキー版 0d
+aJigu.SetRecieveSTX           :受信データの前にあるデータ
+aJigu.SetRecieveETX           :受信データの後にあるデータ　センテックアスキー版 0d
+aJigu.SetDelayTime            :送信してから受信を受け付けるまでの時間...100mSec間隔でポーリングしデータ受信するとポーリング終了する。
+aJigu.SetRecieveDelayTime     :送信してから受信するまでの待ち時間(コマンドによって必要になる)
+aJigu.SetRcvReplaceSpace      :取得したデータの文字列をスペースに変換（TAKANO用）
+
+
+delete aJigu
+
+
+■Texio電源コントロールクラス-----------------------------------------
+StTexioControl aTexioControl    :宣言 aTexioControl(変数名)
+aTexioControl.SetVoltage(12.0)  :電圧設定
+aTexioControl.MainPowerOn       :メイン電源オン
+aTexioControl.MainPowerOff      :メイン電源オフ
+aTexioControl.PowerOn           :パワーオン
+aTexioControl.PowerOff          :パワーオフ
+aTexioControl.SetChannel=1      :1:右チャンネル 2:左チャンネル
+aTexioControl.SetCurrentLimit=1 :電流最大値設定
+aTexioControl.SetPCAddress=1    :TexioのPCアドレス設定,複数使用時用
+aTexioControl.SetSystemAddress=1 :Texioのシステムアドレス設定,複数使用時用
+delete aTexioControl            :Texio電源コントロールクラスのインスタンス破棄
+
+
+■検査クラス-----------------------------------------
+★SN検査---------映像出力中に行う-----------------------
+StCheckSN aCheckSN(aDevice)　 :宣言 aCheckSN(変数名) aDevice(デバイスクラスの変数名)
+aCheckSN.SetStartLine         :検査開始ライン
+aCheckSN.SetEndLine           :検査終了ライン
+aCheckSN.SetAverageMin        :平均の最小値設定
+aCheckSN.SetAverageMax        :平均の最大値設定
+aCheckSN.SetSNMax             :SNの最大値設定
+aCheckSN.SetSN                :SNの平均値設定
+aCheckSN.SetLineAverageMin(100) :縦ライン平均の検査規格最小値
+aCheckSN.SetLineAverageMax(255) :縦ライン平均の検査規格最大値
+
+カラーカメラ個別対応
+aCheckSN.SetAverageRedMin        :Red平均の最小値設定
+aCheckSN.SetAverageRedMax        :Red平均の最大値設定
+aCheckSN.SetAverageGreenMin      :Green平均の最小値設定
+aCheckSN.SetAverageGreenMax      :Green平均の最大値設定
+aCheckSN.SetAverageBlueMin       :Blue平均の最小値設定
+aCheckSN.SetAverageBlueMax       :Blue平均の最大値設定
+aCheckSN.SetLineAverageRedMin    :Red縦ライン平均の検査規格最小値
+aCheckSN.SetLineAverageRedMax    :Red縦ライン平均の検査規格最大値
+aCheckSN.SetLineAverageGreenMin  :Green縦ライン平均の検査規格最小値
+aCheckSN.SetLineAverageGreenMax  :Green縦ライン平均の検査規格最大値
+aCheckSN.SetLineAverageBlueMin   :Blue縦ライン平均の検査規格最小値
+aCheckSN.SetLineAverageBlueMax   :Blue縦ライン平均の検査規格最大値
+
+aCheckSN.Execute              :SN検査実行
+delete aCheckSN               :SN検査終了(インスタンス破棄)
+△内容--------
+1)縦ラインの標準偏差をそれぞれ取得
+2)取得した横ライン分のSNの平均およびMAX値を規格と比較する。
+3)アベレージを取得し規格と比較する。
+
+★SN検査ダイアログ表示-------映像出力中に行う-------------------------
+StCheckSNDlg aCheckSN(aDevice):宣言 aCheckSNDlg(変数名) aDevice(デバイスクラスの変数名)
+aCheckSN.SetStartLine         :検査開始ライン
+aCheckSN.SetEndLine           :検査終了ライン
+aCheckSN.SetAverageMin        :平均の最小値設定
+aCheckSN.SetAverageMax        :平均の最大値設定
+aCheckSN.SetSNMax             :SNの最大値設定
+aCheckSN.SetSN                :SNの平均値設定
+aCheckSN.SetMode              :モード設定
+aCheckSN.SetImageFileName     :保存ファイル名設定 BMP,CSV共通
+
+aCheckSN.Execute              :SN検査実行
+delete aCheckSN               :SN検査終了(インスタンス破棄)
+△内容--------
+SN検査と同様
+
+★シリアル入力------最初に行う--------------------
+StInputSerialDlg aInputSerial：宣言
+aInputSerial.SetCheckMode=1                          :基準機シリアルチェック 0:チェックしない 1:ある場合NG(検査用) 2:ない場合NG(基準機用)
+aInputSerial.SetSerialNumberFile=SerialNumber.txt    :基準機のシリアルを取得するファイル名設定
+aInputSerial.Execute　　　                         　:シリアル入力実行(ダイアログ表示)
+delete aInputSerial                                  :シリアル入力終了(インスタンス破棄)
+△内容--------
+1)シリアル入力する。
+2)入力シリアルとファイルシリアルを比較し、判定する。
+
+★センサーバージョン入力--------------------------
+StInputSensorVersionDlg aInputSensorVersionDlg：宣言
+aInputSensorVersionDlg.Execute　　　　:センサーバージョン入力実行(ダイアログ表示)
+aInputSensorVersionDlg.AddCheckVersion :チェックするバージョン
+aInputSensorVersionDlg.ClearCheckVersion :Addしたバージョン全クリア
+delete aInputSensorVersionDlg   　　  :センサーバージョン入力終了(インスタンス破棄)
+
+★センサーシリアル入力--------------------------
+StInputSensorSerialDlg aInputSensorSerialDlg：宣言
+aInputSensorSerialDlg.Execute　　　　:センサーシリアル入力実行(ダイアログ表示)
+delete aInputSensorSerialDlg   　　  :センサーシリアル入力終了(インスタンス破棄)
+
+
+
+★シリアル(センサーシリアル)書込み-------映像出力中じゃなくてもよい---------カメラリンク用----------------
+
+StWriteSerial aWriteSerial(aDevice)       :宣言 aWriteSerial(変数名) aDevice(デバイスクラスの変数名)
+aWriteSerial.SetSerialMode(1)             : D0:カメラシリアル D1:センサーシリアル(TAKANOのみ)
+aWriteSerial.SetMode(0)                   :0:Binary 1:Ascii 2:Takano
+aWriteSerial.SetDeviceCode(0)             :デバイスコード設定 (Binary用)
+aWriteSerial.SetPage(0)                   :ページ設定 (Binary用)
+aWriteSerial.SetYearAddress(0x07)         :年アドレス設定 (Binary用)
+aWriteSerial.SetMonthAddress(0x06LSB)     :月アドレス設定 (Binary用)
+aWriteSerial.SetMonthAddress2(0x04Q2SB)   :追加 月アドレス設定(Binary用) Q0SB(0,1) Q1SB(2,3) Q2SB(4,5) Q3SB(6,7)
+aWriteSerial.SetSN1Address(0x04LSB)       :SN1アドレス設定 (Binary用)
+aWriteSerial.SetSN1Address2(0x04Q3SB)     :追加 SN1アドレス設定(Binary用) Q0SB(0,1) Q1SB(2,3) Q2SB(4,5) Q3SB(6,7)
+aWriteSerial.SetSN2Address(0x05MSB)       :SN2アドレス設定 (Binary用)
+aWriteSerial.SetSN3Address(0x05LSB)       :SN3アドレス設定 (Binary用)
+aWriteSerial.SetSN4Address(0x06MSB)       :SN4アドレス設定 (Binary用)
+aWriteSerial.SetCommand(SSNC)             :Command名設定 (Ascii,Takano用) takano SSNS:センサーシリアル書込み SSNC:カメラシリアル書込 RSNS:センサーシリアル読込 RSNC:カメラシリアル読込
+aWriteSerial.Execute                      :シリアル入力値書込み
+delete aWriteSerial                       :シリアル書込み終了(インスタンス破棄)
+
+
+★シリアルバージョン検査-------映像出力中じゃなくてもよい-------------------------
+シリアル入力、Connect後に行う。
+StCheckSerialVersion aCheckSerialVersion(aDevice):宣言 aCheckSerialVersion(変数名) aDevice(デバイスクラスの変数名)
+aCheckSerialVersion.SetDeviceVersion    　　　　 :デバイスバージョン設定(未入力の場合比較しない)
+aCheckSerialVersion.SetDeviceSerialNumber        :シリアル番号設定(初期値として宣言時にシリアル入力値が入る。未入力をセットした場合比較しない)
+aCheckSerialVersion.SetDeviceFirmwareVersion     :デバイスファームウェアバージョン設定(未入力の場合比較しない)
+
+aCheckSerialVersion.SetDeviceModelName           :(StDeviceEBus用)デバイスモデルネーム設定(未入力の場合比較しない)
+
+aCheckSerialVersion.SetSensorSerialNumber        :(TAKANOのみ)センサーシリアル番号設定(初期値として宣言時にセンサーシリアル入力値が入る。未入力をセットした場合比較しない)
+aCheckSerialVersion.SetMode(0)           　　　  :0:Binary 1:Ascii 2:Takano　　カメラリンク用
+aCheckSerialVersion.AddSensorSerialETX(-SI)      :(TAKANOのみ)センサーシリアル番号設定で、末尾の文字列が付加される場合があるため設定
+aCheckSerialVersion.ClearSensorSerialETX         :(TAKANOのみ)センサーシリアルETXのクリア
+
+aCheckSerialVersion.SetYearAddress               :(StDeviceMulticamのBINARYモードのみ)シリアル番号のYearアドレス
+aCheckSerialVersion.SetMonthAddress              :(StDeviceMulticamのBINARYモードのみ)シリアル番号のMonthアドレス
+aCheckSerialVersion.SetSN1Address                :(StDeviceMulticamのBINARYモードのみ)シリアル番号のSN1アドレス
+aCheckSerialVersion.SetSN2Address                :(StDeviceMulticamのBINARYモードのみ)シリアル番号のSN2アドレス
+aCheckSerialVersion.SetSN3Address                :(StDeviceMulticamのBINARYモードのみ)シリアル番号のSN3アドレス
+aCheckSerialVersion.SetSN4Address                :(StDeviceMulticamのBINARYモードのみ)シリアル番号のSN4アドレス
+aCheckSerialVersion.SetDeviceCode                :(StDeviceMulticamのBINARYモードのみ)シリアル番号のデバイスコード
+aCheckSerialVersion.SetPage                      :(StDeviceMulticamのBINARYモードのみ)シリアル番号のページ
+
+aCheckSerialVersion.SetEllitoSerialNumberFilepath :　(TAKANOのみ)bを末尾につけるかどうかのシリアルが書き込まれているファイルパス(記述ない場合は\\CONFIG\\Standard)
+aCheckSerialVersion.SetEllitoSerialNumberFilename :　(TAKANOのみ)bを末尾につけるかどうかのシリアルが書き込まれているファイル名 (記述がない場合はb付シリアルなし)
+aCheckSerialVersion.SetAddress                    :(TAKANO,CXPのみ)シリアル番号のアドレス設定
+aCheckSerialVersion.SetSelectorAddress            :(TAKANO,CXPのみ) セレクターアドレス設定　シリアル番号読込み用の設定用アドレス
+aCheckSerialVersion.SetDeviceSerialNumberSelectorValue　　:(TAKANO,CXPのみ)デバイスシリアル番号読込みの番号　(SelectorAddressに書き込みする番号)
+aCheckSerialVersion.SetSensorSerialNumberSelectorValue　　:(TAKANO,CXPのみ)センサーシリアル番号読込みの番号　(SelectorAddressに書き込みする番号)
+aCheckSerialVersion.SetSensorSerialNumberLength   :(TAKANO,CXPのみ)シリアル番号を読み込みするサイズ
+
+aCheckSerialVersion.Execute                      :シリアルバージョン検査実行
+delete aCheckSerialVersion                       :シリアルバージョン検査終了(インスタンス破棄)
+
+
+
+★カメラ通信繰返検査-------映像出力中じゃなくてもよい-------------------------
+StCheckControlRetry aControlRetry(aDevice):宣言 aControlRetry(変数名) aDevice(デバイスクラスの変数名)
+aControlRetry.SetRetry=10            :送信し受信データを比較する繰り返し回数
+aControlRetry.SetTimer=100           :比較後相違の場合次の通信までの時間mSec
+aControlRetry.SendData=020030010003  :UART0送信データ(16進)
+aControlRetry.ReturnData=02010003    :UART0受信比較データ(16進)
+aControlRetry.SetBusyCommand=0200AC010003 :ビジー取得コマンド
+aControlRetry.SetBusyStatus=02010003      :ビジーデータ
+aControlRetry.Execute                :カメラ通信繰返検査実行
+delete aControlRetry                 :カメラ通信繰返検査終了(インスタンス破棄)
+△内容--------
+1)カメラへSendDataデータを送信し直後に受信したデータとReturnDataを比較する。UART0
+2)データが一致していない場合、NGとして終了
+3)データが一致している場合、SetTimer時間後にSetBusyCommandデータを送信
+4)BUSY受信データとSetBusyStatusを比較し、一致していたらOKとして終了
+5)一致していない場合、3->4をSetRetry回数繰り返し行い、OKにならない場合NGとして終了
+
+★特定挙動検査---------映像出力中に行う-----------------------
+StCheckSpBehavior aCheckBehavior(aDevice):宣言 aCheckBehavior(変数名) aDevice(デバイスクラスの変数名)
+aCheckBehavior.SetStartLine          :検査開始ライン
+aCheckBehavior.SetEndLine         :検査終了ライン
+aCheckBehavior.SetColor          :検査する色を指定(D0:Red D1:Green D2:Blue)
+aCheckBehavior.SetMaxLevel         最大レベル(規格)
+aCheckBehavior.SetMinLevel        :最小レベル(規格)
+aCheckBehavior.SetInOutMode　　　　:範囲内か範囲外どちらでNGとするかのモード(0:範囲内NG 1:範囲外NG)
+aCheckBehavior.SetLine             :■未使用。。。
+aCheckBehavior.SetContinuousCount  :連続NG画素判定数(規格)
+aCheckBehavior.SetJudgeMode　　　　:判定条件 0:連続回数が規格を超えた瞬間だけNG　1:1回でもNGがでたらNGのまま固定 ■未使用。。。
+
+aCheckBehavior.Execute                :特定挙動検査実行
+delete aCheckBehavior                 :特定挙動検査終了(インスタンス破棄)
+△内容--------
+1)StartLineとEndLine内で、縦1ラインのそれぞれの画素レベルがMaxLevel-MinLevelの範囲(あるいは範囲外)にあるかどうかを
+調べる。
+2)規格外の画素が連続している数が一番多いライン位置および色を取得する。
+3)取得した数がContinuousCountを超えている場合NGとする。
+4)連続数、ライン位置、色を表示する。
+
+★デジタルデータ取りこぼし検査---------映像出力中に行う-----------------------
+StCheckDataLose aCheckDataLose(aDevice):宣言 aCheckDataLose(変数名) aDevice(デバイスクラスの変数名)
+aCheckDataLose.SetStartLine　　　　　:検査開始ライン
+aCheckDataLose.SetEndLine　　　　　　:検査終了ライン
+aCheckDataLose.SetDifferenceMax　    :差分規格値
+aCheckDataLose.SetCSVFileName        :CSVファイル名
+aCheckDataLose.Execute               :デジタルデータ取りこぼし検査実行
+delete aCheckDataLose                :デジタルデータ取りこぼし検査終了(インスタンス破棄)
+△内容--------
+1)StartLineとEndLine内で、各縦ラインごとに画素値の最大最小平均を取得する。
+2)各ラインの平均と最大、最小の差分を求め、最大差分を規格と比較する。
+3)最大差分、ライン位置、色を表示する。
+4)SetCSVFileNameされている場合、CSVファイル保存を行う。
+パス名
+SaveFilePath\\DeviceModelName\\Date\\csv\\
+ファイル名
+DeviceModelName_SerialNumber_Date_CSVFileName.csv
+
+
+★デジタルデータ取りこぼし検査ダイアログ表示---------映像出力中に行う-----------------------
+StCheckDataLoseDlg aCheckDataLose(aDevice):宣言 aCheckDataLoseDlg(変数名) aDevice(デバイスクラスの変数名)
+aCheckDataLoseDlg.SetStartLine　　　　　:検査開始ライン
+aCheckDataLoseDlg.SetEndLine　　　　　　:検査終了ライン
+aCheckDataLoseDlg.SetMode   　　　　　　:検査モード 0:更新を続ける 1:NG時に停止する
+aCheckDataLoseDlg.SetDifferenceMax　    :差分規格値
+aCheckDataLoseDlg.SetCSVFileName        :CSVファイル名
+aCheckDataLoseDlg.SetBMPFileName        :BMPファイル名
+aCheckDataLoseDlg.Execute               :デジタルデータ取りこぼし検査実行
+delete aCheckDataLoseDlg                :デジタルデータ取りこぼし検査終了(インスタンス破棄)
+△内容--------
+1)StartLineとEndLine内で、各縦ラインごとに画素値の最大最小平均を取得する。
+2)各ラインの平均と最大、最小の差分を求め、最大差分を規格と比較する。
+3)最大差分、ライン位置、色を表示する。
+4)SetCSVFileNameされている場合、CSVファイル保存を行う。
+パス名
+SaveFilePath\\DeviceModelName\\Date\\csv\\
+SaveFilePath\\DeviceModelName\\Date\\bmp\\
+ファイル名
+DeviceModelName_SerialNumber_Date_CSVFileName.csv
+DeviceModelName_SerialNumber_Date_BMPFileName.bmp
+
+
+
+
+
+
+
+★画素欠陥検査---------映像出力中に行う-----------------------
+StCheckPixelDefect aCheckPixelDefect(aDevice):宣言 aCheckPixelDefect(変数名) aDevice(デバイスクラスの変数名)
+aCheckPixelDefect.SetStartLine　　　　　:検査開始ライン
+aCheckPixelDefect.SetEndLine　　　　　　:検査終了ライン
+aCheckPixelDefect.SetWidthLines   　    :検査幅
+aCheckPixelDefect.SetDifferenceMax　    :差分規格値
+aCheckPixelDefect.SetSeparate           :検査領域セパレート
+aCheckPixelDefect.Execute               :画素欠陥検査実行
+delete aCheckPixelDefect                :画素欠陥検査終了(インスタンス破棄)
+△内容--------
+1)StartLineとEndLine内で、各縦ラインごとに画素値の平均を取得する。
+2)検査開始ラインから検査幅分、最大最小の平均値を取得し、差分を求める。
+3)求めた差分が一番大きいライン値、および差分値を取得する。
+4)3で求めたライン値からSetWidthLines分、平均取得し、SetWidthLines分の各ライン平均との差分を取得する。
+5)4で求めた最大差分を規格と比較し、最大差分および比率、位置を取得する。
+
+
+
+★画素欠陥登録----タカノ向け-----映像出力中じゃなくてもよい-----------------------
+StCheckPixelCorrect aPixelCorrect(aDevice):宣言 aCheckPixelDefect(変数名) aDevice(デバイスクラスの変数名)
+aPixelCorrect.Directory=.\CONFIG\PixelCorrect   :画素欠ファイル
+aPixelCorrect.Mode=0                            :  0:TAKANO  1:未定
+aPixelCorrect.SelectMode=0                      :  0:ファイル自動選択  1:ファイル手動選択
+aPixelCorrect.Execute         　　　　　　　    :  画素欠陥登録実行
+delete aPixelCorrect
+
+★ゴミ検査ダイアログ表示---------映像出力中に行う-----------------------
+StCheckDustDlg aCheckDust(aDevice):宣言 aCheckDust(変数名) aDevice(デバイスクラスの変数名)
+aCheckDust.SetStartLine　　　　　:検査開始ライン (初期値:0)
+aCheckDust.SetEndLine　　　　　　:検査終了ライン (初期値:4095)
+aCheckDust.SetWidthLines   　    :検査幅  (初期値:4096)
+aCheckDust.SetDifferenceMax　    :差分規格値   (初期値:なし)
+aCheckDust.SetSeparate           :検査領域セパレート (初期値:1)
+aCheckDust.SetAverageLowLevel    :平均レベル下限値   (初期値:なし)
+aCheckDust.SetAverageHighLevel   :平均レベル上限値   (初期値:なし)
+aCheckDust.SetBMPFileName        :  (初期値:"")
+aCheckDust.SetCSVFileName        :  (初期値:"")
+aCheckDust.SetPNGFileName        :  (初期値:"")
+aCheckDust.SetCheckMode          : 0:最大-最小が一番大きい位置を求め規格と比較する。  (初期値:0)
+　　　　　　　　　　　　　　　　　 1:画像の縦方向を平均化し CheckWidthの幅で最大-平均,平均-最小が一番大きい位置を求め横方向設定値分すべて差分を求め、％化し最大値を規格と比較する。
+　　　　　　　　　　　　　　　　　 2:
+        ①	画像の縦方向を平均化する。(１ライン分のデータにする。)
+	②	CheckWidthの幅で(最大-平均),(平均-最小)を全画素求め、％化する。
+	③	DifferenceMax規格より大きい画素が連続している画素を求め、連続数とContinuousCountを比較し判定する。
+	④	最大連続の画素で最大差分をログ保存する。
+
+aCheckDust.SetContinuousCountMax : (CheckMode=2で使用)差分規格外連続画素許容数  (初期値:0)
+
+aCheckDust.Mode                 : 0:Dialogモード 1:Dialogなしモード  (初期値:0)
+aCheckDust.Execute              :ゴミ検査実行
+delete aCheckDust               :ゴミ検査終了(インスタンス破棄)
+△内容--------
+画素欠陥検査とほぼ同じ
+
+○SetBMPFileNameされている場合、NG時最悪評価画像のBMPファイル保存を行う。
+パス名
+SaveFilePath\\DeviceModelName\\Date\\bmp\\
+ファイル名
+DeviceModelName_SerialNumber_Date_BMPFileName.bmp
+
+★CSVゴミ検査--------------------------------
+StCheckCSVDust aCheckCSVDust     :宣言 aCheckCSVDust(変数名)
+aCheckCSVDust.SetStartLine　　　　　:検査開始ライン
+aCheckCSVDust.SetEndLine　　　　　　:検査終了ライン
+aCheckCSVDust.SetWidthLines   　    :検査幅
+aCheckCSVDust.SetDifferenceMax　    :差分規格値
+aCheckCSVDust.SetSeparate           :検査領域セパレート
+aCheckCSVDust.SetAverageLowLevel    :平均レベル下限値
+aCheckCSVDust.SetAverageHighLevel   :平均レベル上限値
+aCheckCSVDust.SetFilePath           :ファイルがあるフォルダ指定
+aCheckCSVDust.SetFileName           :ファイル名指定
+aCheckCSVDust.SetCheckMode          :モード　StCheckDustDlgを参照
+aCheckCSVDust.Execute               :ゴミ検査実行
+delete aCheckCSVDust                :ゴミ検査終了(インスタンス破棄)
+
+△内容--------
+ファイルを読み込み、ゴミ検査を行う。
+検査内容はStCheckDustDlgを参照
+
+
+★メッセージ表示---------映像出力中じゃなくてもよい-----------------------
+StCheckMessage aMessage                    :宣言 aMessage(変数名) 
+aMessage.SetTextButton(Not Covered)        :第３ボタンの文字
+aMessage.SetMessage(OKを押してください)  　:メッセージの文字
+aMessage.SetOKEnable(true)                 :OKボタン表示有無    true or false
+aMessage.SetNGEnable(true)                 :NGボタン表示有無
+aMessage.SetTextButtonEnable(true)         :第３ボタン表示有無
+aMessage.Execute                           :メッセージ表示　判定あり
+aMessage.DoModal                           :メッセージ表示　判定なし
+delete aMessage　　　　　　　　　　　　　　:メッセージ終了(インスタンス破棄)
+
+★Line to line検査ダイアログ表示---------映像出力中に行う----------------------- ■未使用
+StCheckAdjustLinetolineDlg aCheckLinetoline(aDevice):宣言 aCheckLinetoline(変数名) aDevice(デバイスクラスの変数名)
+aCheckLinetoline.SetStartLine　　　　　:検査開始ライン
+aCheckLinetoline.SetEndLine　　　　　　:検査終了ライン
+aCheckLinetoline.SetTimer=100          :設定変更後、画像取得までの待ち時間mSec
+aCheckLinetoline.SetDeviceCode         :設定値のシリアル通信用書込みデバイスコード（GigE用）
+aCheckLinetoline.SetPage　　　         :設定値のシリアル通信用書込みページ（GigE用）
+aCheckLinetoline.SetAddress　　　      :設定値のシリアル通信用書込みアドレス（GigE用）
+aCheckLinetoline.SetInitValue　　　　　:設定値のシリアル通信用書込み初期値
+aCheckLinetoline.SetMinAverage         :最小平均値
+aCheckLinetoline.SetMaxAverage         :最大平均値
+aCheckLinetoline.SetAdjustCount        :調整最大回数
+
+aCheckLinetoline.SetCommand            :設定コマンド (CLアスキー用)
+コマンドが入っている場合アスキー通信、ない場合バイナリー通信とする。
+
+△内容--------
+1)設定範囲内で縦ラインの平均が一番小さい位置、値を取得する。
+2)規格範囲内の場合OKで終了,繰返し回数がAdjustCountになっても規格範囲内にならなかった場合NGで終了
+3)Max以上の場合次の設定値を NextData = NowData - ( GetValue - Max +1 ) とし、SetTimer後に１）を行う
+4)Min以下の場合次の設定値を NextData = NowData + ( Min - GetValue +1 ) とし、SetTimer後に１）を行う
+
+★Line to line検査---------映像出力中に行う-----------------------
+StCheckAdjustLinetoline aCheckLinetoline(aDevice):宣言 aCheckLinetoline(変数名) aDevice(デバイスクラスの変数名)
+aCheckLinetoline.SetStartLine　　　　　:検査開始ライン
+aCheckLinetoline.SetEndLine　　　　　　:検査終了ライン
+aCheckLinetoline.SetTimer=100          :設定変更後、画像取得までの待ち時間mSec
+aCheckLinetoline.SetDeviceCode         :設定値のシリアル通信用書込みデバイスコード（GigE用）
+aCheckLinetoline.SetPage　　　         :設定値のシリアル通信用書込みページ（GigE用）
+aCheckLinetoline.SetAddress　　　      :設定値のシリアル通信用書込みアドレス（GigE用）
+aCheckLinetoline.SetInitValue　　　　　:設定値のシリアル通信用書込み初期値
+aCheckLinetoline.SetMinAverage         :最小平均値
+aCheckLinetoline.SetMaxAverage         :最大平均値
+aCheckLinetoline.SetAdjustCount        :調整最大回数
+aCheckLinetoline.SetCommand            :設定コマンド (CLアスキー用)
+
+△内容--------
+1)設定範囲内で縦ラインの平均が一番小さい位置、値を取得する。
+2)規格範囲内の場合OKで終了,繰返し回数がAdjustCountになっても規格範囲内にならなかった場合NGで終了
+3)Max以上の場合次の設定値を NextData = NowData - ( GetValue - Max +1 ) とし、SetTimer後に１）を行う
+4)Min以下の場合次の設定値を NextData = NowData + ( Min - GetValue +1 ) とし、SetTimer後に１）を行う
+
+
+
+#★有効画素検査---------映像出力中に行う-----------------------
+StCheckEffectivePixel aCheckEffectivePixel(aDevice):宣言 aCheckEffectivePixel(変数名) aDevice(デバイスクラスの変数名)
+aCheckEffectivePixel.SetStartLine　　　　　:検査開始ライン
+aCheckEffectivePixel.SetEndLine　　　　　　:検査終了ライン
+aCheckEffectivePixel.SetLevel              :レベル(規格)
+aCheckEffectivePixel.SetEffectiveStart     :有効開始位置(規格)
+aCheckEffectivePixel.SetEffectiveEnd       :有効終了位置(規格)
+aCheckEffectivePixel.Execute               :有効画素検査実行
+delete aCheckEffectivePixel                :有効画素検査終了(インスタンス破棄)
+
+△内容--------
+1)設定範囲内で縦ラインの平均を取得する。
+2)取得した平均が設定レベル以上の最初、最後のライン位置を取得する。
+3)取得した最初、最後のライン位置が規格と同じ場合OKとする。違う場合NGとする。
+
+
+
+***未実装*****************
+#★オフセット調整--------映像出力中に行う-----------------------
+StAdjustOffsetDlg aAdjustOffset(aDevice)
+aAdjustOffset.SetTitle                     :ダイアログのタイトル
+aAdjustOffset.SetStartLine                 :開始ライン
+aAdjustOffset.SetEndLine                   :終了ライン
+
+aAdjustOffset.SetColor                   :検査する色を指定(D0:Red D1:Green D2:Blue)
+aAdjustOffset.SetMaxLevel                :最大レベル(規格)
+aAdjustOffset.SetMinLevel                :最小レベル(規格)
+aAdjustOffset.SetInOutMode　　　　:範囲内か範囲外どちらでNGとするかのモード(0:範囲内NG 1:範囲外NG)
+aAdjustOffset.SetContinuousCount  :連続NG画素判定数(規格)
+aAdjustOffset.SetJudgeMode　　　　:判定条件 0:連続回数が規格を超えた瞬間だけNG　1:1回でもNGがでたらNGのまま固定 ■未使用。。。
+aAdjustOffset.Execute                :オフセット調整実行
+
+
+#★オフセット調整-----------------------------------
+StCheckAdjustOffset aCheckAdjustOffset(aDevice)     :宣言 aCheckAdjustOffset(変数名) aDevice(デバイスクラスの変数名)
+aCheckAdjustOffset.SetStartValue                    :最初のオフセット設定値
+aCheckAdjustOffset.SetMaxValue                      :オフセットの最大設定値
+aCheckAdjustOffset.SetChannelCount                  :チャンネル数
+aCheckAdjustOffset.SetCMDL                          :Lowデータ設定コマンドテキスト 例:da_m%dl(Ascii用)
+aCheckAdjustOffset.SetCMDH                          :Highデータ設定コマンドテキスト 例:da_m%dh(Ascii用)
+aCheckAdjustOffset.SetLBIT                          :Lowデータ部分のビット数 4
+aCheckAdjustOffset.SetTrigger                       :OFFSET_CMDL,OFFSET_CMDHのコマンドを入力した後に入力するコマンド litr(Ascii用)
+aCheckAdjustOffset.SetTimer                         :オフセットを設定してからデータを取得するまでの待ち時間(mSec)
+aCheckAdjustOffset.SetStartLine                     :データ取得するための画像開始位置(ピクセル)
+aCheckAdjustOffset.SetEndLine                       :データ取得するための画像終了位置(ピクセル)
+aCheckAdjustOffset.SetBase                          :OFFSET_STとOFFSET_ENDの間の画素値の最小値を求め、OFFSET_BACE以上になるオフセット値の最大値を求める
+aCheckAdjustOffset.SetInc                           :決定したオフセット値からOFFSET_INC足した値を最終オフセット値として設定する。
+aCheckAdjustOffset.SetDiffValue                     :調整時、次のオフセット設定を決めるための変化量(初期値16)
+aCheckAdjustOffset.SetAddressL0                     :Lowデータ設定アドレス　チャンネル0(Binary用)
+aCheckAdjustOffset.SetAddressH0                     :Highデータ設定アドレス　チャンネル0(Binary用)
+aCheckAdjustOffset.SetAddressL1                     :Lowデータ設定アドレス　チャンネル1(Binary用)
+aCheckAdjustOffset.SetAddressH1                     :Highデータ設定アドレス　チャンネル1(Binary用)
+aCheckAdjustOffset.SetTriggerAddress                :Trigger設定アドレス(Binary用)
+aCheckAdjustOffset.SetTriggerBit                    :TriggerのBit位置 0～7のいずれか(Binary用)
+aCheckAdjustOffset.SetCtrl                          :0:Binary 1:Ascii(MultiCam用,GigEはBinary固定)
+
+aCheckAdjustOffset.SetBunch(8)                      :ライン束数設定
+aCheckAdjustOffset.SetEvenOddReverseMode(1)         :0:通常モード   1:EvenOdd逆モード
+
+aCheckAdjustOffset.Execute                          :オフセット調整開始
+delete aCheckAdjustOffset                           :オフセット調整終了(インスタンス破棄)
+
+
+1)StartValue値でオフセット設定する。
+2)Timer値後に映像取得し、チャンネルごとの最小値を取得する。
+3)最小値がBaseに近くなるようにEvenOddのオフセット値を設定する。(オフセット値を大きくすると最小値は小さくなる。)
+  (最小値が１以下の時と２以上の時のオフセットを求めていく。オフセット差が１になるまで)
+4)EvenOddの差が2未満になったら終了する。それ以外は2)から繰り返す。
+
+#★ボリューム調整-----------------------------------
+StCheckAdjustVolumeDlg aCheckAdjustVolumeDlg(aDevice)     :宣言 aCheckAdjustVolumeDlg(変数名) aDevice(デバイスクラスの変数名)
+aCheckAdjustVolumeDlg.SetChannelCount                     :チャンネル数  2 or 4
+aCheckAdjustVolumeDlg.SetLevelDiff                        :規格設定　各チャンネル平均での差分の最大
+aCheckAdjustVolumeDlg.SetCenter                           :中心設定
+aCheckAdjustVolumeDlg.SetWidth                            :平均取得幅設定
+aCheckAdjustVolumeDlg.SetStart0                           :スタート位置設定(未設定の場合、Center,WidthからStart位置が計算される) 末尾の数値はチャンネル２つごとのスタート位置
+aCheckAdjustOffset.Execute                                :ボリューム調整開始
+delete aCheckAdjustOffset                                 :ボリューム調整終了(インスタンス破棄)
+
+1)各チャンネルごとに平均を取得し、各チャンネル平均の差分が小さくなるようボリューム調整する。
+
+#★ゲイン調整-----------------------------------
+StCheckAdjustGain
+
+
+
+
+StCheckAdjustGainDlg
+
+
+
+#★スイッチ検査-----------------------------------
+StCheckSwitchDlg aCheckSwitchDlg(aDevice)     :宣言 aCheckSwitchDlg(変数名) aDevice(デバイスクラスの変数名)
+aCheckSwitchDlg.Duration                      :Beep音の長さ
+aCheckSwitchDlg.Freq                          :Beep音の周波数
+aCheckSwitchDlg.LastPos                       :最終スイッチ位置
+aCheckSwitchDlg.Execute                       :スイッチ検査開始
+delete aCheckSwitchDlg                        :スイッチ検査終了(インスタンス破棄)
+
+
+#★消費電流検査---------映像出力中じゃなくてもよい-----------------------
+StCheckPower aCheckPower                      :宣言 aCheckPower(変数名)
+aCheckPower.SetSerialComm=aJigu               :シリアルポート設定  SetModeが0 or 1 or 3の時
+aCheckPower.SetTexioControl=aTexioControl     :Texio電源設定 SetModeが2の時
+aCheckPower.SetInterfaceGenICam=aInterface    :GenICamインターフェース設定 SetModeが4の時
+aCheckPower.SetCommand=CxpPoCxpCurrent        :GenICamコマンド SetModeが4の時
+aCheckPower.SetMode　　　       　          　:モード設定    0:電流検査(ラインセンサー治具) 1:PoE電流検査(GigE治具) 2:電流検査(Texio電源) 3:電流検査(PoE電源:A6000) 4:PoCXP電流検査(Euresysボード)
+aCheckPower.SetCurrentMax　　　　　　　　　　 :電流値規格設定(MAX)
+aCheckPower.SetCurrentMin　　　　　　　　　　 :電流値規格設定(MIN)
+aCheckPower.Execute                           :消費電流検査実行 
+
+delete aCheckPower                            :消費電流検査終了(インスタンス破棄)
+
+
+
+#★温度検査---------映像出力中じゃなくてもよい-----------------------
+StCheckTemperature aCheckTemperature(aDevice)  :宣言 aCheckTemperature(変数名)  aDevice(デバイスクラスの変数名)
+aCheckTemperature.MinTemperature              :最小温度値
+aCheckTemperature.MaxTemperature              :最大温度値
+aCheckTemperature.Mode                        :モード設定 0:TAKANO  1:未定
+aCheckTemperature.Command(RTMP 0)             :コマンド設定
+
+aCheckTemperature.SelectorFeature(DeviceTemperatureSelector) :Selector項目   (GenICam用)
+aCheckTemperature.SelectorSelect(Mainboard)                  :Selector選択肢 (GenICam用)
+aCheckTemperature.Command(DeviceTemperature)                 :温度項目 (GenICam用)
+aCheckTemperature.SetAddress(0xA560)                         :温度アドレス (GenICam)
+
+aCheckTemperature.Execute                     :温度検査実行
+delete aCheckTemperature                      :温度検査終了(インスタンス破棄)
+
+#★テストパターン検査---------映像出力中に行う-----------------------
+StCheckTestPattern aCheckTestPattern(aDevice)          :宣言 aCheckTestPattern(変数名) aDevice(デバイスクラスの変数名)
+aCheckTestPattern.Start　　　       　             　:検査開始ライン
+aCheckTestPattern.End　　　　　　                    :検査終了ライン
+aCheckTestPattern.FileName                           :ファイル名指定
+aCheckTestPattern.Execute                           :テストパターン検査実行 
+delete aCheckTestPattern                            :テストパターン検査終了(インスタンス破棄)
+
+
+#★IO検査---------映像出力中じゃなくてもよい-----------------------
+StCheckIO aCheckIO(aDevice)                   :宣言 aCheckIO(変数名) aDevice(デバイスクラスの変数名)
+aCheckIO.SetSerialComm=aGigEJigu              :シリアルポート設定(GigE治具)
+aCheckIO.SetTerminal=aTerminal                :ターミナル設定(ラズパイ治具)
+aCheckIO.SetMode                              : 0:GigE冶具 1:ラズパイ冶具
+aCheckIO.CheckWaitTime                        :設定から取得までの待ち時間mSec
+aCheckIO.SetLineCount　　　       　        　:ライン数設定
+aCheckIO.SetLineMode0～xx　　　   　   　　　 :各ラインのIN or OUT設定 (先にSetLineCountの設定が必要)
+aCheckIO.Execute                              :IO検査実行 
+delete aCheckIO                               :IO検査終了(インスタンス破棄)
+
+#★フレームレート検査---------映像出力中に行う-----------------------
+StCheckFramerate aCheckFramerate(aDevice)    :宣言 aCheckFramerate(変数名) aDevice(デバイスクラスの変数名)
+aCheckFramerate.MinFramerate=1.0             :フレームレート規格設定(MIN)
+aCheckFramerate.MaxFramerate=100.0           :フレームレート規格設定(MAX)
+aCheckFramerate.Execute                      :フレームレート検査実行 
+delete aCheckFramerate                       :フレームレート検査終了(インスタンス破棄)
+△内容--------
+1)フレームレートを取得する。
+Multicamの場合、MC_PerSecond_Frから取得
+eBUSの場合、PvStream.AcquisitionRateから取得
+2)取得したフレームレートが規格内の場合OKとする。規格外の場合NGとする。
+
+
+#★LVDS調整画面---------映像出力中じゃなくてもよい-----------------------
+StCheckEllitoLVDSDlg aCheckEllitoLVDSDlg(aDevice)    :宣言 aDevice(デバイスクラスの変数名)
+
+aCheckEllitoLVDSDlg.SetSaveFilePath　　　　　　　　　：ファイル保存フォルダ指定
+aCheckEllitoLVDSDlg.Execute
+delete aCheckEllitoLVDSDlg
+
+#★EllitoLVDS検査---------映像出力中じゃなくてもよい-----------------------
+StCheckEllitoLVDS aCheckEllitoLVDS(aDevice)    :宣言 aDevice(デバイスクラスの変数名)
+aCheckEllitoLVDS.Execute
+delete aCheckEllitoLVDS
+
+
+
+#★照明調光ダイアログ表示---------映像出力中に行う----------------------- ■未使用
+StLightControlDlg aLightControl(aDevice):宣言 aLightControl(変数名) aDevice(デバイスクラスの変数名)
+aLightControl.SetSerialComm(aSerialComm)               :治具クラス設定　StSerialComm
+aLightControl.SetStartLine　　　       　             　:検査開始ライン
+aLightControl.SetEndLine　　　　　　                    :検査終了ライン
+aLightControl.SetTimer=100                              :待ち時間mSec
+aLightControl.SetColor=R                                :調光色および順設定
+aLightControl.SetMaxValueR                             :Redの最大設定値(調光時の初期値)
+aLightControl.SetMaxValueG                             :Greenの最大設定値(調光時の初期値)
+aLightControl.SetMaxValueB                             :Blueの最大設定値(調光時の初期値)
+aLightControl.SetInitValueR                            :Redの初期設定値(開始時のみ設定)
+aLightControl.SetInitValueG                            :Greenの初期設定値(開始時のみ設定)
+aLightControl.SetInitValueB                            :Blueの初期設定値(開始時のみ設定)
+aLightControl.SetTargetR                           　  :Redのターゲット値
+aLightControl.SetTargetG                               :Greenのターゲット値
+aLightControl.SetTargetB                               :Blueのターゲット値
+aLightControl.SetTargetRangeR                          :Redのターゲットレンジ値
+aLightControl.SetTargetRangeG                          :Greenのターゲットレンジ値
+aLightControl.SetTargetRangeB                          :Blueのターゲットレンジ値
+#aLightControl.SetSerialComm                            :照明治具のSerialComm設定
+aLightControl.Execute                                  :照明調光実行
+delete aLightControl                                   :照明調光終了(インスタンス破棄)
+
+
+
+
+△内容--------
+1)初期値で照明をセットする。
+2)変更する色の最大設定値をセットする。
+3)Timer後に明るさ取得する。
+4)明るさがターゲットに近くなるまで設定値を変化させる。
+5)SetColorで設定した色の分おこなう。
+
+
+
+#★照明調光---------映像出力中に行う-----------------------
+StLightControl aLightControl(aDevice):宣言 aLightControl(変数名) aDevice(デバイスクラスの変数名)
+aLightControl.SetStartLine　　　       　             　:検査開始ライン
+aLightControl.SetEndLine　　　　　　                    :検査終了ライン
+aLightControl.SetTimer=100                              :待ち時間mSec
+aLightControl.SetColor=R                                :調光色および順設定
+aLightControl.SetMaxValueR                             :Redの最大設定値(調光時の初期値)
+aLightControl.SetMaxValueG                             :Greenの最大設定値(調光時の初期値)
+aLightControl.SetMaxValueB                             :Blueの最大設定値(調光時の初期値)
+aLightControl.SetInitValueR                            :Redの初期設定値(開始時のみ設定)
+aLightControl.SetInitValueG                            :Greenの初期設定値(開始時のみ設定)
+aLightControl.SetInitValueB                            :Blueの初期設定値(開始時のみ設定)
+aLightControl.SetTargetR                           　  :Redのターゲット値
+aLightControl.SetTargetG                               :Greenのターゲット値
+aLightControl.SetTargetB                               :Blueのターゲット値
+aLightControl.SetTargetRangeR                          :Redのターゲットレンジ値
+aLightControl.SetTargetRangeG                          :Greenのターゲットレンジ値
+aLightControl.SetTargetRangeB                          :Blueのターゲットレンジ値
+aLightControl.SetSerialComm(aSerialComm)               :照明治具のStSerialComm設定
+aLightControl.Execute                                  :照明調光実行
+
+--ラズベリパイを使用する場合----------------
+aLightControl.SetTerminal(aTerminal)                   :照明治具のTerminalクラス設定
+
+--照明データ保存読み込み----------------
+aLightControl.InfoFileName=LCLA-16M.txt                :SaveやLoadするファイル名
+aLightControl.SaveFileExecute                          :照明データをファイル保存
+aLightControl.LoadFileExecute　　　　　　　　　　　　　:照明データをファイルから読み込み
+
+delete aLightControl                                   :照明調光終了(インスタンス破棄)
+
+△内容--------
+照明調光ダイアログ表示と同様
+
+
+#★PTouch印刷-----映像出力中じゃなくてもよい-----------------------
+StPTouch aPTouch(aDevice)                           :宣言 aPTouch(変数名) aDevice(デバイスクラスの変数名)
+aPTouch.SetLabel(xx.lbx)                            :ラベルファイルの設定(ファイル名) このファイルを.\\CONFIG\\PTouch\\フォルダに置く必要あり
+aPTouch.SetConfirmMessage=0                         :確認ダイアログ表示 0:なし 1:あり 
+aPTouch.SetDeviceModelName                          :QRLONGやMODELNAMEで使用する型名の設定
+#aPTouch.AddID=MAC                                  :ラベルファイルに記載されているID文字列をセット■未使用。。。
+aPTouch.MAC=MACADDRESS                              :ラベルファイルに記載されているID文字列 ... IDに代入する文字列(MACADDRESS:マックアドレス,SERIALNUMBER:シリアル番号,MODELNAME:型名,
+                                           　　　　　    QRLONG:QRコード シリアル番号_品目コード_型名,QRSHORT:QRコード シリアル番号_品目コード,その他:記述した文字列)
+aPTouch.Clear                                       :AddIDしたID文字列の全削除
+aPTouch.Execute                                     :PTouch印刷実行
+delete aPTouch                                      :PTouch印刷終了(インスタンス破棄)
+
+
+#★BMP保存CSV保存---------映像出力中に行う-----------------------
+StCheckCommon aCommon(aDevice)     :宣言 aCommon(変数名) aDevice(デバイスクラスの変数名)
+aCommon.SetFileName                :ファイル名設定
+aCommon.SetCSVScopeLeft            :CSVファイルのデータ抽出範囲左側(CSV,Histogram)
+aCommon.SetCSVScopeRight           :CSVファイルのデータ抽出範囲右側(CSV,Histogram)
+aCommon.SaveBitmapExecute          :DeviceModelName_SerialNumber_DateFormat_ファイル名.bmpで画像保存 保存フォルダ(SaveFilePath\DeviceModelName\dateFormat\bmp)
+aCommon.SaveCSVExecute             :DeviceModelName_SerialNumber_DateFormat_ファイル名.csvでCSVファイル保存 保存フォルダ(SaveFilePath\DeviceModelName\dateFormat\csv)
+aCommon.SaveAllExecute             :Bitmap,CSV全部のデータを同一イメージデータで保存
+aCommon.SavePNGExecute             :DeviceModelName_SerialNumber_DateFormat_ファイル名.pngで画像保存 保存フォルダ(SaveFilePath\DeviceModelName\dateFormat\Image)
+aCommon.SaveJpegExecute            :DeviceModelName_SerialNumber_DateFormat_ファイル名.jpgで画像保存 保存フォルダ(SaveFilePath\DeviceModelName\dateFormat\Image)
+aCommon.SaveHistogramExecute       :DeviceModelName_SerialNumber_DateFormat_ファイル名.csvでHistogramファイル保存 保存フォルダ(SaveFilePath\DeviceModelName\dateFormat\csv)
+delete aCommon
+
+
+
+#★ラズベリーパイとの通信で照明調光-------------------------------
+各色のチャンネルはメニューのライトチャンネル設定で行う。。
+StTerminal aTerminal(192.168.1.223)               :宣言 aTerminal(変数名) 192.168.1.223(アドレス名)[TERM1,TERM2,TERM3 メニューで設定したアドレス]
+                                                  :引数ない場合 Addressで設定
+aTerminal.Address=192.168.1.223       :アドレス設定
+
+aTerminal.OnOffR=0                    :RedをOnOffさせる値設定    0:Off 1:On
+aTerminal.OnOffG=0                    :GreenをOnOffさせる値設定    0:Off 1:On
+aTerminal.OnOffB=0                    :BlueをOnOffさせる値設定    0:Off 1:On
+aTerminal.OnOffW=0                    :WhiteをOnOffさせる値設定    0:Off 1:On
+aTerminal.R=100                       :Redを調光させる値設定
+aTerminal.G=100                       :Greenを調光させる値設定
+aTerminal.B=100                       :Blueを調光させる値設定
+aTerminal.W=100                       :Whiteを調光させる値設定
+aTerminal.Execute                     :設定した値をまとめて送信
+
+aTerminal.SetOnOffR=0                 :Redを都度OnOffさせる    0:Off 1:On
+aTerminal.SetOnOffG=0                 :Greenを都度OnOffさせる    0:Off 1:On
+aTerminal.SetOnOffB=0                 :Blueを都度OnOffさせる    0:Off 1:On
+aTerminal.SetOnOffW=0                 :Whiteを都度OnOffさせる    0:Off 1:On
+aTerminal.SetR=100                    :Redを都度調光させる
+aTerminal.SetG=100                    :Greenを都度調光させる
+aTerminal.SetB=100                    :Blueを都度調光させる
+aTerminal.SetW=100                    :Whiteを都度調光させる
+
+aTerminal.Command(ch1onoff=1&ch2onoff=0) :コマンド送信
+
+aTerminal.SetIOPortCount(5)           :ポート数設定
+aTerminal.SetOutport(1)               :Outport出力 D0～D11
+
+(StValueへの値取得)
+GetAllport,LightValue(x),LightOnOff(x) (xはチャンネル番号)
+
+
+delete aTerminal
+
+コマンド例
+http://192.168.1.223/?ch1onoff=0&ch2onoff=1&ch3onoff=0&ch1val=100&ch2val=300&ch3val=10
+Red:ch1onoff=0     ch1val=100
+Green:ch2noff=0   ch2val=300
+Blue:ch3onoff=0    ch3val=10
+
+#★ラズベリーパイとの通信ダイアログ表示----デバッグ用--------------------------
+StHttpControlDlg aHttpControlDlg         :宣言 aHttpControlDlg(変数名) 
+aHttpControlDlg.Execute                  :ダイアログ表示 ExecuteまたはDoModal
+delete aHttpControlDlg                   :終了
+
+
+
+#★変数、繰返しスクリプト用など-------------------------------
+StValue aValue(0)                 :宣言 aValue(変数名) 引数(値)
+aValue++                          :1たす
+aValue=2　　　　　　　　        　:代入   検査結果、GenICam項目なども代入可
+aValue--                          :1引く
+aValue-=2                         :引く
+aValue+=2                         :たす
+delete aValue
+aReep="REEP "         :文字列代入
+aCommand=aReep        :StValue代入
+カメラからの値代入
+aValue = aControlRetry.GetRecieveValue
+aValue=aDevice.ExposureTime
+ストリームデータ取得
+aValue=aDevice.GetStreamData(AcquisitionRate)
+カメラに値設定
+aControlRetry.SendData(0x02,aCommand,0x0d)
+aDevice.ExposureTime=aValue
+
+
+#★繰返しスクリプト-------------------------------
+StLoop aLoop(aValue<3)            :宣言 aLoop(変数名) 引数(StValueを使用した条件)
+aLoop.Start(aValue<4)             :繰返し開始位置   引数(StValueを使用した条件)条件に合わない場合Endの次に行く
+......
+aLoop.End                         :繰返し終了位置
+delete aLoop
+
+#★IF文スクリプト-------------------------------
+StIF aIF(aValue<3)                :宣言 aIF(変数名) 引数(StValueを使用した条件)
+aIF.Start(aValue<4)               :IF文開始位置   引数条件に合わない場合次のElseIFまたはElseまたはEndに行く
+......
+aIF.ElseIF(aValue<5)              :IF文中間位置   引数条件に合わない場合次のElseIFまたはElseまたはEndに行く  
+......
+aIF.Else                          :IF文中間位置   いままでの引数条件に合わない場合Endまでのスクリプトが実行される 
+......
+aIF.End                           :IF文終了位置
+delete aIF
+
+使用できる条件　{_T("=="),_T("!="),_T("<="),_T(">="),_T("<"),_T(">")}
+
+
+
+#★ログ保存-------------------------------
+StFileOperation aFile(.\FileTest4.txt)    :宣言 aValue(変数名) 引数(ファイル名)
+aFile.SetFileName                         :ファイル名設定
+aFile.Mode=1                              :モード 0:上書きモード   1:追加モード    2:ヘッダーモード
+aFile.Write("exposureTime\tAverage\n")    :書込み
+delete aFile                              :破棄
+
+
+#★Interface制御-------------------------------
+StInterfaceGenICam aInterface(PC1633 - Coaxlink Quad G3 (1-camera, line-scan) - KQG00124)
+                                          :宣言 aInterface(変数名) 引数(インターフェースのID)
+aInterface.CxpPoCxpTurnOff                :PoCXPオフ（Euresysボード使用の例）
+aInterface.CxpPoCxpAuto                   :PoCXPオン（Euresysボード使用の例）
+delete aInterface                         :破棄
+
+
+
+
+
+
+■カメラリンクとの共通化のために追加-----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ボリューム調整　　　　○           ○
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+現在の検査番号
+  　　　　　　　　　　CMD          INS        StGenFactoryScript
+1シリアル入力　　　　  ○           X         StInputSerialDlg　
+2スイッチ動作　　　　  ○           X         作成必要　とりあえず最後  　　　　　　※ 作成済み StCheckSwitchDlg
+3ボリューム調整(EO調整)○           ○　　　　作成必要　　　　　　　　　　　　※ 作成済み　StCheckAdjustVolumeDlg
+4SN検査　　　　　　　　○           ○　　　　StCheckSN　　StCheckSNDlg
+5有効画素検査　　　　　○           ○        StCheckEffectivePixel
+6画素欠　　　　　　　　○           ○        StCheckPixelDefect???
+7消費電流　　　　　　　○           ○        StCheckPower
+8Gain　　　　　　　　　○           ○　　　　作成必要
+9ロットNo入力　　　  　○           X　　　　作成必要
+10SNショック　　　  　 ○           X        -----------------
+11シリアル入力2　　　  ○           X        StInputSerialDlg　
+12カメラ通信　　　   　X            ○       StCheckControlRetry
+13FPS検査　　　   　   X            ○		FPSを取得(Multicam or eBUS)し、比較
+14特定挙動検査　　　   ○           ○       StCheckSpBehavior
+15DDT検査　　　   　   ○           ○       StCheckDataLose
+16ゴミ検査             ○           X        StCheckDustDlg 
+18Gain      　　　   　X            ○　　　　作成必要
+19センサーバージョン入力　　○           X   StInputSensorVersionDlg
+20センサーシリアル入力 ○           X        StInputSensorSerialDlg
+
+21画素欠登録(タカノ）  X            ○　　　作成必要　　　　※ 作成済み　StCheckPixelCorrect
+22LVDS検査登録(タカノ）○           ○　　　作成必要　　　　※ 作成済み　StCheckEllitoLVDSDlg
+23テクシオ電流検査     X            ○      StCheckPower
+24温度検査             X            ○　　　作成必要　　　　※ 作成済み　StCheckPower 
+25テストパターン検査   X            ○　　　作成必要　　　　※ 作成済み　StCheckTestPattern
+
+
+MSG                    StCheckMessage
+MSA                    StCheckMessage
+MSB                    StCheckMessage
+MSC                    StCheckMessage
+MSD                    StCheckMessage
+IMO  //IMG ダイアログ  StImageMessageDlg
+IMC                    StImageMessageDlg
+POS  //画像の位置変更  作成必要
+
+
+CONNECT　　　　　　　Multicam  A,Mなど---
+SAV　検査結果ファイル出力　必要なし？？　
+CAM   　　　　　　　　//カメラファイル読み込み　　Multicam
+PVSLP　　　　　　　　//スリープ　　　　　　　　　作成必要？　
+SLP　　　　　　　　　Sleep
+BEEP　　　　　　　　 Beep
+BOT //ボードトポロジー変更
+GRABSTART　　　　　　　Multicam
+GRABSTOP　　　　　　　　Multicam
+BMP //画像を保存させる。         StCheckCommon
+CSV //CSVファイルを保存させる。  StCheckCommon
+RET //カメラ通信の返り値比較     StCheckControlRetry
+TIM  //タイムスタンプ            Print(TIMESTAMP)
+RETRY	//リトライフラグ         RetryMode
+NGF //リトライフラグ             NGContinuousMode
+LGT: //照明調光                 StLightControlDlg
+LGT2 //照明調光                 StLightControlDlg
+OFFSET  //Offset設定　　　　　　　作成必要　※ 作成済み　StCheckAdjustOffset
+L2L   //L2L                    StCheckAdjustLinetolineDlg 確認作成必要
+POW: //ファームへの通信         StSerialComm
+TEXIO:                          StTexioControl
+SCRIPTWINDX:   //ウィンドウ位置  ×
+SCRIPTWINDY    //ウィンドウ位置  ×
+PTOUCH　　　　　　　　　　　　　StPTouch
+SNWRITE       //シリアル書込み　作成必要　StWriteSerial作成終了
+SNCHECK//シリアル書込み　　　　 StCheckSerialVersion　カメラリンク対応必要
+SENSORSERIALWRITE　　　　　　　作成必要　StWriteSerial作成終了
+SENSORSERIALCHECK　　　　　　　作成必要　※ 作成済み　StCheckSerialVersion
+BAUDRATEJUDGE　　　　　　　　　作成必要　※ 作成済み　aSerialComm.AutoBaudRate
+BINCTRL  //カメラ通信　　　　　カメラリング対応必要
+
+
+
+
+
+
+
+
+
+
+なし？
+StCheckSerialVersion
+StCheckAdjustLinetolineDlg  未使用
+StCheckAdjustLinetoline
+StCheckIO
+
+
+
+
+アワイバカメラのオフセット調整(DAC) 
+OFFSET
+
+EO調整
+CMD:3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
