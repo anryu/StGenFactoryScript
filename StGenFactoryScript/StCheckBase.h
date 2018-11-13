@@ -77,6 +77,13 @@ public:
 	void SetScriptCheckMode(INT nScriptCheckMode){m_nScriptCheckMode=nScriptCheckMode;}
 	//Å£1.0.0.1062
 
+	//Å•1.0.0.1073 beta2
+	LPCWSTR GetErrorMessage(void)
+	{
+		return m_szLastErrorMessage.GetUnicode();
+	}
+	//Å£1.0.0.1073 beta2
+
 protected:
 	INT m_iJudge;	//-1:ñ¢èàóù 0:NG 1:OK 2:èàóùíÜ
 
@@ -186,8 +193,13 @@ protected:
 	INT m_nScriptCheckMode;
 	//Å£1.0.0.1062
 
+	//Å•1.0.0.1073 beta2
+	StString m_szLastErrorMessage;
+	//Å£1.0.0.1073 beta2
+
 private:
 	INT m_nColorIndex[4];	//0:R 1:G 2:B 3:A -1:Mono 
+
 
 };
 

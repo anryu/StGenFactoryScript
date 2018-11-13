@@ -2061,6 +2061,18 @@ BOOL StInspectMain::GetControlFunction(LPCTSTR szString, CString &szValue, doubl
 					szValue.Format(_T("%i"),nData);
 					dblValue = nData;
 				}
+
+				//▼1.0.0.1073 beta2
+				//保留----
+				//else
+				//{
+				//	StString tmp = aTerminal->GetErrorMessage();
+				//	if( tmp.GetLength()>0 )
+				//	{
+
+				//	}
+				//}
+				//▲1.0.0.1073 beta2
 			}
 		}
 		break;
@@ -6415,6 +6427,18 @@ BOOL StInspectMain::ExecuteClassFunction(CString &szString, INT nScriptLine)
 				else
 				{
 					szErrorMessage = _T("LightControl エラー");
+					//▼1.0.0.1073 beta2
+					CString szError = pStLightControlDlg->GetErrorMessage();
+					CString szText = _T("Error=");
+					szText += szError;
+					OutputLogFile(szText);
+					if( szError.GetLength()>0 )
+					{
+						szErrorMessage += _T("(");
+						szErrorMessage += szError;
+						szErrorMessage += _T(")");
+					}
+					//▲1.0.0.1073 beta2
 				}
 
 				//▼1.0.0.1062
@@ -6555,6 +6579,18 @@ BOOL StInspectMain::ExecuteClassFunction(CString &szString, INT nScriptLine)
 				else
 				{
 					szErrorMessage = _T("LightControl エラー");
+					//▼1.0.0.1073 beta2
+					CString szError = pStLightControl->GetErrorMessage();
+					CString szText = _T("Error=");
+					szText += szError;
+					OutputLogFile(szText);
+					if( szError.GetLength()>0 )
+					{
+						szErrorMessage += _T("(");
+						szErrorMessage += szError;
+						szErrorMessage += _T(")");
+					}
+					//▲1.0.0.1073 beta2
 				}
 
 				//▼1.0.0.1062
@@ -6932,7 +6968,20 @@ BOOL StInspectMain::ExecuteClassFunction(CString &szString, INT nScriptLine)
 				}
 				else
 				{
+					//▼1.0.0.1073 beta2
+					//szErrorMessage = _T("IO検査エラー");
+					CString szError = pCheckIO->GetErrorMessage();
+					CString szText = _T("Error=");
+					szText += szError;
+					OutputLogFile(szText);
 					szErrorMessage = _T("IO検査エラー");
+					if( szError.GetLength()>0 )
+					{
+						szErrorMessage += _T("(");
+						szErrorMessage += szError;
+						szErrorMessage += _T(")");
+					}
+					//▲1.0.0.1073 beta2
 				}
 
 				//▼1.0.0.1062

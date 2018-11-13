@@ -565,26 +565,49 @@ BOOL StCheckIO::TerminalExecute(void)
 			//冶具端子への入出力初期設定------
 			_stprintf_s(szText,_countof(szText),_T("%i"),m_nPinCount);
 			m_pTerminal->function(_T("IOPortCount"),szText);
-			INT nAllPort = 0;
-			for( int i=0; i<m_nPinCount; i++ )
-			{
-				if( m_piPinMode[i]==0 )	//カメラからみてIN　JIGUから見てOut
-				{
-					nAllPort |= (1<<i);
-				}
-			}
-			_stprintf_s(szText,_countof(szText),_T("%i"),nAllPort);
-			m_pTerminal->function(_T("SetAllport"),szText);
 
+			//▼1.0.0.1073 beta2
+			//m_pTerminal->function(_T("IOPortCount"),szText);
+			bReval = m_pTerminal->function(_T("IOPortCount"),szText);
+			if( !bReval )
+			{
+				m_szLastErrorMessage = m_pTerminal->GetErrorMessage();
+				break;
+			}
+			//▲1.0.0.1073 beta2
+
+
+			//▼1.0.0.1073 beta2
+			//INT nAllPort = 0;
+			//for( int i=0; i<m_nPinCount; i++ )
+			//{
+			//	if( m_piPinMode[i]==0 )	//カメラからみてIN　JIGUから見てOut
+			//	{
+			//		nAllPort |= (1<<i);
+			//	}
+			//}
+			//_stprintf_s(szText,_countof(szText),_T("%i"),nAllPort);
+			//m_pTerminal->function(_T("SetAllport"),szText);
+
+
+			//いらない--------------
+
+			//bReval = m_pTerminal->function(_T("SetAllOutportValue"),szText);
+			//if( !bReval )
+			//{
+			//	m_szLastErrorMessage = m_pTerminal->GetErrorMessage();
+			//	break;
+			//}
+			//▲1.0.0.1073 beta2
 			//
 			WORD	wSetCameraStatus;
-			for( INT nReverse=0; nReverse<2 && m_iJudge==2; nReverse++ )	//反転
+			//▼1.0.0.1073 beta2
+			//for( INT nReverse=0; nReverse<2 && m_iJudge==2; nReverse++ )	//反転
+			for( INT nReverse=0; nReverse<2 && m_iJudge==2 && bReval; nReverse++ )	//反転
+			//▲1.0.0.1073 beta2
 			{
-//TRACE( _T("@@@ nReverse=%i\n"), nReverse );
 				for( INT nPin=0; nPin<m_nPinCount && m_iJudge==2; nPin++ )		//PIN
 				{
-//TRACE( _T("@@@ nPin=%i\n"), nPin );
-
 					wSetCameraStatus = (1<<nPin);
 					if( nReverse>0 ) wSetCameraStatus = ~wSetCameraStatus;
 
@@ -617,7 +640,15 @@ BOOL StCheckIO::TerminalExecute(void)
 						}
 					}
 					_stprintf_s(szText,_countof(szText),_T("%i"),nJiguSetValue);
-					m_pTerminal->ExecutePublic(_T("SetAllOutportValue"),szText);
+					//▼1.0.0.1073 beta2
+					//m_pTerminal->ExecutePublic(_T("SetAllOutportValue"),szText);
+					bReval = m_pTerminal->ExecutePublic(_T("SetAllOutportValue"),szText);
+					if( !bReval )
+					{
+						m_szLastErrorMessage = m_pTerminal->GetErrorMessage();
+						break;
+					}
+					//▲1.0.0.1073 beta2
 
 					//▼1.0.0.1058
 					//Sleep(500);
@@ -630,6 +661,13 @@ BOOL StCheckIO::TerminalExecute(void)
 					bReval = m_pTerminal->GetFunction(_T("GetAllport"), NULL, nJiguStatusValue);
 					//▲1.0.0.1072 beta2
 					bReval = m_pTerminal->GetFunction(_T("GetAllport"), NULL, nJiguStatusValue);
+					//▼1.0.0.1073 beta2
+					if( !bReval )
+					{
+						m_szLastErrorMessage = m_pTerminal->GetErrorMessage();
+						break;
+					}
+					//▲1.0.0.1073 beta2
 
 					//Maskする
 					for( int i=0; i<m_nPinCount; i++ )

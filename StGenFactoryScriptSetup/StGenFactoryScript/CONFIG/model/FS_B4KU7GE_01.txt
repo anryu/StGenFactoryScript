@@ -12,6 +12,7 @@ FileName=..\GigE_Common\GigE_Common_prologue.txt
 
 FileName=..\GigE_Common\GigE_Common_PrintMacAddress.txt
 FeatureName=MACアドレスシール印刷
+CheckMode=1
 
 FileName=..\GigE_Common\GigE_Common_CheckSerialVersion.txt
 FeatureName=シリアルバージョン検査

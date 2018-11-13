@@ -11,6 +11,14 @@
 #include <libxml/HTMLparser.h>
 //▲1.0.0.1053
 
+
+
+//▼1.0.0.1073 beta2
+#define _NO_TERMINAL_ADDR  _T("Nothing terminal address! Setting the terminal address.")
+#define _TERMINAL_CTRL_ERROR  _T("Terminal Control Error! Check the terminal address.")
+//▲1.0.0.1073 beta2
+
+
 StTerminal::StTerminal(void)
 	: StControl()
 	, m_Address(_T(""))
@@ -50,6 +58,10 @@ void StTerminal::Initialize(void)
 	//▼1.0.0.1053
 	m_nIOPortCount = 12;
 	//▲1.0.0.1053
+
+	//▼1.0.0.1073 beta2
+	m_szLastErrorMessage = _T("");
+	//▲1.0.0.1073 beta2
 
 }
 
@@ -247,21 +259,107 @@ BOOL ExecuteCommand( LPCTSTR szAddress, LPCTSTR szCommand )
 		hSession = WinHttpOpen( L"WinHTTP Example/1.0",WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,WINHTTP_NO_PROXY_NAME,WINHTTP_NO_PROXY_BYPASS,0);
 		assert(hSession);
 
+		//▼1.0.0.1073 beta2
+		if( !hSession ) break;
+		//▲1.0.0.1073 beta2
+
 		// HTTP サーバの指定 
 		//hConnect = WinHttpConnect(hSession, L"www.google.com", INTERNET_DEFAULT_HTTP_PORT,0);
 		hConnect = WinHttpConnect(hSession, szAddress, INTERNET_DEFAULT_HTTP_PORT,0);
 		assert(hConnect);
 
+		//▼1.0.0.1073 beta2
+		if( !hConnect ) break;
+		//▲1.0.0.1073 beta2
 
 		// HTTP リクエストハンドルを作成 
 		//hRequest = WinHttpOpenRequest( hConnect,L"PUT", L"/", NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, 0);
 		hRequest = WinHttpOpenRequest( hConnect,L"PUT", szCommand, NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, 0);
+		//▼1.0.0.1073 beta2
+		if( !hRequest ) break;
+		//▲1.0.0.1073 beta2
 
 		// Send a request. 
 		BOOL bResults = WinHttpSendRequest( hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA, 0, 0, 0); 
+		//▼1.0.0.1073 beta2
+		if( !bResults ) break;
+		//▲1.0.0.1073 beta2
 
 		// リクエスト終了
 		bResults = WinHttpReceiveResponse( hRequest, NULL);
+
+		//▼1.0.0.1073 beta2
+		//PUTではレスポンスがないか？
+		/*
+		//ResponseのHeader部取得
+		if( bResults )
+		{
+			DWORD dwSize=0;
+			bResults = WinHttpQueryHeaders( hRequest, 
+					WINHTTP_QUERY_RAW_HEADERS_CRLF,
+					WINHTTP_HEADER_NAME_BY_INDEX,
+					NULL,
+					&dwSize,
+					WINHTTP_NO_HEADER_INDEX
+
+				  //DWORD dwInfoLevel,
+				  //LPCWSTR pwszName,
+				  //LPVOID lpBuffer,
+				  //LPDWORD lpdwBufferLength,
+				  //LPDWORD lpdwIndex
+				);
+
+			LPBYTE lpHeader = (LPBYTE)HeapAlloc(GetProcessHeap(), 0, dwSize);
+
+			bResults = WinHttpQueryHeaders( hRequest, 
+					WINHTTP_QUERY_RAW_HEADERS_CRLF,
+					WINHTTP_HEADER_NAME_BY_INDEX,
+					lpHeader,
+					&dwSize,
+					WINHTTP_NO_HEADER_INDEX
+				);
+
+
+			HeapFree(GetProcessHeap(), 0, lpHeader);
+
+
+			//if( bResults )
+			//{
+			//	LPBYTE lpHeader = (LPBYTE)HeapAlloc(GetProcessHeap(), 0, dwSize);
+
+			//	//ResponseのBody部取得
+			//	DWORD dwNumberOfBytesRead = 0;
+			//	bResults = WinHttpReadData( hRequest, 
+			//		  lpHeader,
+			//		  dwSize,
+			//		  &dwNumberOfBytesRead
+			//		);
+
+			//	if( dwNumberOfBytesRead==0 )
+			//		bResults = FALSE;
+			//	HeapFree(GetProcessHeap(), 0, lpHeader);
+			//}
+
+			//if( bResults )
+			//{
+
+			//	//ResponseのBody部取得
+			//	BYTE byteData[256];
+			//	DWORD dwNumberOfBytesRead = 0;
+			//	bResults = WinHttpReadData( hRequest, 
+			//		  byteData,
+			//		  sizeof(byteData),
+			//		  &dwNumberOfBytesRead
+			//		);
+
+			//	if( dwNumberOfBytesRead==0 )
+			//		bResults = FALSE;
+			//}
+
+
+		}
+		*/
+		//▲1.0.0.1073 beta2
 
 		bReval = bResults;
 
@@ -282,7 +380,15 @@ BOOL StTerminal::Execute(LPCTSTR szFunc, LPCTSTR szArgument)
 	//▲1.0.0.1062
 
 	BOOL bReval = FALSE;
-	if( m_Address.GetLength()==0 ) return FALSE;
+	
+	//▼1.0.0.1073 beta2
+	//if( m_Address.GetLength()==0 ) return FALSE;
+	if( m_Address.GetLength()==0 )
+	{
+		m_szLastErrorMessage = _NO_TERMINAL_ADDR;
+		return FALSE;
+	}
+	//▲1.0.0.1073 beta2
 
 	CString szFunction(szFunc);
 
@@ -376,6 +482,13 @@ BOOL StTerminal::Execute(LPCTSTR szFunc, LPCTSTR szArgument)
 		}
 		//ここでszCommand実行-------------------
 		bReval = ExecuteCommand( m_Address, szCommand );
+
+		//▼1.0.0.1073 beta2
+		if( !bReval )
+		{
+			m_szLastErrorMessage = _TERMINAL_CTRL_ERROR;
+		}
+		//▲1.0.0.1073 beta2
 
 	}while(0);
 
@@ -593,11 +706,84 @@ void FindInfo_input_value(xmlNode*& element,PINT pnInputValue)
 	} 
 }
 
+//▼1.0.0.1073 beta2
+BOOL FindContentCheck(xmlNode*& element, const char * szName, const char * szCheckContent, size_t size)
+{ 
+	BOOL bReval = FALSE;
+
+	for (htmlNodePtr node = element; node != NULL && !bReval; node = node->next)
+	{ 
+		if( node->name )
+		{
+			const xmlChar *aText = node->name;
+			if( strcmp((const char *)aText, szName)==0 )
+			{
+				const char *szTitleContent=NULL;
+				//StString szText;
+				//if( node->content )
+				//{
+				//	szText = (const char *)node->content;
+				//	TRACE(_T(" @@@@@@@ node->content=%s\n"), szText.GetUnicode());
+				//}
+				//if( node->doc && node->doc->name )
+				//{
+				//	szText = (const char *)node->doc->name;
+				//	TRACE(_T(" @@@@@@@ node->doc->name=%s\n"), szText.GetUnicode());
+				//}
+				//if( node->next && node->next->name )
+				//{
+				//	szText = (const char *)node->next->name;
+				//	TRACE(_T(" @@@@@@@ node->next->name=%s\n"), szText.GetUnicode());
+				//}
+				//if( node->children && node->children->name )
+				//{
+				//	szText = (const char *)node->children->name;
+				//	TRACE(_T(" @@@@@@@ node->children->name=%s\n"), szText.GetUnicode());
+				//}
+				if( node->children && node->children->content )
+				{
+					szTitleContent = (const char *)node->children->content;
+					//StString szText = (const char *)node->children->content;
+					//TRACE(_T(" @@@@@@@ node->children->content=%s\n"), szText.GetUnicode());
+				}
+
+				if( szTitleContent )
+				{
+					size_t sizeContent = strlen((const char *)szTitleContent);
+					if( sizeContent==size )
+					{
+						if( memcmp(szTitleContent,szCheckContent,sizeContent)==0 )
+						{
+							bReval = TRUE;
+							break;
+						}
+					}
+				}
+			}
+		}
+		if(node->children != NULL && !bReval ) 
+		{
+			bReval = FindContentCheck(node->children, szName, szCheckContent, size ); 
+		} 
+
+	}
+	return bReval;
+}
+//▲1.0.0.1073 beta2
 
 BOOL StTerminal::GetAllport(INT &nData)
 {
 	BOOL bReval = FALSE;
 	
+	//▼1.0.0.1073 beta2
+	if( m_Address.GetLength()==0 )
+	{
+		m_szLastErrorMessage = _NO_TERMINAL_ADDR;
+		return FALSE;
+	}
+	//▲1.0.0.1073 beta2
+
+
 	HINTERNET hSession=NULL;
 	HINTERNET hConnect=NULL;
 	HINTERNET hRequest=NULL;
@@ -730,6 +916,21 @@ BOOL StTerminal::GetAllport(INT &nData)
 
 						bReval = TRUE;
 					} 
+
+					//▼1.0.0.1073 beta2
+					//IO治具という文字列が検出できない場合はNGとする.
+					//192.168.2.53のアドレス指定をして、データ自体はなぜか取得できてしまうから。自分のPCだけかもしれない。
+					if( bReval )
+					{
+						//IO治具　バイナリエディタでみて49 4F E6 B2 BB E5 85 B7 となっていた   (UTF-8)
+						const char szCompare[] = {0x49, 0x4F, 0xE6, 0xB2, 0xBB, 0xE5, 0x85, 0xB7};
+						bReval = FindContentCheck(root, "title", szCompare, sizeof(szCompare));
+						if( !bReval )
+						{
+							m_szLastErrorMessage = _TERMINAL_CTRL_ERROR;
+						}
+					}
+					//▲1.0.0.1073 beta2
 					xmlFreeDoc(doc); 
 				}
 				xmlCleanupParser();
@@ -965,6 +1166,14 @@ BOOL StTerminal::GetLightStatus(const char *szID, INT &nData)
 {
 	BOOL bReval = FALSE;
 	
+	//▼1.0.0.1073 beta2
+	if( m_Address.GetLength()==0 )
+	{
+		m_szLastErrorMessage = _NO_TERMINAL_ADDR;
+		return FALSE;
+	}
+	//▲1.0.0.1073 beta2
+
 	HINTERNET hSession=NULL;
 	HINTERNET hConnect=NULL;
 	HINTERNET hRequest=NULL;
@@ -984,17 +1193,30 @@ BOOL StTerminal::GetLightStatus(const char *szID, INT &nData)
 		// セッションハンドルを取得
 		hSession = WinHttpOpen( L"WinHTTP Example/1.0",WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,WINHTTP_NO_PROXY_NAME,WINHTTP_NO_PROXY_BYPASS,0);
 		assert(hSession);
+		//▼1.0.0.1073 beta2
+		if( !hSession ) break;
+		//▲1.0.0.1073 beta2
 
 		// HTTP サーバの指定 
 		hConnect = WinHttpConnect(hSession, szURL, INTERNET_DEFAULT_HTTP_PORT,0);
 		assert(hConnect);
+		//▼1.0.0.1073 beta2
+		if( !hConnect ) break;
+		//▲1.0.0.1073 beta2
 
 
 		// HTTP リクエストハンドルを作成 
 		hRequest = WinHttpOpenRequest( hConnect,L"GET", szCommand, NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, 0);
+		//▼1.0.0.1073 beta2
+		if( !hRequest ) break;
+		//▲1.0.0.1073 beta2
 
 		// Send a request. 
 		BOOL bResults = WinHttpSendRequest( hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA, 0, WINHTTP_IGNORE_REQUEST_TOTAL_LENGTH, 0); 
+
+		//▼1.0.0.1073 beta2
+		if( !bResults ) break;
+		//▲1.0.0.1073 beta2
 
 		// リクエスト終了
 		bResults = WinHttpReceiveResponse( hRequest, NULL);
@@ -1046,6 +1268,24 @@ BOOL StTerminal::GetLightStatus(const char *szID, INT &nData)
 
 						bReval = TRUE;
 					} 
+
+					//▼1.0.0.1073 beta2
+					//PTPという文字列が検出できない場合はNGとする.
+					//IO冶具と同じ処理をする
+					if( bReval )
+					{
+						//PHP
+						const char szCompare[] = "PHP";
+						bReval = FindContentCheck(root, "title", szCompare, strlen(szCompare));
+						if( !bReval )
+						{
+							m_szLastErrorMessage = _TERMINAL_CTRL_ERROR;
+						}
+					}
+					//▲1.0.0.1073 beta2
+
+
+
 					xmlFreeDoc(doc); 
 				}
 				xmlCleanupParser();
@@ -1187,6 +1427,8 @@ TRACE(TEXT("@@@@@@@@@ value=%s \n"), aString.GetUnicode() );
 BOOL StTerminal::GetFunction(LPCTSTR szFunc, LPCTSTR szArgument, INT &nData)
 {
 	BOOL bReval = FALSE;
+
+
 	CString szFunction(szFunc);
 	if( szFunction == _T("GetAllport") )
 	{

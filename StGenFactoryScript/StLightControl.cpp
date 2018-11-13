@@ -317,6 +317,14 @@ BOOL StLightControl::SetLightControlTerminal(INT nColor, INT nValue)
 		TCHAR szValue[64];
 		_stprintf_s(szValue,_countof(szValue), _T("%i"),nValue);
 		bReval = m_pTerminal->function(szCommand[nColor], szValue);
+		//¥1.0.0.1073 beta2
+		if( !bReval )
+		{
+			m_szLastErrorMessage = m_pTerminal->GetErrorMessage();
+			//break;
+		}
+		//£1.0.0.1073 beta2
+
 		TCHAR szText[64];
 		_stprintf_s(szText,_countof(szText), _T("%s=%i"),szCommand[nColor],nValue);
 		DisplayListBox(szText);
@@ -454,6 +462,13 @@ BOOL StLightControl::SetInitValueTerminal(void)
 	DisplayListBox(szExecute);
 	//£1.0.0.1021
 
+	//¥1.0.0.1073 beta2
+	if( !bReval )
+	{
+		m_szLastErrorMessage = m_pTerminal->GetErrorMessage();
+	}
+	//£1.0.0.1073 beta2
+
 	return bReval;
 }
 //£1.0.0.1017
@@ -500,6 +515,13 @@ BOOL StLightControl::SetValueTerminal(CString szColor,PINT pnValue)
 	CString szExecute(_T("Execute"));
 	bReval = m_pTerminal->function(szExecute,_T(""));
 	DisplayListBox(szExecute);
+
+	//¥1.0.0.1073 beta2
+	if( !bReval )
+	{
+		m_szLastErrorMessage = m_pTerminal->GetErrorMessage();
+	}
+	//£1.0.0.1073 beta2
 
 	return bReval;
 }

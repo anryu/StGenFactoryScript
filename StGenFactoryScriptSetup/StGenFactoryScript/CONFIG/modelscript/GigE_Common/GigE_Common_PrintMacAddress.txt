@@ -1,6 +1,6 @@
 
-print=#############################################################################################START:受け入れ検査では除外する箇所
 CommentStart=6
+print=#############################################################################################START:受け入れ検査では除外する箇所
 #:宣言 aPTouch(変数名) aDevice(デバイスクラスの変数名)
 StPTouch aPTouch(aDevice)
 aPTouch.SetLabel(GigE-Factory.lbx)
@@ -29,3 +29,4 @@ StValue aTMP
 aTMP = aDevice.MACAddressStr
 aMacAddress+=aTMP
 print(aMacAddress)
+CommentEnd=6

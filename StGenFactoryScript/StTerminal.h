@@ -23,6 +23,9 @@ public:
 	//Å•1.3.0.70
 	BOOL GetLightStatus(const char *szID, INT &nData);
 	//Å£1.0.0.70
+	//Å•1.0.0.1073 beta2
+	StString GetErrorMessage(void){return m_szLastErrorMessage;}
+	//Å£1.0.0.1073 beta2
 
 private:
 	StString m_Address;
@@ -59,5 +62,9 @@ private:
 	//Å•1.0.0.1053
 	INT m_nIOPortCount;
 	//Å£1.0.0.1053
+
+	//Å•1.0.0.1073 beta2
+	StString m_szLastErrorMessage;
+	//Å£1.0.0.1073 beta2
 };
 
